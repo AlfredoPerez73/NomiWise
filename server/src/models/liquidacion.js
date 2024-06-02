@@ -11,55 +11,52 @@ export const Liquidacion = sequelize.define(
       autoIncrement: true,
     },
     salarioTotal: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.DECIMAL,
     },
     saludTotal: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.DECIMAL,
     },
     pensionTotal: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.DECIMAL,
     },
     auxTransporteTotal: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.DECIMAL,
     },
     bonificacionServicioTotal: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.DECIMAL,
     },
     auxAlimentacionTotal: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.DECIMAL,
     },
     primaNavidadTotal: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.DECIMAL,
     },
     vacacionesTotal: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.DECIMAL,
     },
     cesantiasTotal: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.DECIMAL,
     },
     interesesCesantiasTotal: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.DECIMAL,
     },
     total: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.DECIMAL,
     },
     fechaRegistro: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
     },
   },
-  {
-    timestamps: false,
-  }
 );
 
 
-DetalleLiquidacion.hasMany(Liquidacion, {
+Liquidacion.hasMany(DetalleLiquidacion, {
     foreignKey: "idLiquidacion",
     sourceKey: "idLiquidacion",
   });
   
-Liquidacion.belongsTo(DetalleLiquidacion, {
+DetalleLiquidacion.belongsTo(Liquidacion, {
     foreignKey: "idLiquidacion",
     targetID: "idLiquidacion",
   });

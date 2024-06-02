@@ -9,6 +9,46 @@ export const DetalleLiquidacion = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
+    diasTrabajados: {
+        type: DataTypes.INTEGER,
+    },
+    horasExtras: {
+        type: DataTypes.INTEGER,
+    },
+    salud: {
+        type: DataTypes.DECIMAL,
+    },
+    pension: {
+        type: DataTypes.DECIMAL,
+    },
+    auxTransporte: {
+        type: DataTypes.DECIMAL,
+    },
+    bonificacionServicio: {
+        type: DataTypes.DECIMAL,
+    },
+    auxAlimentacion: {
+        type: DataTypes.DECIMAL,
+    },
+    primaNavidad: {
+        type: DataTypes.DECIMAL,
+    },
+    vacaciones: {
+        type: DataTypes.DECIMAL,
+    },
+    cesantias: {
+        type: DataTypes.DECIMAL,
+    },
+    interesesCesantias: {
+        type: DataTypes.DECIMAL,
+    },
+    devengado: {
+        type: DataTypes.DECIMAL,
+    },
+    fechaRegistro: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+    },
     idEmpleado: {
         type: DataTypes.INTEGER,
     },
@@ -18,48 +58,5 @@ export const DetalleLiquidacion = sequelize.define(
     idUsuario: {
         type: DataTypes.INTEGER,
     },
-    diasTrabajados: {
-        type: DataTypes.INTEGER,
-    },
-    horasExtras: {
-        type: DataTypes.INTEGER,
-    },
-    salud: {
-        type: DataTypes.NUMBER,
-    },
-    pension: {
-        type: DataTypes.NUMBER,
-    },
-    auxTransporte: {
-        type: DataTypes.NUMBER,
-    },
-    bonificacionServicio: {
-        type: DataTypes.NUMBER,
-    },
-    auxAlimentacion: {
-        type: DataTypes.NUMBER,
-    },
-    primaNavidad: {
-        type: DataTypes.NUMBER,
-    },
-    vacaciones: {
-        type: DataTypes.NUMBER,
-    },
-    cesantias: {
-        type: DataTypes.NUMBER,
-    },
-    interesesCesantias: {
-        type: DataTypes.NUMBER,
-    },
-    devengado: {
-        type: DataTypes.NUMBER,
-    },
-    fechaRegistro: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-    },
   },
-  {
-    timestamps: false,
-  }
 );

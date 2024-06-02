@@ -33,9 +33,6 @@ export const Empleado = sequelize.define(
         type: DataTypes.INTEGER,
     },
   },
-  {
-    timestamps: false,
-  }
 );
 
 Empleado.hasMany(DetalleLiquidacion, {

@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../database/database.js";
 import { Permiso } from "../models/permiso.js";
+import { Usuario } from "../models/usuario.js";
 
 export const Rol = sequelize.define(
   "roles",
@@ -17,21 +18,25 @@ export const Rol = sequelize.define(
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
     },
-    idUsuario: {
-      type: DataTypes.INTEGER,
-    },
   },
-  {
-    timestamps: false,
-  }
 );
 
-Permiso.hasMany(Rol, {
-  foreignKey: "idPermiso",
-  sourceKey: "idPermiso",
+Rol.hasMany(Permiso, {
+  foreignKey: "idRol",
+  sourceKey: "idRol",
 });
 
-Rol.belongsTo(Permiso, {
-  foreignKey: "idPermiso",
-  targetID: "idPermiso",
+Permiso.belongsTo(Rol, {
+  foreignKey: "idRol",
+  targetID: "idRol",
+});
+
+Rol.hasMany(Usuario, {
+  foreignKey: "idRol",
+  sourceKey: "idRol",
+});
+
+Usuario.belongsTo(Rol, {
+  foreignKey: "idRol",
+  targetID: "idRol",
 });

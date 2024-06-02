@@ -4,7 +4,6 @@ import { Empleado } from "./empleado.js";
 import { Cargo } from "./cargo.js";
 import { Contrato } from "./contrato.js";
 import { Permiso } from "./permiso.js";
-import { Rol } from "./rol.js";
 import { DetalleLiquidacion } from "./detalleLiquidacion.js";
 
 export const Usuario = sequelize.define(
@@ -31,10 +30,10 @@ export const Usuario = sequelize.define(
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
     },
+    idRol: {
+      type: DataTypes.INTEGER,
+    }
   },
-  {
-    timestamps: false,
-  }
 );
 
 Usuario.hasMany(Empleado, {
@@ -44,68 +43,45 @@ Usuario.hasMany(Empleado, {
 
 Empleado.belongsTo(Usuario, {
   foreignKey: "idUsuario",
-  targetID: "idUsuario",
+  targetKey: "idUsuario",
 });
 
 Usuario.hasMany(Cargo, {
-    foreignKey: "idUsuario",
-    targetID: "idUsuario",
-  });
-  
+  foreignKey: "idUsuario",
+  sourceKey: "idUsuario",
+});
+
 Cargo.belongsTo(Usuario, {
-    foreignKey: "idUsuario",
-    targetID: "idUsuario",
-  });
-  
-  
+  foreignKey: "idUsuario",
+  targetKey: "idUsuario",
+});
+
 Usuario.hasMany(Contrato, {
-    foreignKey: "idUsuario",
-    targetID: "idUsuario",
-  });
+  foreignKey: "idUsuario",
+  sourceKey: "idUsuario",
+});
 
 Contrato.belongsTo(Usuario, {
-    foreignKey: "idUsuario",
-    targetID: "idUsuario",
-  });
-  
-Usuario.hasMany(Permiso, {
-    foreignKey: "idUsuario",
-    targetID: "idUsuario",
-  });
-  
-Permiso.belongsTo(Usuario, {
-    foreignKey: "idUsuario",
-    targetID: "idUsuario",
-  });
+  foreignKey: "idUsuario",
+  targetKey: "idUsuario",
+});
 
-    
-Usuario.hasMany(Rol, {
-    foreignKey: "idUsuario",
-    targetID: "idUsuario",
-  });
-  
-Rol.belongsTo(Usuario, {
-    foreignKey: "idUsuario",
-    targetID: "idUsuario",
-  });
-  
-    
 Usuario.hasMany(Permiso, {
-    foreignKey: "idUsuario",
-    targetID: "idUsuario",
-  });
-  
+  foreignKey: "idUsuario",
+  sourceKey: "idUsuario",
+});
+
 Permiso.belongsTo(Usuario, {
-    foreignKey: "idUsuario",
-    targetID: "idUsuario",
-  });
+  foreignKey: "idUsuario",
+  targetKey: "idUsuario",
+});
 
 Empleado.hasMany(DetalleLiquidacion, {
-    foreignKey: "idUsuario",
-    sourceKey: "idUsuario",
-  });
-  
+  foreignKey: "idEmpleado",
+  sourceKey: "idEmpleado",
+});
+
 DetalleLiquidacion.belongsTo(Empleado, {
-    foreignKey: "idUsuario",
-    targetID: "idUsuario",
-  });
+  foreignKey: "idEmpleado",
+  targetKey: "idEmpleado",
+});

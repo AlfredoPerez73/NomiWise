@@ -23,7 +23,4 @@ export const Permiso = sequelize.define(
         type: DataTypes.INTEGER,
     },
   },
-  {
-    timestamps: false,
-  }
 );

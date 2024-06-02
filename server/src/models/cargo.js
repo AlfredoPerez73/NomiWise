@@ -21,17 +21,14 @@ export const Cargo = sequelize.define(
         type: DataTypes.INTEGER,
     },
   },
-  {
-    timestamps: false,
-  }
 );
 
-Empleado.hasMany(Cargo, {
-    foreignKey: "idEmpleado",
-    sourceKey: "idEmpleado",
+Cargo.hasMany(Empleado, {
+    foreignKey: "idCargo",
+    sourceKey: "idCargo",
   });
   
-Cargo.belongsTo(Empleado, {
-    foreignKey: "idEmpleado",
-    targetID: "idEmpleado",
+Empleado.belongsTo(Cargo, {
+    foreignKey: "idCargo",
+    targetID: "idCargo",
   });

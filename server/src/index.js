@@ -1,20 +1,22 @@
-import express from "express";
-import cookieParser from "cookie-parser";
-import morgan from "morgan";
-import cors from "cors";
+import app from "./app.js";
+import { sequelize } from "./database/database.js";
+import './models/usuario.js'
+import './models/cargo.js'
+import './models/contrato.js'
+import './models/empleado.js'
+import './models/permiso.js'
+import './models/rol.js'
+import './models/liquidacion.js'
+import './models/detalleLiquidacion.js' 
 
-const app = express();
+async function main() {
+  try {
+    await sequelize.sync({ force: true });
+    app.listen(4000);
+    console.log("Server corriendo en el puerto 4000");
+  } catch (error) {
+    console.error("Server Errrr: ", error);
+  }
+}
 
-// Middlewares
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  })
-);
-
-app.use(morgan("dev"));
-app.use(express.json());
-app.use(cookieParser());
-
-export default app;
+main();
