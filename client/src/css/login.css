@@ -13,7 +13,7 @@ body {
 }
 
 .Bg-Img {
-    background: linear-gradient(180deg, #22214a 50%, #1f1e44e1 100%), url("../assets/fondo.jpg");
+    background: linear-gradient(180deg, #22214a 50%, #1f1e44e1 100%);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;

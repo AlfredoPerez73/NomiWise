@@ -4,6 +4,7 @@ import { AuthProvider } from "../context/authContext";
 import ProtectedRoutes from "../ProtectedRoutes";
 import Login from "../pages/login";
 import Registro from "../pages/registro";
+import Menu from "../pages/menu";
 
 const AppRoutes = () => {
     return (
@@ -15,6 +16,7 @@ const AppRoutes = () => {
                         <Route path="/registro" element={<Registro />} />
 
                         <Route element={<ProtectedRoutes />}>
+                            <Route path="/menu" element={<Menu />} />
                         </Route>
                     </Routes>
                 </BrowserRouter>

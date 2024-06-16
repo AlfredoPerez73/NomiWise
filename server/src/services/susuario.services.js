@@ -73,13 +73,13 @@ export async function iniciarSesion(correo, contraseña) {
 
     // Generar token de acceso
     const token = await createAccessToken({
-      idUsuario: usuarioEncontrado.idUsuario,
+      idSUsuario: usuarioEncontrado.idSUsuario,
       nombre: usuarioEncontrado.nombre,
     });
 
     // Crear y devolver DTO de usuario logueado
     return new SUsuarioDTO(
-      usuarioEncontrado.idUsuario,
+      usuarioEncontrado.idSUsuario,
       usuarioEncontrado.documento,
       usuarioEncontrado.nombre,
       usuarioEncontrado.correo,

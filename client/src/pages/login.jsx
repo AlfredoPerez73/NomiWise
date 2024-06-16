@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useAuth } from "../context/authContext";
 import "../css/login.css";
-import logo from "../assets/logo.png";
 import logo2 from "../assets/logoSinFondoConTexto.png";
 
 const LoginPage = () => {
@@ -32,6 +31,7 @@ const LoginPage = () => {
             popup: 'custom-alert',
           },
       });
+      navigate("/menu");
     } catch (error) {
       Swal.fire({
         icon: "error",

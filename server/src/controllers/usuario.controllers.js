@@ -46,15 +46,15 @@ export const verifyToken = async (req, res) => {
   const { token } = req.cookies;
 
   if(!token) return res.status(401).json({message: 
-    "Unauthorized"});
+    "Unauthorized 1"});
 
   jwt.verify(token, TOKEN_SECRET, async (err, user) => {
     if(err) return res.status(401).json({message: 
-      "Unauthorized"});
+      "Unauthorized 2"});
 
     const userFound = await Usuario.findByPk(user.idUsuario);
     if(!userFound) return res.status(401).json({ message: 
-      "Unauthorized" });
+      "Unauthorized 3" });
 
     return res.json(userFound);
   })
