@@ -32,6 +32,10 @@ export const Empleado = sequelize.define(
     idUsuario: {
         type: DataTypes.INTEGER,
     },
+    idSUsuario: {
+      type: DataTypes.INTEGER,
+      unique: true
+    },
   },
 );
 

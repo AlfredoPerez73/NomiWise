@@ -55,7 +55,7 @@ export const DetalleLiquidacion = sequelize.define(
     idLiquidacion: {
         type: DataTypes.INTEGER,
     },
-    idUsuario: {
+    idSUsuario: {
         type: DataTypes.INTEGER,
     },
   },

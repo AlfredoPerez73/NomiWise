@@ -3,6 +3,8 @@ import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import cors from "cors";
 
+import susuariosRoutes from "./routes/susuario.routes.js";
+
 const app = express();
 
 // Middlewares
@@ -16,5 +18,7 @@ app.use(
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(cookieParser());
+
+app.use("/api", susuariosRoutes);
 
 export default app;

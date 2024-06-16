@@ -1,18 +1,16 @@
-import { Usuario } from "../models/usuario.js";
-import * as UsuarioService from "../services/usuario.services.js";
+import { SUsuario } from "../models/susuario.js";
+import * as UsuarioService from "../services/susuario.services.js";
 import jwt from 'jsonwebtoken';
 import { TOKEN_SECRET } from "../config.js";
 
 export const postRegistroUsuario = async (req, res) => {
   try {
-    const { documento, nombre, correo, contraseña, idRol, idSUsuario } = req.body;
+    const { documento, nombre, correo, contraseña } = req.body;
     const usuarioRegistrado = await UsuarioService.registrarUsuario(
       documento,
       nombre,
       correo,
-      contraseña,
-      idRol,
-      idSUsuario
+      contraseña
     );
     // res.cookie("token", usuarioRegistrado.token); para acceder de una depues de  registrar
     res.json(usuarioRegistrado);
@@ -52,7 +50,7 @@ export const verifyToken = async (req, res) => {
     if(err) return res.status(401).json({message: 
       "Unauthorized"});
 
-    const userFound = await Usuario.findByPk(user.idUsuario);
+    const userFound = await SUsuario.findByPk(user.idUsuario);
     if(!userFound) return res.status(401).json({ message: 
       "Unauthorized" });
 

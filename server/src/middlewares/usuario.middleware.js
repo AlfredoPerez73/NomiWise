@@ -5,10 +5,8 @@ export const usuarioRequerido = (req, res, next) => {
   console.log(req.headers);
   try {
     const { token } = req.cookies;
-
     if (!token)
       return res.status(401).json({ message: "autorizacion Denegada" });
-
     jwt.verify(token, TOKEN_SECRET, (error, usuario) => {
       if (error) {
         return res.status(401).json({ message: "Token no es valido" });

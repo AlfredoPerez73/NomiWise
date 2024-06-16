@@ -3,14 +3,15 @@ import { sequelize } from "../database/database.js";
 import { Empleado } from "./empleado.js";
 import { Cargo } from "./cargo.js";
 import { Contrato } from "./contrato.js";
+import { Usuario } from "./usuario.js";
 import { Permiso } from "./permiso.js";
 import { Rol } from "./rol.js";
 import { DetalleLiquidacion } from "./detalleLiquidacion.js";
 
-export const Usuario = sequelize.define(
-  "usuarios",
+export const SUsuario = sequelize.define(
+  "susuarios",
   {
-    idUsuario: {
+    idSUsuario: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
@@ -31,54 +32,47 @@ export const Usuario = sequelize.define(
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
     },
-    idSUsuario: {
-      type: DataTypes.INTEGER,
-    },
-    idRol: {
-      type: DataTypes.INTEGER,
-    },
   },
 );
 
-
-Usuario.hasMany(Empleado, {
-  foreignKey: "idUsuario",
-  sourceKey: "idUsuario",
+SUsuario.hasMany(Empleado, {
+  foreignKey: "idSUsuario",
+  sourceKey: "idSUsuario",
 });
 
-Empleado.belongsTo(Usuario, {
-  foreignKey: "idUsuario",
-  targetKey: "idUsuario",
+Empleado.belongsTo(SUsuario, {
+  foreignKey: "idSUsuario",
+  targetKey: "idSUsuario",
 });
 
-Usuario.hasMany(Cargo, {
-  foreignKey: "idUsuario",
-  sourceKey: "idUsuario",
+SUsuario.hasMany(Cargo, {
+  foreignKey: "idSUsuario",
+  sourceKey: "idSUsuario",
 });
 
-Cargo.belongsTo(Usuario, {
-  foreignKey: "idUsuario",
-  targetKey: "idUsuario",
+Cargo.belongsTo(SUsuario, {
+  foreignKey: "idSUsuario",
+  targetKey: "idSUsuario",
 });
 
-Usuario.hasMany(Contrato, {
-  foreignKey: "idUsuario",
-  sourceKey: "idUsuario",
+SUsuario.hasMany(Contrato, {
+  foreignKey: "idSUsuario",
+  sourceKey: "idSUsuario",
 });
 
-Cargo.belongsTo(Usuario, {
-  foreignKey: "idUsuario",
-  targetKey: "idUsuario",
+Contrato.belongsTo(SUsuario, {
+  foreignKey: "idSUsuario",
+  targetKey: "idSUsuario",
 });
 
-Usuario.hasMany(Contrato, {
-  foreignKey: "idUsuario",
-  sourceKey: "idUsuario",
+SUsuario.hasMany(Usuario, {
+  foreignKey: "idSUsuario",
+  sourceKey: "idSUsuario",
 });
 
-Contrato.belongsTo(Usuario, {
-  foreignKey: "idUsuario",
-  targetKey: "idUsuario",
+Usuario.belongsTo(SUsuario, {
+  foreignKey: "idSUsuario",
+  targetKey: "idSUsuario",
 });
 
 Usuario.hasMany(Rol, {
@@ -102,11 +96,11 @@ Permiso.belongsTo(Usuario, {
 });
 
 Empleado.hasMany(DetalleLiquidacion, {
-  foreignKey: "idEmpleado",
-  sourceKey: "idEmpleado",
+  foreignKey: "idSUsuario",
+  sourceKey: "idSUsuario",
 });
 
 DetalleLiquidacion.belongsTo(Empleado, {
-  foreignKey: "idEmpleado",
-  targetKey: "idEmpleado",
+  foreignKey: "idSUsuario",
+  targetKey: "idSUsuario",
 });

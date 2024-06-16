@@ -18,6 +18,9 @@ export const Rol = sequelize.define(
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
     },
+    idSUsuario: {
+      type: DataTypes.INTEGER,
+    },
   },
 );
 
@@ -27,16 +30,6 @@ Rol.hasMany(Permiso, {
 });
 
 Permiso.belongsTo(Rol, {
-  foreignKey: "idRol",
-  targetID: "idRol",
-});
-
-Rol.hasMany(Usuario, {
-  foreignKey: "idRol",
-  sourceKey: "idRol",
-});
-
-Usuario.belongsTo(Rol, {
   foreignKey: "idRol",
   targetID: "idRol",
 });

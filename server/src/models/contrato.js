@@ -26,7 +26,7 @@ export const Contrato = sequelize.define(
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
     },
-    idUsuario: {
+    idSUsuario: {
         type: DataTypes.INTEGER,
     },
   },
