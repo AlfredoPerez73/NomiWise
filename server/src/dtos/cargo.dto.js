@@ -1,7 +1,8 @@
 export class CargoDTO {
-    constructor(idCargo, idUsuario, NCargo) {
+    constructor(idCargo, idUsuario, nCargo, fechaRegistro) {
       this.idCargo = idCargo;
       this.idUsuario = idUsuario;
-      this.NCargo = NCargo;
+      this.nCargo = nCargo;
+      this.fechaRegistro = fechaRegistro;
     }
   }

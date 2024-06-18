@@ -4,7 +4,6 @@ import { Empleado } from "./empleado.js";
 import { Cargo } from "./cargo.js";
 import { Contrato } from "./contrato.js";
 import { Usuario } from "./usuario.js";
-import { Permiso } from "./permiso.js";
 import { Rol } from "./rol.js";
 import { DetalleLiquidacion } from "./detalleLiquidacion.js";
 
@@ -75,24 +74,14 @@ Usuario.belongsTo(SUsuario, {
   targetKey: "idSUsuario",
 });
 
-Usuario.hasMany(Rol, {
-  foreignKey: "idUsuario",
-  sourceKey: "idUsuario",
+SUsuario.hasMany(Rol, {
+  foreignKey: "idSUsuario",
+  sourceKey: "idSUsuario",
 });
 
-Rol.belongsTo(Usuario, {
-  foreignKey: "idUsuario",
-  targetKey: "idUsuario",
-});
-
-Usuario.hasMany(Permiso, {
-  foreignKey: "idUsuario",
-  sourceKey: "idUsuario",
-});
-
-Permiso.belongsTo(Usuario, {
-  foreignKey: "idUsuario",
-  targetKey: "idUsuario",
+Rol.belongsTo(SUsuario, {
+  foreignKey: "idSUsuario",
+  targetKey: "idSUsuario",
 });
 
 Empleado.hasMany(DetalleLiquidacion, {

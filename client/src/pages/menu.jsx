@@ -17,6 +17,7 @@ import {
 } from "react-icons/fa6";
 import logo from "../assets/logo2.1.png";
 import "../css/menu.css";
+import FrmRol from "../components/frmRol";
 import { useAuth } from "../context/authContext";
 
 const Dashboard = () => {
@@ -41,6 +42,7 @@ const Dashboard = () => {
       case "Contratos":
       case "Cargos":
       case "Roles":
+        return <FrmRol />
       case "Permisos":
       case "Usuarios":
       case "Reportes":

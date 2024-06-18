@@ -34,20 +34,15 @@ body {
     height: 900px;
     margin-bottom: 0px;
     background-color: rgba(31, 30, 68, 0.9);
-    /* Fondo del formulario más oscuro */
     padding: 30px;
     box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
-    /* Sombra más suave */
     border-radius: 25px;
     border: 1px solid rgba(31, 30, 68, 0.9);
-    /* Borde del mismo color que el fondo */
 }
 
 .logo-container {
     text-align: center;
-    /* Centra horizontalmente */
     margin-bottom: 20px;
-    /* Espacio inferior entre el logo y el formulario */
 }
 
 .login-form h2 {
@@ -57,16 +52,12 @@ body {
     color: whitesmoke;
     font-weight: bold;
     display: flex;
-    /* Para alinear elementos horizontalmente */
     align-items: center;
-    /* Centra verticalmente */
 }
 
 .logo-img {
     width: 300px;
-    /* Tamaño de la imagen del logo */
     margin-left: 0px;
-    /* Espacio entre la imagen y el texto */
     margin-top: -30px;
 }
 

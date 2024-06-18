@@ -1,0 +1,568 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap");
+
+:root {
+  --azul1: #5383e8;
+  --azul2: #375db1;
+  --rojo1: #f44336;
+  --rojo2: #d32f2f;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  box-sizing: border-box;
+}
+
+.main {
+  background-color: var(--color2);
+}
+
+
+.w-full.h-full {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header-comp {
+  background-color: rgba(31, 30, 68);
+  color: whitesmoke;
+  padding: 1rem 1.5rem;
+  border-radius: 1.5rem;
+}
+
+.title-comp {
+  font-size: 1.875rem;
+  font-weight: bold;
+}
+
+.form-comp {
+  font-weight: bold;
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  color: whitesmoke;
+}
+
+.input-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.form-group input {
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    background-color: #fff;
+    color: rgb(31, 30, 68);
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-group label {
+    position: absolute;
+    top: 53%;
+    left: 10px;
+    transform: translateY(-50%);
+    background-color: transparent;
+    color: rgb(31, 30, 68);
+    padding: 0 5px;
+    font-size: 15px;
+    transition: 0.3s;
+    pointer-events: none;
+}
+
+
+.form-group input:focus+label,
+.form-group input:not(:placeholder-shown)+label {
+    top: 5px;
+    left: 0px;
+    font-size: 12px;
+    color: whitesmoke;
+}
+
+.sub-titles-copm {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: whitesmoke
+}
+
+.text-sm.font-medium.leading-none.peer-disabled:cursor-not-allowed.peer-disabled:opacity-70 {
+  font-size: 0.875rem;
+  font-weight: medium;
+  color: rgba(255, 255, 255, 0.7);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.card {
+  background-color: rgba(31, 30, 68);
+  border-radius: 1.5rem;
+  padding: 3rem;
+}
+
+.card label {
+  color: whitesmoke;
+  font-weight: bold;
+  margin-bottom: 0.1rem;
+  font-size: 13px;
+}
+
+.card input,
+.card select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid rgb(45, 43, 104);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  font-weight: normal;
+  font-family: "Poppins", sans-serif;
+  color: var(--text-color);
+  background-color: rgb(45, 43, 104);
+}
+
+.card input:focus,
+.card select:focus {
+  box-shadow: 0 0 0 2px var(--azul1);
+  outline: none;
+}
+
+.grid-item input,
+.grid-item select {
+  margin-bottom: -0.01rem;
+}
+
+.card button {
+  width: 40%;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 1rem;
+  background-color: var(--azul1);
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  left: 30%;
+  margin-top: 40px;
+}
+
+.card button:hover {
+  background-color: var(--azul2);
+}
+
+.card button[type="submit_2"] {
+  width: 20%;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 1rem;
+  background-color: var(--azul1);
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  position: relative;
+  left: 30%;
+  margin-right: 10px;
+  margin-top: 20px;
+}
+
+.card button[type="submit_2"]:hover {
+  background-color: var(--azul2);
+}
+
+.card button[type="button"] {
+  width: 20%;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 1rem;
+  background-color: var(--rojo1);
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  position: relative;
+  left: 30%;
+  margin-top: 20px;
+}
+
+.card button[type="button"]:hover {
+  background-color: var(--rojo2);
+}
+
+.edit-button {
+  background-color: var(--azul1);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-right: 0.5rem;
+  margin-left: 1rem;
+  text-decoration: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: 0.85rem;
+}
+
+.delete-button {
+  background-color: var(--rojo1);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s;
+  margin-right: 0.5rem;
+}
+
+.edit-button:hover {
+  background-color: var(--azul2);
+}
+
+.delete-button:hover {
+  background-color: var(--rojo2);
+}
+
+/*CSS TABLAS*/
+
+.table-card {
+  overflow: hidden;
+  color: whitesmoke;
+}
+
+.table-card table {
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  border-collapse: collapse;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.table-card table th,
+.table-card table td {
+  padding: 0.75rem;
+  background-color: rgb(45, 43, 104);
+}
+
+.table-card table td {
+  border-left: 1px solid transparent;
+  border-right: 1px solid transparent;
+}
+
+.table-card table th {
+  border-left: 1px solid transparent;
+  border-right: 1px solid transparent;
+}
+
+.table-card table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table-card table tbody td {
+  text-align: center;
+}
+
+.table-card table tr:nth-child(odd) td {
+  background-color: rgb(43, 41, 88);
+}
+
+/* CSS PARA EL GRID */
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.grid-item {
+  display: flex;
+  flex-direction: column;
+  padding-top: -20px;
+}
+
+/* CSS para las search bar */
+
+.search-bar {
+  display: grid;
+  margin-bottom: 1rem;
+  margin-top: 1.5rem;
+  gap: 20px;
+  grid-auto-flow: column;
+}
+
+.search-bar input,
+.search-bar select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid rgb(45, 43, 104);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+  margin-bottom: -0.3rem;
+  font-size: 0.8rem;
+  font-weight: normal;
+  font-family: "Poppins", sans-serif;
+  color: var(--text-color);
+  background-color: rgb(45, 43, 104);
+}
+
+.search-bar input:focus,
+.search-bar select:focus {
+  border: 2px solid var(--azul1);
+  outline: none;
+}
+
+/* CSS para venta */
+
+.card button[type="button-venta"] {
+  width: 80%;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 1rem;
+  background-color: var(--azul1);
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  position: relative;
+  left: -40%;
+  margin-top: 100px;
+}
+
+.card button[type="button-venta"]:hover {
+  background-color: var(--azul2);
+}
+
+.table-card h3 {
+  margin-top: 20px;
+}
+
+.table-card button[type="button-registrar-venta"] {
+  width: 20%;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 1rem;
+  background-color: var(--azul1);
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  position: relative;
+  left: 0%;
+  margin-top: 50px;
+}
+
+.table-card button[type="button-registrar-venta"]:hover {
+  background-color: var(--azul2);
+}
+
+/* CSS detalle de la venta */
+
+.table-card table {
+  margin-bottom: 10px;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.overlay.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.detalle-venta-card {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  background-color: var(--color1);
+  border: 1px solid var(--color2);
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 500px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  opacity: 0;
+  animation: enterAnimation 0.5s ease forwards;
+  font-family: "Poppins", sans-serif;
+}
+
+@keyframes enterAnimation {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes exitAnimation {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0;
+  }
+}
+
+.detalle-venta-card.exiting {
+  animation: exitAnimation 0.5s ease forwards;
+}
+
+.detalle-venta-card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--text-color);
+  padding-bottom: 0.5rem;
+}
+
+.detalle-venta-card p,
+.detalle-venta-card li {
+  margin: 0.5rem 0;
+}
+
+.detalle-venta-card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.detalle-venta-card li {
+  border-bottom: 1px solid var(--text-color);
+  padding: 0.5rem 0;
+}
+
+.detalle-venta-card strong {
+  display: inline-block;
+  width: 150px;
+}
+
+.detalle-venta-card .total {
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding-top: 0.5rem;
+  margin-top: 0.5rem;
+  text-align: right;
+}
+
+.detalle-venta-card button {
+  display: block;
+  margin: 1rem auto 0;
+  padding: 0.5rem 1rem;
+  background-color: var(--rojo1);
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.detalle-venta-card button:hover {
+  background-color: var(--rojo2);
+}
+
+.detalle-card-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: -40px;
+}
+
+.detalle-card-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: -40px;
+}
+
+.report-button-card button {
+  background-color: var(--azul1);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 1em;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s;
+  margin-right: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.report-button-card button:hover {
+  background-color: var(--azul2);
+}
+
+.cerrar-button-card button {
+  background-color: var(--rojo1);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s;
+  margin-right: 0.5rem;
+  margin: 0 auto;
+}
+
+.print-button-container,
+.print-button-container-empleado {
+  position: relative;
+  text-align: right;
+}
+
+.print-button-container button,
+.print-button-container-empleado button {
+  background-color: var(--azul1);
+  color: #fff;
+  border: none;
+  border-radius: 1em;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s;
+}
+
+.print-button-container button:hover,
+.print-button-container-empleado button:hover {
+  background-color: var(--azul2);
+}
+
+.cerrar-button-card button:hover {
+  background-color: var(--rojo2);
+}
+
+.total-venta {
+  color: whitesmoke;
+}
+
+.card input::placeholder,
+.search-bar input::placeholder,
+.grid-container input::placeholder {
+  color: var(--placeholder);
+}

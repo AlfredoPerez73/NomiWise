@@ -3,8 +3,6 @@ import { sequelize } from "../database/database.js";
 import { Empleado } from "./empleado.js";
 import { Cargo } from "./cargo.js";
 import { Contrato } from "./contrato.js";
-import { Permiso } from "./permiso.js";
-import { Rol } from "./rol.js";
 import { DetalleLiquidacion } from "./detalleLiquidacion.js";
 
 export const Usuario = sequelize.define(
@@ -33,6 +31,7 @@ export const Usuario = sequelize.define(
     },
     idSUsuario: {
       type: DataTypes.INTEGER,
+      unique: true
     },
     idRol: {
       type: DataTypes.INTEGER,
@@ -77,26 +76,6 @@ Usuario.hasMany(Contrato, {
 });
 
 Contrato.belongsTo(Usuario, {
-  foreignKey: "idUsuario",
-  targetKey: "idUsuario",
-});
-
-Usuario.hasMany(Rol, {
-  foreignKey: "idUsuario",
-  sourceKey: "idUsuario",
-});
-
-Rol.belongsTo(Usuario, {
-  foreignKey: "idUsuario",
-  targetKey: "idUsuario",
-});
-
-Usuario.hasMany(Permiso, {
-  foreignKey: "idUsuario",
-  sourceKey: "idUsuario",
-});
-
-Permiso.belongsTo(Usuario, {
   foreignKey: "idUsuario",
   targetKey: "idUsuario",
 });

@@ -4,6 +4,7 @@ import morgan from "morgan";
 import cors from "cors";
 
 import susuariosRoutes from "./routes/susuario.routes.js";
+import rolRoutes from "./routes/rol.routes.js";
 
 const app = express();
 
@@ -20,5 +21,6 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api", susuariosRoutes);
+app.use("/api", rolRoutes);
 
 export default app;

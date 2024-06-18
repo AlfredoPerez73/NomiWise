@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../database/database.js";
-import { DetalleLiquidacion } from "../models/detalleLiquidacion.js";
 
 export const Liquidacion = sequelize.define(
   "liquidaciones",
@@ -49,14 +48,3 @@ export const Liquidacion = sequelize.define(
     },
   },
 );
-
-
-Liquidacion.hasMany(DetalleLiquidacion, {
-    foreignKey: "idLiquidacion",
-    sourceKey: "idLiquidacion",
-  });
-  
-DetalleLiquidacion.belongsTo(Liquidacion, {
-    foreignKey: "idLiquidacion",
-    targetID: "idLiquidacion",
-  });

@@ -2,6 +2,7 @@
     width: 10px;
     margin: 0;
     background: linear-gradient(180deg, #22214a 50%, #1f1e44e1 100%);
+    border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -111,7 +112,7 @@
 }
 
 .sub-menu-item:hover {
-    background-color: var(--color3);
+    background-color: rgb(45, 43, 104);
 }
 
 .sub-menu-item button {
@@ -147,7 +148,7 @@
 }
 
 .sidebar:not(.open) {
-    width: 80px; /* Adjusted width to only show icons */
+    width: 80px;
 }
 
 .sidebar-nav {
@@ -166,12 +167,12 @@
 }
 
 .nav-link span {
-    display: inline; /* Show text when sidebar is expanded */
+    display: inline;
     transition: display 0.3s ease-in-out;
 }
 
 .sidebar:not(.open) .nav-link span {
-    display: none; /* Hide text when sidebar is collapsed */
+    display: none;
 }
 
 .nav-link.collapsed {
@@ -190,11 +191,11 @@
 }
 
 .main.full {
-    margin-left: 60px; /* Adjusted margin for collapsed sidebar */
+    margin-left: 60px;
 }
 
 .react-icon {
-    font-size: 25px; /* Ensure icons remain the same size */
+    font-size: 25px;
     transition: font-size 0.3s ease-in-out;
 }
 

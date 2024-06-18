@@ -1,7 +1,8 @@
 export class RolDTO {
-    constructor(idRol, idUsuario, NRol) {
+    constructor(idRol, idUsuario, nRol, fechaRegistro) {
       this.idRol = idRol;
       this.idUsuario = idUsuario;
-      this.NRol = NRol;
+      this.nRol = nRol;
+      this.fechaRegistro = fechaRegistro;
     }
   }

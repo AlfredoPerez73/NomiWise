@@ -19,8 +19,5 @@ export const Permiso = sequelize.define(
     idRol: {
         type: DataTypes.INTEGER,
     },
-    idUsuario: {
-        type: DataTypes.INTEGER,
-    },
   },
 );
