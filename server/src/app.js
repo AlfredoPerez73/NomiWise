@@ -5,6 +5,8 @@ import cors from "cors";
 
 import susuariosRoutes from "./routes/susuario.routes.js";
 import rolRoutes from "./routes/rol.routes.js";
+import permisoRoutes from "./routes/permiso.routes.js";
+import cargoRoutes from "./routes/cargo.routes.js";
 
 const app = express();
 
@@ -22,5 +24,7 @@ app.use(cookieParser());
 
 app.use("/api", susuariosRoutes);
 app.use("/api", rolRoutes);
+app.use("/api", permisoRoutes);
+app.use("/api", cargoRoutes);
 
 export default app;

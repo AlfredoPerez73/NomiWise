@@ -3,19 +3,19 @@ import { Usuario } from "../models/usuario.js";
 import { Permiso } from "../models/permiso.js";
 import { RolDTO } from "../dtos/rol.dto.js";
 
-async function validarCategoria(nRol, idSUsuario) {
-    const categoriaEncontrada = await Rol.findOne({
+async function validarRol(nRol, idSUsuario) {
+    const rolEncontrado = await Rol.findOne({
         where: { nRol: nRol, idSUsuario: idSUsuario },
     });
 
-    if (categoriaEncontrada) {
+    if (rolEncontrado) {
         throw new Error("El rol ya está en registrado");
     }
 }
 
 export async function crearRol(idSUsuario, nRol) {
     try {
-        await validarCategoria(nRol, idSUsuario);
+        await validarRol(nRol, idSUsuario);
 
         const newRol = await Rol.create({
             idSUsuario,

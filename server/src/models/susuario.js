@@ -6,6 +6,7 @@ import { Contrato } from "./contrato.js";
 import { Usuario } from "./usuario.js";
 import { Rol } from "./rol.js";
 import { DetalleLiquidacion } from "./detalleLiquidacion.js";
+import { Permiso } from "./permiso.js";
 
 export const SUsuario = sequelize.define(
   "susuarios",
@@ -80,6 +81,16 @@ SUsuario.hasMany(Rol, {
 });
 
 Rol.belongsTo(SUsuario, {
+  foreignKey: "idSUsuario",
+  targetKey: "idSUsuario",
+});
+
+SUsuario.hasMany(Permiso, {
+  foreignKey: "idSUsuario",
+  sourceKey: "idSUsuario",
+});
+
+Permiso.belongsTo(SUsuario, {
   foreignKey: "idSUsuario",
   targetKey: "idSUsuario",
 });

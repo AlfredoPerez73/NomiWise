@@ -18,6 +18,8 @@ import {
 import logo from "../assets/logo2.1.png";
 import "../css/menu.css";
 import FrmRol from "../components/frmRol";
+import FrmCargo from "../components/frmCargo";
+import FrmPermiso from "../components/frmPermiso";
 import { useAuth } from "../context/authContext";
 
 const Dashboard = () => {
@@ -41,9 +43,11 @@ const Dashboard = () => {
       case "Nomina":
       case "Contratos":
       case "Cargos":
+        return <FrmCargo />
       case "Roles":
         return <FrmRol />
       case "Permisos":
+        return <FrmPermiso />
       case "Usuarios":
       case "Reportes":
       case "Inicio":
@@ -219,67 +223,67 @@ const Dashboard = () => {
             </Link>
           </li>
           <ul className="submenu">
-                <li className="nav-item">
-                  <Link
-                    className={
-                      activeContent === "Usuarios"
-                        ? "nav-link active"
-                        : "nav-link collapsed"
-                    }
-                    onClick={() => setActiveContent("Usuarios")}
-                  >
-                    <FaCircleUser
-                      style={{
-                        marginLeft: "0px",
-                        marginRight: "5px",
-                        color: "rgb(24, 161, 251)"
-                    }}
-                      className="react-icon"
-                    />
-                    <span>Usuarios</span>
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link
-                    className={
-                      activeContent === "Roles"
-                        ? "nav-link active"
-                        : "nav-link collapsed"
-                    }
-                    onClick={() => setActiveContent("Roles")}
-                  >
-                    <FaDiceD20
-                      style={{
-                        marginLeft: "0px",
-                        marginRight: "5px",
-                        color: "rgb(95, 77, 221)"
-                    }}
-                      className="react-icon"
-                    />
-                    <span>Roles</span>
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link
-                    className={
-                      activeContent === "Permisos"
-                        ? "nav-link active"
-                        : "nav-link collapsed"
-                    }
-                    onClick={() => setActiveContent("Permisos")}
-                  >
-                    <FaShieldHalved
-                      style={{
-                        marginLeft: "0px",
-                        marginRight: "5px",
-                        color: "mediumpurple"
-                      }}
-                      className="react-icon"
-                    />
-                    <span>Permisos</span>
-                  </Link>
-                </li>
-              </ul>
+            <li className="nav-item">
+              <Link
+                className={
+                  activeContent === "Usuarios"
+                    ? "nav-link active"
+                    : "nav-link collapsed"
+                }
+                onClick={() => setActiveContent("Usuarios")}
+              >
+                <FaCircleUser
+                  style={{
+                    marginLeft: "0px",
+                    marginRight: "5px",
+                    color: "rgb(24, 161, 251)"
+                  }}
+                  className="react-icon"
+                />
+                <span>Usuarios</span>
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                className={
+                  activeContent === "Roles"
+                    ? "nav-link active"
+                    : "nav-link collapsed"
+                }
+                onClick={() => setActiveContent("Roles")}
+              >
+                <FaDiceD20
+                  style={{
+                    marginLeft: "0px",
+                    marginRight: "5px",
+                    color: "rgb(95, 77, 221)"
+                  }}
+                  className="react-icon"
+                />
+                <span>Roles</span>
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                className={
+                  activeContent === "Permisos"
+                    ? "nav-link active"
+                    : "nav-link collapsed"
+                }
+                onClick={() => setActiveContent("Permisos")}
+              >
+                <FaShieldHalved
+                  style={{
+                    marginLeft: "0px",
+                    marginRight: "5px",
+                    color: "mediumpurple"
+                  }}
+                  className="react-icon"
+                />
+                <span>Permisos</span>
+              </Link>
+            </li>
+          </ul>
           <li className="nav-item">
             <Link
               className={

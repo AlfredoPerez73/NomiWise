@@ -10,14 +10,17 @@ export const Permiso = sequelize.define(
       autoIncrement: true,
     },
     nPermiso: {
-        type: DataTypes.DATE,
-    },
-    fechaRegistro: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
+      type: DataTypes.STRING,
     },
     idRol: {
-        type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER,
+    },
+    idSUsuario: {
+      type: DataTypes.INTEGER,
+    },
+    fechaRegistro: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
     },
   },
 );
