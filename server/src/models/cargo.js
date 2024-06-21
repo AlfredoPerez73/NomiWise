@@ -14,21 +14,22 @@ export const Cargo = sequelize.define(
       type: DataTypes.STRING,
     },
     fechaRegistro: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
     },
-    idSUsuario: {
-        type: DataTypes.INTEGER,
+    idUsuario: {
+      type: DataTypes.INTEGER,
     },
+
   },
 );
 
 Cargo.hasMany(Empleado, {
-    foreignKey: "idCargo",
-    sourceKey: "idCargo",
-  });
-  
+  foreignKey: "idCargo",
+  sourceKey: "idCargo",
+});
+
 Empleado.belongsTo(Cargo, {
-    foreignKey: "idCargo",
-    targetID: "idCargo",
-  });
+  foreignKey: "idCargo",
+  targetID: "idCargo",
+});

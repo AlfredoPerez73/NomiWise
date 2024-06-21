@@ -11,52 +11,104 @@ async function validarCorreo(correo) {
   if (usuarioEncontrado) {
     throw new Error("El correo ya está en uso por un usuario");
   }
-
-  const empleadoEncontrado = await Empleado.findOne({
-    where: { correo: correo },
-  });
-
-  if (empleadoEncontrado) {
-    throw new Error("El correo ya está en uso por un empleado");
-  }
 }
 
-export async function registrarUsuario(documento, nombre, correo, contraseña, idRol, idSUsuario) {
+export async function registrarUsuario(documento, nombre, correo, contraseña, idRol) {
   try {
 
     await validarCorreo(correo);
 
-    // Hash de la contraseña
     const contraseñaHash = await bcrypt.hash(contraseña, 10);
 
-    // Crear el nuevo usuario
     const newUsuario = new Usuario({
       documento,
       nombre,
       correo,
-      contraseña: contraseñaHash,
       idRol,
-      idSUsuario
+      contraseña: contraseñaHash,
     });
 
-    // Guardar el usuario en la base de datos
     const UsuarioGuardado = await newUsuario.save();
 
-    // // Crear token de acceso
-    // const token = await createAccessToken({
-    //   idUsuario: UsuarioGuardado.idUsuario,
-    // });
-
-    // Crear y devolver un DTO de usuario
     return new UsuarioDTO(
       UsuarioGuardado.idUsuario,
       UsuarioGuardado.idRol,
-      UsuarioGuardado.idSUsuario,
       UsuarioGuardado.documento,
       UsuarioGuardado.nombre,
       UsuarioGuardado.correo,
-      // token
     );
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function obtenerUsuarios(idUsuario) {
+  try {
+    const usuarios = await Usuario.findAll({
+      where: {
+        idUsuario: idUsuario,
+      },
+    });
+    return usuarios.map(
+      (usuario) =>
+        new UsuarioDTO(
+          usuario.idUsuario,
+          usuario.idRol,
+          usuario.documento,
+          usuario.nombre,
+          usuario.correo,
+          usuario.contraseña,
+          usuario.fechaRegistro,
+        )
+    );
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function actualizarUsuarios(
+  idUsuario,
+  idRol,
+  documento,
+  nombre,
+  correo,
+  contraseña,
+) {
+  try {
+    const usuario = await Usuario.findOne({
+      where: {
+        idUsuario: idUsuario,
+      },
+    });
+
+    const contraseñaHash = await bcrypt.hash(contraseña, 10);
+
+    usuario.idRol = idRol;
+    usuario.documento = documento;
+    usuario.nombre = nombre;
+    usuario.correo = correo;
+    usuario.contraseña = contraseñaHash;
+    await usuario.save();
+    return new UsuarioDTO(
+      usuario.idUsuario,
+      usuario.idRol,
+      usuario.documento,
+      usuario.nombre,
+      usuario.correo,
+      usuario.contraseña,
+    );
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function eliminarUsuario(idUsuario) {
+  try {
+    await Usuario.destroy({
+      where: {
+        idUsuario: idUsuario,
+      },
+    });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -64,7 +116,6 @@ export async function registrarUsuario(documento, nombre, correo, contraseña, i
 
 export async function iniciarSesion(correo, contraseña) {
   try {
-    // Buscar usuario por correo electrónico
     const usuarioEncontrado = await Usuario.findOne({
       where: {
         correo: correo,
@@ -75,29 +126,23 @@ export async function iniciarSesion(correo, contraseña) {
       throw new Error("El correo electrónico no existe");
     }
 
-    // Comparar contraseñas
-    const isMatch = await bcrypt.compare(
-      contraseña,
-      usuarioEncontrado.contraseña
-    );
-    if (!isMatch) {
+    if (contraseña != usuarioEncontrado.contraseña) {
       throw new Error("La contraseña es incorrecta");
     }
 
-    // Generar token de acceso
     const token = await createAccessToken({
       idUsuario: usuarioEncontrado.idUsuario,
       nombre: usuarioEncontrado.nombre,
     });
 
-    // Crear y devolver DTO de usuario logueado
     return new UsuarioDTO(
       usuarioEncontrado.idUsuario,
       usuarioEncontrado.idRol,
-      usuarioEncontrado.idSUsuario,
       usuarioEncontrado.documento,
       usuarioEncontrado.nombre,
       usuarioEncontrado.correo,
+      usuarioEncontrado.contraseña,
+      usuarioEncontrado.fechaRegistro,
       token
     );
   } catch (error) {

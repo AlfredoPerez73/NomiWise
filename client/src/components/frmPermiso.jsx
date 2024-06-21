@@ -3,7 +3,11 @@ import "../css/components.css";
 import Swal from "sweetalert2";
 import { usePermiso } from "../context/permisoContext";
 import { useRol } from "../context/rolContext";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
+import {
+    FaPenClip,
+    FaCircleMinus
+} from "react-icons/fa6";
 
 const RegistroPermisos = () => {
     const [formData, setFormData] = useState({
@@ -227,6 +231,7 @@ const RegistroPermisos = () => {
             )
         );
     };
+    
     const formatFecha = (fecha) => {
         return format(new Date(fecha), "dd/MM/yyyy");
     };
@@ -343,13 +348,19 @@ const RegistroPermisos = () => {
                                                 className="edit-button"
                                                 onClick={() => setPermiso(val)}
                                             >
-                                                Editar
+                                                <FaPenClip
+                                                    style={{
+                                                        marginTop: "3px"
+                                                    }} />
                                             </button>
                                             <button
                                                 className="delete-button"
                                                 onClick={() => handleDeletePermiso(val)}
                                             >
-                                                Eliminar
+                                                <FaCircleMinus
+                                                    style={{
+                                                        marginTop: "3px"
+                                                    }} />
                                             </button>
                                         </td>
                                     </tr>

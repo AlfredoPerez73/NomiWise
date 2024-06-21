@@ -1,11 +1,9 @@
 import * as permisoService from "../services/permiso.services.js";
 
 export async function postPermiso(req, res) {
-    const idSUsuario = req.susuario.idSUsuario;
     const { nPermiso, idRol } = req.body;
     try {
         const newPermiso = await permisoService.crearPermiso(
-            idSUsuario,
             nPermiso,
             idRol
         );
@@ -16,9 +14,8 @@ export async function postPermiso(req, res) {
 }
 
 export async function getPermiso(req, res) {
-    const idSUsuario = req.susuario.idSUsuario;
     try {
-        const permisos = await permisoService.obtenerPermiso(idSUsuario);
+        const permisos = await permisoService.obtenerPermiso();
         res.json(permisos);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -26,13 +23,11 @@ export async function getPermiso(req, res) {
 }
 
 export async function putPermiso(req, res) {
-    const idSUsuario = req.susuario.idSUsuario;
     const { idPermiso } = req.params;
     const { nPermiso, idRol } = req.body;
     try {
         const permisoActualizado = await permisoService.actualizarPermiso(
             idPermiso,
-            idSUsuario,
             nPermiso,
             idRol
         );
@@ -44,9 +39,8 @@ export async function putPermiso(req, res) {
 
 export async function deletePermiso(req, res) {
     const { idPermiso } = req.params;
-    const idSUsuario = req.susuario.idSUsuario;
     try {
-        await permisoService.eliminarPermiso(idPermiso, idSUsuario);
+        await permisoService.eliminarPermiso(idPermiso);
         res.sendStatus(204);
     } catch (error) {
         res.status(500).json({ message: error.message });

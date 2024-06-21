@@ -19,18 +19,16 @@ import { PermisoDTO } from "../dtos/permiso.dto.js";
     }
 } */
 
-export async function crearPermiso(idSUsuario, nPermiso, idRol) {
+export async function crearPermiso(nPermiso, idRol) {
     try {
         const newPermiso = await Permiso.create({
             idRol,
-            idSUsuario,
             nPermiso,
         });
 
         return new PermisoDTO(
             newPermiso.idPermiso,
             newPermiso.idRol,
-            newPermiso.idSUsuario,
             newPermiso.nPermiso,
         );
     } catch (error) {
@@ -38,19 +36,14 @@ export async function crearPermiso(idSUsuario, nPermiso, idRol) {
     }
 }
 
-export async function obtenerPermiso(idSUsuario) {
+export async function obtenerPermiso() {
     try {
-        const permisos = await Permiso.findAll({
-            where: {
-                idSUsuario: idSUsuario,
-            },
-        });
+        const permisos = await Permiso.findAll();
         return permisos.map(
             (permiso) =>
                 new PermisoDTO(
                     permiso.idPermiso,
                     permiso.idRol,
-                    permiso.idSUsuario,
                     permiso.nPermiso,
                     permiso.fechaRegistro
                 )
@@ -63,7 +56,6 @@ export async function obtenerPermiso(idSUsuario) {
 
 export async function actualizarPermiso(
     idPermiso,
-    idSUsuario,
     nPermiso,
     idRol
 ) {
@@ -71,7 +63,6 @@ export async function actualizarPermiso(
         const permiso = await Permiso.findOne({
             where: {
                 idPermiso: idPermiso,
-                idSUsuario: idSUsuario,
             },
         });
 
@@ -81,7 +72,6 @@ export async function actualizarPermiso(
         return new PermisoDTO(
             permiso.idPermiso,
             permiso.idRol,
-            permiso.idSUsuario,
             permiso.nPermiso
         );
     } catch (error) {
@@ -89,12 +79,11 @@ export async function actualizarPermiso(
     }
 }
 
-export async function eliminarPermiso(idPermiso, idSUsuario) {
+export async function eliminarPermiso(idPermiso) {
     try {
         await Permiso.destroy({
             where: {
                 idPermiso: idPermiso,
-                idSUsuario: idSUsuario,
             },
         });
     } catch (error) {

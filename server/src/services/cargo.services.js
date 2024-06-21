@@ -3,9 +3,9 @@ import { Usuario } from "../models/usuario.js";
 import { Empleado } from "../models/empleado.js";
 import { CargoDTO } from "../dtos/cargo.dto.js";
 
-async function validarCargo(nCargo, idSUsuario) {
+async function validarCargo(nCargo, idUsuario) {
     const cargoEncontrado = await Cargo.findOne({
-        where: { nCargo: nCargo, idSUsuario: idSUsuario },
+        where: { nCargo: nCargo, idUsuario: idUsuario },
     });
 
     if (cargoEncontrado) {
@@ -13,17 +13,17 @@ async function validarCargo(nCargo, idSUsuario) {
     }
 }
 
-export async function crearCargo(idSUsuario, nCargo) {
+export async function crearCargo(idUsuario, nCargo) {
     try {
-        await validarCargo(nCargo, idSUsuario);
+        await validarCargo(nCargo, idUsuario);
 
         const newCargo = await Cargo.create({
-            idSUsuario,
+            idUsuario,
             nCargo,
         });
         return new CargoDTO(
             newCargo.idCargo,
-            newCargo.idSUsuario,
+            newCargo.idUsuario,
             newCargo.nCargo
         );
     } catch (error) {
@@ -31,18 +31,18 @@ export async function crearCargo(idSUsuario, nCargo) {
     }
 }
 
-export async function obtenerCargo(idSUsuario) {
+export async function obtenerCargo(idUsuario) {
     try {
         const cargos = await Cargo.findAll({
             where: {
-                idSUsuario: idSUsuario,
+                idUsuario: idUsuario,
             },
         });
         return cargos.map(
             (cargo) =>
                 new CargoDTO(
                     cargo.idCargo,
-                    cargo.idSUsuario,
+                    cargo.idUsuario,
                     cargo.nCargo,
                     cargo.fechaRegistro
                 )
@@ -54,21 +54,21 @@ export async function obtenerCargo(idSUsuario) {
 
 export async function actualizarCargo(
     idCargo,
-    idSUsuario,
+    idUsuario,
     nCargo
 ) {
     try {
         const cargo = await Cargo.findOne({
             where: {
                 idCargo: idCargo,
-                idSUsuario: idSUsuario,
+                idUsuario: idUsuario,
             },
         });
         cargo.nCargo = nCargo;
         await cargo.save();
         return new CargoDTO(
             rol.idCargo,
-            rol.idSUsuario,
+            rol.idUsuario,
             rol.nCargo
         );
     } catch (error) {
@@ -76,7 +76,7 @@ export async function actualizarCargo(
     }
 }
 
-export async function eliminarCargo(idCargo, idSUsuario) {
+export async function eliminarCargo(idCargo, idUsuario) {
     try {
         const empleado = await Empleado.findAll({
             where: {
@@ -91,7 +91,7 @@ export async function eliminarCargo(idCargo, idSUsuario) {
         await Cargo.destroy({
             where: {
                 idCargo: idCargo,
-                idSUsuario: idSUsuario,
+                idUsuario: idUsuario,
             },
         });
     } catch (error) {

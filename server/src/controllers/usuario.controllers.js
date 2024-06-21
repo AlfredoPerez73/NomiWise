@@ -5,21 +5,59 @@ import { TOKEN_SECRET } from "../config.js";
 
 export const postRegistroUsuario = async (req, res) => {
   try {
-    const { documento, nombre, correo, contraseña, idRol, idSUsuario } = req.body;
+    const idUsuario = req.usuario.idUsuario;
+    const { documento, nombre, correo, contraseña, idRol } = req.body;
     const usuarioRegistrado = await UsuarioService.registrarUsuario(
       documento,
       nombre,
       correo,
       contraseña,
-      idRol,
-      idSUsuario
+      idUsuario,
+      idRol
     );
-    // res.cookie("token", usuarioRegistrado.token); para acceder de una depues de  registrar
     res.json(usuarioRegistrado);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
+export async function getUsuario(req, res) {
+  const idUsuario = req.usuario.idUsuario;
+  try {
+    const usuarios = await UsuarioService.obtenerUsuarios(idUsuario);
+    res.json(usuarios);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+export async function putUsuario(req, res) {
+  const { idUsuario } = req.params;
+  const { documento, nombre, correo, contraseña, idRol } = req.body;
+  try {
+    const usuarioActualizado = await UsuarioService.actualizarUsuarios(
+      idUsuario,
+      idRol,
+      documento,
+      nombre,
+      correo,
+      contraseña,
+    );
+    res.json(usuarioActualizado);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+export async function deleteUsuario(req, res) {
+  const { idUsuario } = req.params;
+  try {
+    await UsuarioService.eliminarUsuario(idUsuario);
+    res.sendStatus(204);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
 
 export const postIniciarSesion = async (req, res) => {
   try {
@@ -45,16 +83,22 @@ export const postCerrarSesion = async (req, res) => {
 export const verifyToken = async (req, res) => {
   const { token } = req.cookies;
 
-  if(!token) return res.status(401).json({message: 
-    "Unauthorized 1"});
+  if (!token) return res.status(401).json({
+    message:
+      "Unauthorized 1"
+  });
 
   jwt.verify(token, TOKEN_SECRET, async (err, user) => {
-    if(err) return res.status(401).json({message: 
-      "Unauthorized 2"});
+    if (err) return res.status(401).json({
+      message:
+        "Unauthorized 2"
+    });
 
     const userFound = await Usuario.findByPk(user.idUsuario);
-    if(!userFound) return res.status(401).json({ message: 
-      "Unauthorized 3" });
+    if (!userFound) return res.status(401).json({
+      message:
+        "Unauthorized 3"
+    });
 
     return res.json(userFound);
   })

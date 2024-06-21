@@ -1,11 +1,11 @@
 import * as cargoService from "../services/cargo.services.js";
 
 export async function postCargo(req, res) {
-    const idSUsuario = req.susuario.idSUsuario;
+    const idUsuario = req.usuario.idUsuario;
     const { nCargo } = req.body;
     try {
         const newCargo = await cargoService.crearCargo(
-            idSUsuario,
+            idUsuario,
             nCargo
         );
         res.json(newCargo);
@@ -15,9 +15,9 @@ export async function postCargo(req, res) {
 }
 
 export async function getCargo(req, res) {
-    const idSUsuario = req.susuario.idSUsuario;
+    const idUsuario = req.usuario.idUsuario;
     try {
-        const cargos = await cargoService.obtenerCargo(idSUsuario);
+        const cargos = await cargoService.obtenerCargo(idUsuario);
         res.json(cargos);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -25,13 +25,13 @@ export async function getCargo(req, res) {
 }
 
 export async function putCargo(req, res) {
-    const idSUsuario = req.susuario.idSUsuario;
+    const idUsuario = req.usuario.idUsuario;
     const { nCargo } = req.body;
     const { idCargo } = req.params;
     try {
         const cargoActualizado = await cargoService.actualizarCargo(
             idCargo,
-            idSUsuario,
+            idUsuario,
             nCargo
         );
         res.json(cargoActualizado);
@@ -42,9 +42,9 @@ export async function putCargo(req, res) {
 
 export async function deleteCargo(req, res) {
     const { idCargo } = req.params;
-    const idSUsuario = req.susuario.idSUsuario;
+    const idUsuario = req.usuario.idUsuario;
     try {
-        await cargoService.eliminarCargo(idCargo, idSUsuario);
+        await cargoService.eliminarCargo(idCargo, idUsuario);
         res.sendStatus(204);
     } catch (error) {
         res.status(500).json({ message: error.message });

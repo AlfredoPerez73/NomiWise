@@ -1,4 +1,4 @@
-import { registerRequest, loginRequest, verityTokenRequest } from '../api/auth'
+import { loginRequestUsuario, verityTokenRequestUsuario } from '../api/usuario/usuarioAuth'
 import { createContext, useState, useContext, useEffect } from "react";
 import Cookies from 'js-cookie'
 
@@ -13,25 +13,17 @@ export const useAuth = () => {
 }
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null)
+    const [usuario, setUsuario] = useState(null)
     const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [errors, setErrors] = useState(null)
     const [loading, setLoading] = useState(true)
 
-    const signup = async (user) => {
-        const response = await registerRequest(user);
-        console.log(response.data);
-        setIsAuthenticated(true);
-        setUser(response.data);
-
-    }
-
-    const signin = async (user) => {
+    const signinu = async (usuario) => {
         try {
-            const response = await loginRequest(user);
+            const response = await loginRequestUsuario(usuario);
             console.log(response.data);
             setIsAuthenticated(true);
-            setUser(response.data);
+            setUsuario(response.data);
         } catch (error) {
             console.error(error);
             setErrors(error.response.data);
@@ -42,7 +34,7 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         Cookies.remove("token");
         setIsAuthenticated(false);
-        setUser(null);
+        setUsuario(null);
     }
 
     useEffect(() => {
@@ -51,10 +43,10 @@ export const AuthProvider = ({ children }) => {
             if (!cookies.token) {
                 setIsAuthenticated(false);
                 setLoading(false);
-                return setUser(null);
+                return setUsuario(null);
             }
             try {
-                const res = await verityTokenRequest(cookies.token);
+                const res = await verityTokenRequestUsuario(cookies.token);
                 console.log(res);
                 if (!res.data) {
                     setIsAuthenticated(false);
@@ -62,12 +54,12 @@ export const AuthProvider = ({ children }) => {
                     return;
                 }
                 setIsAuthenticated(true);
-                setUser(res.data);
+                setUsuario(res.data);
                 setLoading(false);
             } catch (error) {
                 console.log(error);
                 setIsAuthenticated(false);
-                setUser(null);
+                setUsuario(null);
                 setLoading(false);
             }
         }
@@ -78,11 +70,10 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider value={{
-            signup,
-            signin,
+            signinu,
             logout,
             loading,
-            user,
+            usuario,
             isAuthenticated,
             errors
         }}>

@@ -3,6 +3,10 @@ import "../css/components.css";
 import Swal from "sweetalert2";
 import { useRol } from "../context/rolContext";
 import { format } from "date-fns";
+import {
+    FaPenClip,
+    FaCircleMinus
+} from "react-icons/fa6";
 
 const RegistroRoles = () => {
     const [formData, setFormData] = useState({
@@ -264,13 +268,19 @@ const RegistroRoles = () => {
                                                 className="edit-button"
                                                 onClick={() => setRol(val)}
                                             >
-                                                Editar
+                                                <FaPenClip
+                                                    style={{
+                                                        marginTop: "3px"
+                                                    }} />
                                             </button>
                                             <button
                                                 className="delete-button"
                                                 onClick={() => handleDeleteRol(val)}
                                             >
-                                                Eliminar
+                                                <FaCircleMinus
+                                                    style={{
+                                                        marginTop: "3px"
+                                                    }} />
                                             </button>
                                         </td>
                                     </tr>

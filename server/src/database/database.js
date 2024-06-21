@@ -1,7 +1,7 @@
 import Sequelize from "sequelize";
 
 export const sequelize = new Sequelize(
-  "nomiwise",
+  "nomiwise2",
   "postgres",
   "123",
   {

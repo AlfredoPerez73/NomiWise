@@ -3,9 +3,9 @@ import { Usuario } from "../models/usuario.js";
 import { Permiso } from "../models/permiso.js";
 import { RolDTO } from "../dtos/rol.dto.js";
 
-async function validarRol(nRol, idSUsuario) {
+async function validarRol(nRol) {
     const rolEncontrado = await Rol.findOne({
-        where: { nRol: nRol, idSUsuario: idSUsuario },
+        where: { nRol: nRol },
     });
 
     if (rolEncontrado) {
@@ -13,17 +13,15 @@ async function validarRol(nRol, idSUsuario) {
     }
 }
 
-export async function crearRol(idSUsuario, nRol) {
+export async function crearRol(nRol) {
     try {
-        await validarRol(nRol, idSUsuario);
+        await validarRol(nRol);
 
         const newRol = await Rol.create({
-            idSUsuario,
             nRol,
         });
         return new RolDTO(
             newRol.idRol,
-            newRol.idSUsuario,
             newRol.nRol
         );
     } catch (error) {
@@ -31,18 +29,13 @@ export async function crearRol(idSUsuario, nRol) {
     }
 }
 
-export async function obtenerRol(idSUsuario) {
+export async function obtenerRol() {
     try {
-        const roles = await Rol.findAll({
-            where: {
-                idSUsuario: idSUsuario,
-            },
-        });
+        const roles = await Rol.findAll();
         return roles.map(
             (rol) =>
                 new RolDTO(
                     rol.idRol,
-                    rol.idSUsuario,
                     rol.nRol,
                     rol.fechaRegistro
                 )
@@ -54,21 +47,18 @@ export async function obtenerRol(idSUsuario) {
 
 export async function actualizarRol(
     idRol,
-    idSUsuario,
     nRol
 ) {
     try {
         const rol = await Rol.findOne({
             where: {
                 idRol: idRol,
-                idSUsuario: idSUsuario,
             },
         });
         rol.nRol = nRol;
         await rol.save();
         return new RolDTO(
             rol.idRol,
-            rol.idSUsuario,
             rol.nRol
         );
     } catch (error) {
@@ -76,12 +66,11 @@ export async function actualizarRol(
     }
 }
 
-export async function eliminarRol(idRol, idSUsuario) {
+export async function eliminarRol(idRol) {
     try {
         const usuario = await Usuario.findAll({
             where: {
                 idRol: idRol,
-                idSUsuario: idSUsuario,
             },
         });
 
@@ -102,7 +91,6 @@ export async function eliminarRol(idRol, idSUsuario) {
         await Rol.destroy({
             where: {
                 idRol: idRol,
-                idSUsuario: idSUsuario,
             },
         });
     } catch (error) {

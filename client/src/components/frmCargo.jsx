@@ -3,6 +3,10 @@ import "../css/components.css";
 import Swal from "sweetalert2";
 import { useCargo } from "../context/cargoContext";
 import { format } from "date-fns";
+import {
+    FaPenClip,
+    FaCircleMinus
+} from "react-icons/fa6";
 
 const RegistroCargos = () => {
     const [formData, setFormData] = useState({
@@ -262,15 +266,21 @@ const RegistroCargos = () => {
                                         <td>
                                             <button
                                                 className="edit-button"
-                                                onClick={() => setCargo(val)}
+                                                onClick={() => setRol(val)}
                                             >
-                                                Editar
+                                                <FaPenClip
+                                                    style={{
+                                                        marginTop: "3px"
+                                                    }} />
                                             </button>
                                             <button
                                                 className="delete-button"
-                                                onClick={() => handleDeleteCargo(val)}
+                                                onClick={() => handleDeleteRol(val)}
                                             >
-                                                Eliminar
+                                                <FaCircleMinus
+                                                    style={{
+                                                        marginTop: "3px"
+                                                    }} />
                                             </button>
                                         </td>
                                     </tr>

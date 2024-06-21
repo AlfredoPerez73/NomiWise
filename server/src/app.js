@@ -3,10 +3,10 @@ import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import cors from "cors";
 
-import susuariosRoutes from "./routes/susuario.routes.js";
 import rolRoutes from "./routes/rol.routes.js";
 import permisoRoutes from "./routes/permiso.routes.js";
 import cargoRoutes from "./routes/cargo.routes.js";
+import usuarioRoutes from "./routes/usuario.routes.js";
 
 const app = express();
 
@@ -22,7 +22,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(cookieParser());
 
-app.use("/api", susuariosRoutes);
+app.use("/api", usuarioRoutes);
 app.use("/api", rolRoutes);
 app.use("/api", permisoRoutes);
 app.use("/api", cargoRoutes);

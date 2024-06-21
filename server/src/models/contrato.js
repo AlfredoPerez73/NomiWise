@@ -11,33 +11,33 @@ export const Contrato = sequelize.define(
       autoIncrement: true,
     },
     fechaInicio: {
-        type: DataTypes.DATE,
+      type: DataTypes.DATE,
     },
     fechaFin: {
-        type: DataTypes.DATE,
+      type: DataTypes.DATE,
     },
     salario: {
-        type: DataTypes.DECIMAL,
+      type: DataTypes.DECIMAL,
     },
     tipoContrato: {
-        type: DataTypes.STRING,
+      type: DataTypes.STRING,
     },
     fechaRegistro: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
     },
-    idSUsuario: {
-        type: DataTypes.INTEGER,
-    },
+    idUsuario: {
+      type: DataTypes.INTEGER,
+    }
   },
 );
 
 Contrato.hasMany(Empleado, {
-    foreignKey: "idContrato",
-    sourceKey: "idContrato",
-  });
-  
+  foreignKey: "idContrato",
+  sourceKey: "idContrato",
+});
+
 Empleado.belongsTo(Contrato, {
-    foreignKey: "idContrato",
-    targetID: "idContrato",
-  });
+  foreignKey: "idContrato",
+  targetID: "idContrato",
+});

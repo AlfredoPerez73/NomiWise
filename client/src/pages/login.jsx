@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useAuth } from "../context/authContext";
 import "../css/login.css";
@@ -9,7 +9,8 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ correo: "", contraseña: "" });
   const navigate = useNavigate();
-  const { signin } = useAuth();
+  const { signinu } = useAuth();
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,7 +20,7 @@ const LoginPage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      await signin(formData);
+      await signinu(formData);
       Swal.fire({
         icon: "success",
         confirmButtonColor: '#5383E8',
@@ -95,12 +96,7 @@ const LoginPage = () => {
               <button type="submit">Inicia Sesión</button>
             </div>
           </form>
-          <div className="links">
-            <p>¿No tienes cuenta?</p>
-            <Link to="/registro" className="nav-links2">
-              Regístrate aquí
-            </Link>
-          </div>
+
         </div>
       </div>
     </div>

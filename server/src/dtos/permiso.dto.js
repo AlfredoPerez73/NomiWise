@@ -1,8 +1,7 @@
 export class PermisoDTO {
-    constructor(idPermiso, idRol, idUsuario, nPermiso, fechaRegistro) {
+    constructor(idPermiso, idRol, nPermiso, fechaRegistro) {
       this.idPermiso = idPermiso;
       this.idRol = idRol;
-      this.idUsuario = idUsuario;
       this.nPermiso = nPermiso;
       this.fechaRegistro = fechaRegistro;
     }

@@ -48,12 +48,12 @@
 
 .input-container {
     position: relative;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
 }
 
 .form-group input {
     width: 100%;
-    margin-top: 20px;
+    margin-top: 10px;
     padding: 12px;
     font-size: 15px;
     border: 1px solid #ccc;
@@ -66,7 +66,7 @@
 
 .form-group label {
     position: absolute;
-    top: 53%;
+    top: 45%;
     left: 10px;
     transform: translateY(-50%);
     background-color: transparent;
@@ -80,7 +80,7 @@
 
 .form-group input:focus+label,
 .form-group input:not(:placeholder-shown)+label {
-    top: 5px;
+    top: -5px;
     left: 0px;
     font-size: 12px;
     color: whitesmoke;
@@ -125,7 +125,7 @@
   font-size: 0.9rem;
   font-weight: normal;
   font-family: "Poppins", sans-serif;
-  color: var(--text-color);
+  color: whitesmoke;
   background-color: rgb(45, 43, 104);
 }
 
@@ -147,7 +147,7 @@
   border-radius: 1rem;
   background-color: var(--azul1);
   color: white;
-  font-size: 0.9rem;
+  font-size: 13px;
   cursor: pointer;
   transition: background-color 0.3s;
   position: relative;
@@ -202,6 +202,7 @@
 }
 
 .edit-button {
+  align-items: center;
   background-color: var(--azul1);
   color: #fff;
   padding: 0.5rem 1rem;
@@ -209,23 +210,26 @@
   border-radius: 0.8rem;
   cursor: pointer;
   transition: background-color 0.3s;
-  margin-right: 0.5rem;
+  margin-right: 0.3rem;
   margin-left: 1rem;
   text-decoration: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
 }
 
 .delete-button {
+  align-items: center;
   background-color: var(--rojo1);
   color: #fff;
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 0.8rem;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s;
-  margin-right: 0.5rem;
+  margin-right: 0.3rem;
+  text-decoration: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: 0.8rem;
 }
 
 .edit-button:hover {
@@ -253,7 +257,7 @@
 
 .table-card table th,
 .table-card table td {
-  padding: 0.75rem;
+  padding: 0.3rem;
   background-color: rgb(45, 43, 104);
 }
 
@@ -270,6 +274,7 @@
 .table-card table {
   border-collapse: separate;
   border-spacing: 0;
+  margin-bottom: 10px;
 }
 
 .table-card table tbody td {
@@ -278,20 +283,6 @@
 
 .table-card table tr:nth-child(odd) td {
   background-color: rgb(43, 41, 88);
-}
-
-/* CSS PARA EL GRID */
-
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-}
-
-.grid-item {
-  display: flex;
-  flex-direction: column;
-  padding-top: -20px;
 }
 
 /* CSS para las search bar */
@@ -315,254 +306,65 @@
   font-size: 0.8rem;
   font-weight: normal;
   font-family: "Poppins", sans-serif;
-  color: var(--text-color);
   background-color: rgb(45, 43, 104);
+  color: whitesmoke;
 }
 
 .search-bar input:focus,
 .search-bar select:focus {
   border: 2px solid var(--azul1);
   outline: none;
-}
-
-/* CSS para venta */
-
-.card button[type="button-venta"] {
-  width: 80%;
-  padding: 0.75rem 1rem;
-  border: none;
-  border-radius: 1rem;
-  background-color: var(--azul1);
-  color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  position: relative;
-  left: -40%;
-  margin-top: 100px;
-}
-
-.card button[type="button-venta"]:hover {
-  background-color: var(--azul2);
-}
-
-.table-card h3 {
-  margin-top: 20px;
-}
-
-.table-card button[type="button-registrar-venta"] {
-  width: 20%;
-  padding: 0.75rem 1rem;
-  border: none;
-  border-radius: 1rem;
-  background-color: var(--azul1);
-  color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  position: relative;
-  left: 0%;
-  margin-top: 50px;
-}
-
-.table-card button[type="button-registrar-venta"]:hover {
-  background-color: var(--azul2);
-}
-
-/* CSS detalle de la venta */
-
-.table-card table {
-  margin-bottom: 10px;
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.5s ease, visibility 0.5s ease;
-}
-
-.overlay.visible {
-  opacity: 1;
-  visibility: visible;
-}
-
-.detalle-venta-card {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  background-color: var(--color1);
-  border: 1px solid var(--color2);
-  padding: 20px;
-  border-radius: 10px;
-  width: 80%;
-  max-width: 500px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  z-index: 1000;
-  opacity: 0;
-  animation: enterAnimation 0.5s ease forwards;
-  font-family: "Poppins", sans-serif;
-}
-
-@keyframes enterAnimation {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.8);
-  }
-  to {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes exitAnimation {
-  from {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  to {
-    transform: translate(-50%, -50%) scale(0.8);
-    opacity: 0;
-  }
-}
-
-.detalle-venta-card.exiting {
-  animation: exitAnimation 0.5s ease forwards;
-}
-
-.detalle-venta-card h2 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  border-bottom: 2px solid var(--text-color);
-  padding-bottom: 0.5rem;
-}
-
-.detalle-venta-card p,
-.detalle-venta-card li {
-  margin: 0.5rem 0;
-}
-
-.detalle-venta-card ul {
-  list-style: none;
-  padding: 0;
-}
-
-.detalle-venta-card li {
-  border-bottom: 1px solid var(--text-color);
-  padding: 0.5rem 0;
-}
-
-.detalle-venta-card strong {
-  display: inline-block;
-  width: 150px;
-}
-
-.detalle-venta-card .total {
-  font-size: 1.2rem;
-  font-weight: bold;
-  padding-top: 0.5rem;
-  margin-top: 0.5rem;
-  text-align: right;
-}
-
-.detalle-venta-card button {
-  display: block;
-  margin: 1rem auto 0;
-  padding: 0.5rem 1rem;
-  background-color: var(--rojo1);
-  color: #fff;
-  border: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.detalle-venta-card button:hover {
-  background-color: var(--rojo2);
-}
-
-.detalle-card-container {
-  display: flex;
-  justify-content: space-between;
-  margin-top: -40px;
-}
-
-.detalle-card-container {
-  display: flex;
-  justify-content: space-between;
-  margin-top: -40px;
-}
-
-.report-button-card button {
-  background-color: var(--azul1);
-  color: #fff;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 1em;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s;
-  margin-right: 0.5rem;
-  margin-bottom: 2rem;
-}
-
-.report-button-card button:hover {
-  background-color: var(--azul2);
-}
-
-.cerrar-button-card button {
-  background-color: var(--rojo1);
-  color: #fff;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 1rem;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s;
-  margin-right: 0.5rem;
-  margin: 0 auto;
-}
-
-.print-button-container,
-.print-button-container-empleado {
-  position: relative;
-  text-align: right;
-}
-
-.print-button-container button,
-.print-button-container-empleado button {
-  background-color: var(--azul1);
-  color: #fff;
-  border: none;
-  border-radius: 1em;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s;
-}
-
-.print-button-container button:hover,
-.print-button-container-empleado button:hover {
-  background-color: var(--azul2);
-}
-
-.cerrar-button-card button:hover {
-  background-color: var(--rojo2);
-}
-
-.total-venta {
   color: whitesmoke;
 }
 
-.card input::placeholder,
-.search-bar input::placeholder,
-.grid-container input::placeholder {
-  color: var(--placeholder);
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  animation: fadeIn 0.3s forwards;
+}
+
+.modal-content {
+  background: rgba(31, 30, 68);
+  padding: 20px;
+  border-radius: 20px;
+  position: relative;
+  max-width: 1500px;
+  width: 100%;
+  animation: slideIn 0.3s forwards;
+}
+
+.open-modal-button {
+  margin-bottom: -100px;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background: #5383E8;
+  color: whitesmoke;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.open-modal-button:hover {
+  background-color: #395ead;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }

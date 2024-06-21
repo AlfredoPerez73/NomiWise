@@ -4,6 +4,7 @@ import { Empleado } from "./empleado.js";
 import { Cargo } from "./cargo.js";
 import { Contrato } from "./contrato.js";
 import { DetalleLiquidacion } from "./detalleLiquidacion.js";
+import { Liquidacion } from "./liquidacion.js";
 
 export const Usuario = sequelize.define(
   "usuarios",
@@ -28,10 +29,6 @@ export const Usuario = sequelize.define(
     fechaRegistro: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
-    },
-    idSUsuario: {
-      type: DataTypes.INTEGER,
-      unique: true
     },
     idRol: {
       type: DataTypes.INTEGER,
@@ -80,12 +77,22 @@ Contrato.belongsTo(Usuario, {
   targetKey: "idUsuario",
 });
 
-Empleado.hasMany(DetalleLiquidacion, {
-  foreignKey: "idEmpleado",
-  sourceKey: "idEmpleado",
+Usuario.hasMany(DetalleLiquidacion, {
+  foreignKey: "idUsuario",
+  sourceKey: "idUsuario",
 });
 
-DetalleLiquidacion.belongsTo(Empleado, {
-  foreignKey: "idEmpleado",
-  targetKey: "idEmpleado",
+DetalleLiquidacion.belongsTo(Usuario, {
+  foreignKey: "idUsuario",
+  targetKey: "idUsuario",
+});
+
+Usuario.hasMany(Liquidacion, {
+  foreignKey: "idUsuario",
+  sourceKey: "idUsuario",
+});
+
+Liquidacion.belongsTo(Usuario, {
+  foreignKey: "idUsuario",
+  targetKey: "idUsuario",
 });
