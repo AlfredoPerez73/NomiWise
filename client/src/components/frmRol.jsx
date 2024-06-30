@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "../css/components.css";
-import Swal from "sweetalert2";
+import toast, { Toaster } from "react-hot-toast";
 import { useRol } from "../context/rolContext";
 import { format } from "date-fns";
-import {
-    FaPenClip,
-    FaCircleMinus
-} from "react-icons/fa6";
 
 const RegistroRoles = () => {
     const [formData, setFormData] = useState({
@@ -29,89 +25,46 @@ const RegistroRoles = () => {
         e.preventDefault();
         try {
             await createRol(formData);
-            Swal.fire({
-                icon: "success",
-                title: "¡Registro exitoso!",
-                text: "El rol ha sido registrado correctamente.",
-                confirmButtonColor: '#5383E8',
-                background: '#1f1e44e1',
-                color: 'whitesmoke',
-                customClass: {
-                    popup: 'custom-alert',
-                },
-            });
+            toast.success(<b>El rol ha sido registrado correctamente.</b>);
             setFormData({
                 nRol: "",
             });
             await getRol();
         } catch (error) {
             setError(error.response.data.message);
-            Swal.fire({
-                icon: "error",
-                title: "¡Error!",
-                text: error.response.data.message,
-                footer: error,
-                confirmButtonColor: '#5383E8',
-                background: '#1f1e44e1',
-                color: 'whitesmoke',
-                customClass: {
-                    popup: 'custom-alert',
-                },
-            });
+            toast.error(<b>Error: {error.response.data.message}</b>);
         }
     };
 
     const handleDeleteRol = (val) => {
-        Swal.fire({
-            title: "Confirmar eliminación",
-            html:
-                "<i>¿Realmente desea eliminar a <strong>" +
-                val.nRol +
-                "</strong>?</i>",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: '#5383E8',
-            background: '#1f1e44e1',
-            color: 'whitesmoke',
-            customClass: {
-                popup: 'custom-alert',
-            },
-        }).then((result) => {
-            if (result.isConfirmed) {
-                deleteRol(val.idRol)
-                    .then(() => {
-                        Swal.fire({
-                            title: "Registro eliminado!",
-                            html:
-                                "<i>El rol <strong>" +
-                                val.nRol +
-                                "</strong> fue eliminado exitosamente!</i>",
-                            icon: "success",
-                            confirmButtonColor: '#5383E8',
-                            background: '#1f1e44e1',
-                            color: 'whitesmoke',
-                            customClass: {
-                                popup: 'custom-alert',
-                            },
-                        });
-                        getRol();
-                    })
-                    .catch((error) => {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Oops...",
-                            text: error.response.data.message,
-                            footer: "<a>Intente más tarde</a>",
-                            confirmButtonColor: '#5383E8',
-                            background: '#1f1e44e1',
-                            color: 'whitesmoke',
-                            customClass: {
-                                popup: 'custom-alert',
-                            },
-                        });
-                    });
+        toast(
+            (t) => (
+                <div style={{ textAlign: "center", fontWeight: "bold" }}>
+                    <p>¿Realmente desea eliminar a <strong>{val.nRol}</strong>?</p>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '10px' }}>
+                        <button className="toast-button-confirmed" onClick={() => {
+                            deleteRol(val.idRol)
+                                .then(() => {
+                                    toast.dismiss(t.id);
+                                    toast.success(<b>El rol {val.nRol} fue eliminado exitosamente!</b>);
+                                    getRol();
+                                })
+                                .catch((error) => {
+                                    toast.error(<b>Error: {error.response.data.message}</b>);
+                                });
+                        }}>
+                            Confirmar
+                        </button>
+                        <button className="toast-button-delete" onClick={() => toast.dismiss(t.id)}>
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            ),
+            {
+                duration: 8000,
             }
-        });
+        );
     };
 
     const handleUpdateRol = async (e) => {
@@ -119,35 +72,11 @@ const RegistroRoles = () => {
         try {
             await updateRol(id, formData);
             limpiar();
-            Swal.fire({
-                title: "<strong>Actualización exitosa!</strong>",
-                html:
-                    "<i>El rol <strong>" +
-                    formData.nRol +
-                    "</strong> fue actualizado con éxito! </i>",
-                icon: "success",
-                confirmButtonColor: '#5383E8',
-                background: '#1f1e44e1',
-                color: 'whitesmoke',
-                customClass: {
-                    popup: 'custom-alert',
-                },
-            });
+            toast.success(<b>El rol {formData.nRol} fue actualizado con éxito!</b>);
             await getRol();
         } catch (error) {
             setError(error.response.data.message);
-            Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: "No se puede actualizar la categoria!",
-                footer: '<a href="#">Intente más tarde</a>',
-                confirmButtonColor: '#5383E8',
-                background: '#1f1e44e1',
-                color: 'whitesmoke',
-                customClass: {
-                    popup: 'custom-alert',
-                },
-            });
+            toast.error(<b>No se puede actualizar el rol! Intente más tarde.</b>);
         }
     };
 
@@ -199,6 +128,7 @@ const RegistroRoles = () => {
 
     return (
         <div className="w-full h-full">
+            <Toaster />
             <div className="form-comp">
                 <div className="header-comp">
                     <h1 className="title-comp">Registro de Roles</h1>
@@ -237,7 +167,7 @@ const RegistroRoles = () => {
                     </form>
                 </div>
                 <div className="table-card">
-                    <h1 className="sub-titles-copm">Roles Registradas</h1>
+                    <h1 className="sub-titles-copm">Roles Registrados</h1>
                     <div className="search-bar">
                         <input
                             type="text"
@@ -268,19 +198,13 @@ const RegistroRoles = () => {
                                                 className="edit-button"
                                                 onClick={() => setRol(val)}
                                             >
-                                                <FaPenClip
-                                                    style={{
-                                                        marginTop: "3px"
-                                                    }} />
+                                                <i className="fi fi-br-customize-edit icon-style-components"></i>
                                             </button>
                                             <button
                                                 className="delete-button"
                                                 onClick={() => handleDeleteRol(val)}
                                             >
-                                                <FaCircleMinus
-                                                    style={{
-                                                        marginTop: "3px"
-                                                    }} />
+                                                <i className="fi fi-br-clear-alt icon-style-components"></i>
                                             </button>
                                         </td>
                                     </tr>

@@ -22,9 +22,8 @@ export const postRegistroUsuario = async (req, res) => {
 };
 
 export async function getUsuario(req, res) {
-  const idUsuario = req.usuario.idUsuario;
   try {
-    const usuarios = await UsuarioService.obtenerUsuarios(idUsuario);
+    const usuarios = await UsuarioService.obtenerUsuarios();
     res.json(usuarios);
   } catch (error) {
     res.status(500).json({ message: error.message });

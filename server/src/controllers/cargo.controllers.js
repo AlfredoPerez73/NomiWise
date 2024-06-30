@@ -15,9 +15,8 @@ export async function postCargo(req, res) {
 }
 
 export async function getCargo(req, res) {
-    const idUsuario = req.usuario.idUsuario;
     try {
-        const cargos = await cargoService.obtenerCargo(idUsuario);
+        const cargos = await cargoService.obtenerCargo();
         res.json(cargos);
     } catch (error) {
         res.status(500).json({ message: error.message });

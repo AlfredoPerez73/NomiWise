@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "../css/components.css";
-import Swal from "sweetalert2";
+import toast, { Toaster } from "react-hot-toast";
 import { useUsuario } from "../context/usuarioContext";
 import { useRol } from "../context/rolContext";
 import { format } from "date-fns";
-import { FaPenClip, FaCircleMinus } from "react-icons/fa6";
 
 const RegistroUsuarios = () => {
     const [formData, setFormData] = useState({
@@ -38,17 +37,7 @@ const RegistroUsuarios = () => {
         e.preventDefault();
         try {
             await createUsuario(formData);
-            Swal.fire({
-                icon: "success",
-                title: "¡Registro exitoso!",
-                text: "El usuario ha sido registrado correctamente.",
-                confirmButtonColor: '#5383E8',
-                background: '#1f1e44e1',
-                color: 'whitesmoke',
-                customClass: {
-                    popup: 'custom-alert',
-                },
-            });
+            toast.success(<b>El usuario ha sido registrado correctamente.</b>);
             setFormData({
                 documento: "",
                 nombre: "",
@@ -60,72 +49,39 @@ const RegistroUsuarios = () => {
             closeModal();
         } catch (error) {
             setError(error.response.data.message);
-            Swal.fire({
-                icon: "error",
-                title: "¡Error!",
-                text: error.response.data.message,
-                footer: error,
-                confirmButtonColor: '#5383E8',
-                background: '#1f1e44e1',
-                color: 'whitesmoke',
-                customClass: {
-                    popup: 'custom-alert',
-                },
-            });
+            toast.error(<b>Error: {error.response.data.message}</b>);
         }
     };
 
     const handleDeleteUsuario = (val) => {
-        Swal.fire({
-            title: "Confirmar eliminación",
-            html:
-                "<i>¿Realmente desea eliminar a <strong>" +
-                val.nombre +
-                "</strong>?</i>",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: '#5383E8',
-            background: '#1f1e44e1',
-            color: 'whitesmoke',
-            customClass: {
-                popup: 'custom-alert',
-            },
-        }).then((result) => {
-            if (result.isConfirmed) {
-                deleteUsuario(val.idUsuario)
-                    .then(() => {
-                        Swal.fire({
-                            title: "Registro eliminado!",
-                            html:
-                                "<i>El usuario <strong>" +
-                                val.nombre +
-                                "</strong> fue eliminado exitosamente!</i>",
-                            icon: "success",
-                            confirmButtonColor: '#5383E8',
-                            background: '#1f1e44e1',
-                            color: 'whitesmoke',
-                            customClass: {
-                                popup: 'custom-alert',
-                            },
-                        });
-                        getUsuario();
-                    })
-                    .catch((error) => {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Oops...",
-                            text: error.response.data.message,
-                            footer: "<a>Intente más tarde</a>",
-                            confirmButtonColor: '#5383E8',
-                            background: '#1f1e44e1',
-                            color: 'whitesmoke',
-                            customClass: {
-                                popup: 'custom-alert',
-                            },
-                        });
-                    });
+        toast(
+            (t) => (
+                <div style={{ textAlign: "center", fontWeight: "bold" }}>
+                    <p>¿Realmente desea eliminar a <strong>{val.nombre}</strong>?</p>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '10px' }}>
+                        <button className="toast-button-confirmed" onClick={() => {
+                            deleteUsuario(val.idUsuario)
+                                .then(() => {
+                                    toast.dismiss(t.id);
+                                    toast.success(<b>El usuario {val.nombre} fue eliminado exitosamente!</b>);
+                                    getUsuario();
+                                })
+                                .catch((error) => {
+                                    toast.error(<b>Error: {error.response.data.message}</b>);
+                                });
+                        }}>
+                            Confirmar
+                        </button>
+                        <button className="toast-button-delete" onClick={() => toast.dismiss(t.id)}>
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            ),
+            {
+                duration: 8000,
             }
-        });
+        );
     };
 
     const handleUpdateUsuario = async (e) => {
@@ -133,36 +89,12 @@ const RegistroUsuarios = () => {
         try {
             await updateUsuario(id, formData);
             limpiar();
-            Swal.fire({
-                title: "<strong>Actualización exitosa!</strong>",
-                html:
-                    "<i>El rol <strong>" +
-                    formData.nombre +
-                    "</strong> fue actualizado con éxito! </i>",
-                icon: "success",
-                confirmButtonColor: '#5383E8',
-                background: '#1f1e44e1',
-                color: 'whitesmoke',
-                customClass: {
-                    popup: 'custom-alert',
-                },
-            });
+            toast.success(<b>El usuario {formData.nombre} fue actualizado con éxito!</b>);
             await getUsuario();
             closeModal();
         } catch (error) {
             setError(error.response.data.message);
-            Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: "No se puede actualizar la categoria!",
-                footer: '<a href="#">Intente más tarde</a>',
-                confirmButtonColor: '#5383E8',
-                background: '#1f1e44e1',
-                color: 'whitesmoke',
-                customClass: {
-                    popup: 'custom-alert',
-                },
-            });
+            toast.error(<b>No se puede actualizar el usuario! Intente más tarde.</b>);
         }
     };
 
@@ -246,17 +178,16 @@ const RegistroUsuarios = () => {
         setIsModalOpen(false);
     };
 
-
-
     return (
         <div className="w-full h-full">
+            <Toaster />
             <div className="form-comp">
                 <div className="header-comp">
                     <h1 className="title-comp">Registro de Usuarios</h1>
                 </div>
-                <button className="open-modal-button" onClick={openModal}>Registrar</button>
+                <button type="button" className="open-modal-button" onClick={openModal}>Registrar</button>
                 <div className="table-card">
-                    <h1 className="sub-titles-copm">Usuarios Registradas</h1>
+                    <h1 className="sub-titles-copm">Usuarios Registrados</h1>
                     <div className="search-bar">
                         <input
                             type="text"
@@ -308,19 +239,13 @@ const RegistroUsuarios = () => {
                                                 className="edit-button"
                                                 onClick={() => setUsuario(val)}
                                             >
-                                                <FaPenClip
-                                                    style={{
-                                                        marginTop: "3px"
-                                                    }} />
+                                                <i className="fi fi-br-customize-edit icon-style-components"></i>
                                             </button>
                                             <button
                                                 className="delete-button"
                                                 onClick={() => handleDeleteUsuario(val)}
                                             >
-                                                <FaCircleMinus
-                                                    style={{
-                                                        marginTop: "3px"
-                                                    }} />
+                                                <i className="fi fi-br-clear-alt icon-style-components"></i>
                                             </button>
                                         </td>
                                     </tr>
@@ -334,68 +259,70 @@ const RegistroUsuarios = () => {
                 <div className="modal-overlay" onClick={closeModal}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <form onSubmit={editar ? handleUpdateUsuario : handleCreateUsuario} className="form-comp">
-                            <div className="container-inputs">
-                                <label htmlFor="documento">Documento:</label>
-                                <input
-                                    type="text"
-                                    id="documento"
-                                    name="documento"
-                                    value={formData.documento}
-                                    onChange={handleChange}
-                                    required
-                                />
+                            <div className="form-group">
+                                <div className="container-inputs">
+                                    <label htmlFor="documento">Documento:</label>
+                                    <input
+                                        type="text"
+                                        id="documento"
+                                        name="documento"
+                                        value={formData.documento}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="container-inputs">
+                                    <label htmlFor="nombre">Nombre:</label>
+                                    <input
+                                        type="text"
+                                        id="nombre"
+                                        name="nombre"
+                                        value={formData.nombre}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="container-inputs">
+                                    <label htmlFor="correo">Correo:</label>
+                                    <input
+                                        type="email"
+                                        id="correo"
+                                        name="correo"
+                                        value={formData.correo}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="container-inputs">
+                                    <label htmlFor="contraseña">Contraseña:</label>
+                                    <input
+                                        type="text"
+                                        id="contraseña"
+                                        name="contraseña"
+                                        value={formData.contraseña}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="container-inputs">
+                                    <label htmlFor="idRol">Rol:</label>
+                                    <select
+                                        id="idRol"
+                                        name="idRol"
+                                        value={formData.idRol}
+                                        onChange={handleChange}
+                                        required
+                                    >
+                                        <option value="">Seleccionar Rol</option>
+                                        {roles.map((rol) => (
+                                            <option key={rol.idRol} value={rol.idRol}>
+                                                {rol.nRol}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                {error && <p className="text-red-500">{error}</p>}
                             </div>
-                            <div className="container-inputs">
-                                <label htmlFor="nombre">Nombre:</label>
-                                <input
-                                    type="text"
-                                    id="nombre"
-                                    name="nombre"
-                                    value={formData.nombre}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
-                            <div className="container-inputs">
-                                <label htmlFor="correo">Correo:</label>
-                                <input
-                                    type="email"
-                                    id="correo"
-                                    name="correo"
-                                    value={formData.correo}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
-                            <div className="container-inputs">
-                                <label htmlFor="contraseña">Contraseña:</label>
-                                <input
-                                    type="text"
-                                    id="contraseña"
-                                    name="contraseña"
-                                    value={formData.contraseña}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
-                            <div className="container-inputs">
-                                <label htmlFor="idRol">Rol:</label>
-                                <select
-                                    id="idRol"
-                                    name="idRol"
-                                    value={formData.idRol}
-                                    onChange={handleChange}
-                                    required
-                                >
-                                    <option value="">Seleccionar Rol</option>
-                                    {roles.map((rol) => (
-                                        <option key={rol.idRol} value={rol.idRol}>
-                                            {rol.nRol}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            {error && <p className="text-red-500">{error}</p>}
                             <div className="container-button">
                                 <button type="submit">
                                     {editar ? "Actualizar" : "Registrar"}

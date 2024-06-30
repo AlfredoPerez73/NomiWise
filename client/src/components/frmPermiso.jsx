@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
 import "../css/components.css";
-import Swal from "sweetalert2";
+import toast, { Toaster } from "react-hot-toast";
 import { usePermiso } from "../context/permisoContext";
 import { useRol } from "../context/rolContext";
-import { format, set } from "date-fns";
-import {
-    FaPenClip,
-    FaCircleMinus
-} from "react-icons/fa6";
+import { format } from "date-fns";
 
 const RegistroPermisos = () => {
     const [formData, setFormData] = useState({
         nPermiso: "",
         idRol: ""
     });
+    const [newRol, setNewRol] = useState({
+        nRol: ""
+    });
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [id, setId] = useState("");
     const [editar, setEditar] = useState(false);
     const [filteredPermisos, setFilteredPermisos] = useState([]);
@@ -28,6 +28,7 @@ const RegistroPermisos = () => {
         updatePermiso,
     } = usePermiso();
     const {
+        createRol,
         getRol,
         roles
     } = useRol();
@@ -48,17 +49,7 @@ const RegistroPermisos = () => {
         e.preventDefault();
         try {
             await createPermiso(formData);
-            Swal.fire({
-                icon: "success",
-                title: "¡Registro exitoso!",
-                text: "El permiso ha sido registrado correctamente.",
-                confirmButtonColor: '#5383E8',
-                background: '#1f1e44e1',
-                color: 'whitesmoke',
-                customClass: {
-                    popup: 'custom-alert',
-                },
-            });
+            toast.success(<b>El permiso ha sido registrado correctamente.</b>);
             setFormData({
                 nPermiso: "",
                 idRol: "",
@@ -66,109 +57,67 @@ const RegistroPermisos = () => {
             await getPermiso();
         } catch (error) {
             setError(error.response?.data?.message || "Error desconocido");
-            Swal.fire({
-                icon: "error",
-                title: "¡Error!",
-                text: error.response?.data?.message || "Error desconocido",
-                footer: error.message,
-                confirmButtonColor: '#5383E8',
-                background: '#1f1e44e1',
-                color: 'whitesmoke',
-                customClass: {
-                    popup: 'custom-alert',
-                },
-            });
+            toast.error(<b>Error: {error.response?.data?.message || "Error desconocido"}</b>);
         }
     };
-    
+
     const handleDeletePermiso = (val) => {
-        Swal.fire({
-            title: "Confirmar eliminación",
-            html:
-                "<i>¿Realmente desea eliminar a <strong>" +
-                val.nPermiso +
-                "</strong>?</i>",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#5383E8",
-            background: "#1f1e44e1",
-            color: "whitesmoke",
-            customClass: {
-                popup: "custom-alert",
-            },
-        }).then((result) => {
-            if (result.isConfirmed) {
-                deletePermiso(val.idPermiso)
-                    .then(() => {
-                        Swal.fire({
-                            title: "Registro eliminado!",
-                            html:
-                                "<i>El permiso <strong>" +
-                                val.nPermiso +
-                                "</strong> fue eliminado exitosamente!</i>",
-                            icon: "success",
-                            confirmButtonColor: "#5383E8",
-                            background: "#1f1e44e1",
-                            color: "whitesmoke",
-                            customClass: {
-                                popup: "custom-alert",
-                            },
-                        });
-                        getPermiso();
-                    })
-                    .catch((error) => {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Oops...",
-                            text: error.response.data.message,
-                            footer: "<a>Intente más tarde</a>",
-                            confirmButtonColor: '#5383E8',
-                            background: '#1f1e44e1',
-                            color: 'whitesmoke',
-                            customClass: {
-                                popup: 'custom-alert',
-                            },
-                        });
-                    });
+        toast(
+            (t) => (
+                <div style={{ textAlign: "center", fontWeight: "bold" }}>
+                    <p>¿Realmente desea eliminar a <strong>{val.nPermiso}</strong>?</p>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '10px' }}>
+                        <button className="toast-button-confirmed" onClick={() => {
+                            deletePermiso(val.idPermiso)
+                                .then(() => {
+                                    toast.dismiss(t.id);
+                                    toast.success(<b>El permiso {val.nPermiso} fue eliminado exitosamente!</b>);
+                                    getPermiso();
+                                })
+                                .catch((error) => {
+                                    toast.error(<b>Error: {error.response.data.message}</b>);
+                                });
+                        }}>
+                            Confirmar
+                        </button>
+                        <button className="toast-button-delete" onClick={() => toast.dismiss(t.id)}>
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            ),
+            {
+                duration: 8000,
             }
-        });
+        );
     };
-    
 
     const handleUpdatePermiso = async (e) => {
         e.preventDefault();
         try {
             await updatePermiso(id, formData);
             limpiar();
-            Swal.fire({
-                title: "<strong>Actualización exitosa!</strong>",
-                html:
-                    "<i>El permiso <strong>" +
-                    formData.nPermiso +
-                    "</strong> fue actualizado con éxito! </i>",
-                icon: "success",
-                confirmButtonColor: '#5383E8',
-                background: '#1f1e44e1',
-                color: 'whitesmoke',
-                customClass: {
-                    popup: 'custom-alert',
-                },
-            });
+            toast.success(<b>El permiso {formData.nPermiso} fue actualizado con éxito!</b>);
             await getPermiso();
         } catch (error) {
             setError(error.response?.data?.message || "Error desconocido");
-            Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: "No se puede actualizar la categoria!",
-                footer: '<a href="#">Intente más tarde</a>',
-                confirmButtonColor: '#5383E8',
-                background: '#1f1e44e1',
-                color: 'whitesmoke',
-                customClass: {
-                    popup: 'custom-alert',
-                },
+            toast.error(<b>No se puede actualizar el permiso! Intente más tarde.</b>);
+        }
+    };
+
+    const handleCreateRol = async (e) => {
+        e.preventDefault();
+        try {
+            await createRol(newRol);
+            toast.success(<b>El rol ha sido registrado correctamente.</b>);
+            setNewRol({
+                nRol: ""
             });
+            setIsModalOpen(false);
+            await getRol();
+        } catch (error) {
+            setError(error.response?.data?.message || "Error desconocido");
+            toast.error(<b>Error: {error.response?.data?.message || "Error desconocido"}</b>);
         }
     };
 
@@ -212,6 +161,14 @@ const RegistroPermisos = () => {
         }));
     };
 
+    const handleNewRolChange = (e) => {
+        const { name, value } = e.target;
+        setNewRol((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
+    };
+
     const handleFilterChangePermiso = (e) => {
         const query = e.target.value.toLowerCase();
         setFilterValuePermiso(e.target.value);
@@ -231,13 +188,14 @@ const RegistroPermisos = () => {
             )
         );
     };
-    
+
     const formatFecha = (fecha) => {
         return format(new Date(fecha), "dd/MM/yyyy");
     };
 
     return (
         <div className="w-full h-full">
+            <Toaster />
             <div className="form-comp">
                 <div className="header-comp">
                     <h1 className="title-comp">Registro de Permisos</h1>
@@ -264,22 +222,27 @@ const RegistroPermisos = () => {
                                     </option>
                                 ))}
                             </select>
-                            <select
-                                id="idRol"
-                                name="idRol"
-                                value={formData.idRol}
-                                onChange={handleChange}
-                                required
-                            >
-                                <option value="">
-                                    Seleccionar Rol
-                                </option>
-                                {roles.map((rol) => (
-                                    <option key={rol.idRol} value={rol.idRol}>
-                                        {rol.nRol}
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <select
+                                    id="idRol"
+                                    name="idRol"
+                                    value={formData.idRol}
+                                    onChange={handleChange}
+                                    required
+                                >
+                                    <option value="">
+                                        Seleccionar Rol
                                     </option>
-                                ))}
-                            </select>
+                                    {roles.map((rol) => (
+                                        <option key={rol.idRol} value={rol.idRol}>
+                                            {rol.nRol}
+                                        </option>
+                                    ))}
+                                </select>
+                                <button type="submit_3" className="open-modal-button-2" onClick={() => setIsModalOpen(true)}>
+                                    <i className="fi fi-br-plus-small icon-style-modal"></i>
+                                </button>
+                            </div>
                         </div>
                         <div>
                             <button type={editar ? "submit_2" : "submit"}>
@@ -348,19 +311,13 @@ const RegistroPermisos = () => {
                                                 className="edit-button"
                                                 onClick={() => setPermiso(val)}
                                             >
-                                                <FaPenClip
-                                                    style={{
-                                                        marginTop: "3px"
-                                                    }} />
+                                                <i className="fi fi-br-customize-edit icon-style-components"></i>
                                             </button>
                                             <button
                                                 className="delete-button"
                                                 onClick={() => handleDeletePermiso(val)}
                                             >
-                                                <FaCircleMinus
-                                                    style={{
-                                                        marginTop: "3px"
-                                                    }} />
+                                                <i className="fi fi-br-clear-alt icon-style-components"></i>
                                             </button>
                                         </td>
                                     </tr>
@@ -370,6 +327,34 @@ const RegistroPermisos = () => {
                     </table>
                 </div>
             </div>
+            {isModalOpen && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <h2>Agregar Nuevo Rol</h2>
+                        <div className="card-modal">
+                            <form onSubmit={handleCreateRol}>
+                                <div className="form-group">
+                                    <div className="input-container">
+                                        <input
+                                            type="text"
+                                            id="nRol"
+                                            name="nRol"
+                                            placeholder=" "
+                                            autoComplete="off"
+                                            value={newRol.nRol}
+                                            onChange={handleNewRolChange}
+                                            required
+                                        />
+                                        <label htmlFor="nRol">Nombre de rol</label>
+                                    </div>
+                                </div>
+                                <button type="submit">Guardar</button>
+                                <button type="button" onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

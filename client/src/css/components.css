@@ -18,11 +18,78 @@
   background-color: var(--color2);
 }
 
+html {
+  font-size: 13.5px; /* Ajusta este valor según necesites */
+}
+
+body {
+  line-height: 1.4;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+input, select, button {
+  font-size: 10.5px; /* Reducir tamaño de texto */
+  padding: 6px; /* Reducir padding */
+  border-radius: 4px; /* Borde redondeado */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  padding: 0;
+}
+
+.toast-question {
+  text-align: right;
+  font-weight: bold;
+}
+
+.toast-button-confirmed {
+  margin: 5px;
+  padding: 5px 10px;
+  background-color: var(--azul1);
+  color: whitesmoke;
+  border: none;
+  cursor: pointer;
+  margin-left: 70px;
+  margin-right: -20px;
+  border-radius: 10px;
+  transition: all 0.3s ease-out;
+}
+
+.toast-button-confirmed:hover {
+  background-color: var(--azul2);
+  transition: all 0.3s ease-in-out;
+}  
+
+.toast-button-delete {
+  margin: 5px;
+  padding: 5px 10px;
+  background-color: var(--rojo1);
+  color: whitesmoke;
+  border: none;
+  margin-left: 30px;
+  margin-right: 70px;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: all 0.3s ease-out;
+}
+
+.toast-button-delete:hover {
+  background-color: var(--rojo2);
+  transition: all 0.3s ease-in-out;
+}  
 
 .w-full.h-full {
   min-height: 80vh;
   display: flex;
   flex-direction: column;
+}
+
+.icon-style-components {
+  margin: 0px;
+  font-size: 15px;
 }
 
 .header-comp {
@@ -111,7 +178,7 @@
   color: whitesmoke;
   font-weight: bold;
   margin-bottom: 0.1rem;
-  font-size: 13px;
+  font-size: 10px;
 }
 
 .card input,
@@ -122,7 +189,7 @@
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
   border-radius: 1rem;
   margin-bottom: 1rem;
-  font-size: 0.9rem;
+  font-size: 11px;
   font-weight: normal;
   font-family: "Poppins", sans-serif;
   color: whitesmoke;
@@ -147,7 +214,7 @@
   border-radius: 1rem;
   background-color: var(--azul1);
   color: white;
-  font-size: 13px;
+  font-size: 10.5px;
   cursor: pointer;
   transition: background-color 0.3s;
   position: relative;
@@ -167,7 +234,7 @@
   border-radius: 1rem;
   background-color: var(--azul1);
   color: white;
-  font-size: 0.9rem;
+  font-size: 10.5px;
   cursor: pointer;
   transition: background-color 0.3s;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -189,7 +256,7 @@
   background-color: var(--rojo1);
   color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  font-size: 0.9rem;
+  font-size: 10.5px;
   cursor: pointer;
   transition: background-color 0.3s;
   position: relative;
@@ -317,7 +384,63 @@
   color: whitesmoke;
 }
 
+.card button[type="submit_3"] {
+  width: 3%;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 1rem;
+  background-color: transparent;
+  color: white;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  position: relative;
+  left: 0%;
+  margin-top: -10px;
+}
+
+.icon-style-modal {
+  font-size: 20px;
+  align-items: center;
+}
+
+.open-modal-button {
+  background-color: #5383E8;
+  color: whitesmoke;
+  padding: 10px 20px;
+  margin-right: 10px;
+  margin-bottom: -20px;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease-out;
+}
+
+.open-modal-button:hover {
+  background-color: #395ead;
+  transition: all 0.3s ease-in-out;
+}
+
+.modal-content button {
+  padding: 10px 20px;
+  margin-right: 10px;
+  margin-bottom: 0px;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
 /* Modal styles */
+
+.card-modal {
+  background-color:  rgba(31, 30, 68);
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  padding-left: 3rem;
+  padding-right: 3rem;
+}
+
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -333,32 +456,60 @@
 }
 
 .modal-content {
-  background: rgba(31, 30, 68);
+  background: rgb(22, 22, 54);
   padding: 20px;
-  border-radius: 20px;
+  border-radius: 40px;
   position: relative;
-  max-width: 1500px;
-  width: 100%;
+  max-width: 1000px;
+  max-height: 700px;
+  width: 90%;
+  height: 27%;
   animation: slideIn 0.3s forwards;
+  text-align: center;
+  padding-left: 3rem;
+  padding-right: 3rem;
+
 }
 
-.open-modal-button {
-  margin-bottom: -100px;
-  margin: 20px auto;
-  padding: 10px 20px;
-  background: #5383E8;
+.modal-content h2 {
   color: whitesmoke;
+  margin-bottom: 20px;
+
+}
+
+.modal-content .form-group {
+  margin-bottom: 20px;
+}
+
+.modal-content .form-group label {
+  color: whitesmoke;
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  font-size: 10.5px;
+}
+
+.modal-content .form-group input {
+  width: 100%;
+  padding: 10px;
   border: none;
   border-radius: 15px;
-  cursor: pointer;
-  font-size: 13px;
+  background-color: rgb(22, 22, 54);
+  color: whitesmoke;
+  font-size: 11.5px;
+  margin-bottom: 15px;
 }
 
-.open-modal-button:hover {
-  background-color: #395ead;
+.modal-content button[type="submit"] {
+  background-color: #5383E8;
+  color: whitesmoke;
 }
 
-/* Animations */
+.modal-content button[type="button"] {
+  background-color: #f44336;
+  color: whitesmoke;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }

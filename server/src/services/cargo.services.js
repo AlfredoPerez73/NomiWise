@@ -31,13 +31,9 @@ export async function crearCargo(idUsuario, nCargo) {
     }
 }
 
-export async function obtenerCargo(idUsuario) {
+export async function obtenerCargo() {
     try {
-        const cargos = await Cargo.findAll({
-            where: {
-                idUsuario: idUsuario,
-            },
-        });
+        const cargos = await Cargo.findAll();
         return cargos.map(
             (cargo) =>
                 new CargoDTO(

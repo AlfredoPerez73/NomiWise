@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "../css/components.css";
-import Swal from "sweetalert2";
+import toast, { Toaster } from "react-hot-toast";
 import { useCargo } from "../context/cargoContext";
 import { format } from "date-fns";
-import {
-    FaPenClip,
-    FaCircleMinus
-} from "react-icons/fa6";
 
 const RegistroCargos = () => {
     const [formData, setFormData] = useState({
@@ -29,89 +25,44 @@ const RegistroCargos = () => {
         e.preventDefault();
         try {
             await createCargo(formData);
-            Swal.fire({
-                icon: "success",
-                title: "¡Registro exitoso!",
-                text: "El cargo ha sido registrado correctamente.",
-                confirmButtonColor: '#5383E8',
-                background: '#1f1e44e1',
-                color: 'whitesmoke',
-                customClass: {
-                    popup: 'custom-alert',
-                },
-            });
+            toast.success(<b>El cargo ha sido registrado correctamente.</b>);
             setFormData({
                 nCargo: "",
             });
             await getCargo();
         } catch (error) {
             setError(error.response.data.message);
-            Swal.fire({
-                icon: "error",
-                title: "¡Error!",
-                text: error.response.data.message,
-                footer: error,
-                confirmButtonColor: '#5383E8',
-                background: '#1f1e44e1',
-                color: 'whitesmoke',
-                customClass: {
-                    popup: 'custom-alert',
-                },
-            });
+            toast.error(<b>Error: {error.response.data.message}</b>);
         }
     };
 
     const handleDeleteCargo = (val) => {
-        Swal.fire({
-            title: "Confirmar eliminación",
-            html:
-                "<i>¿Realmente desea eliminar a <strong>" +
-                val.nCargo +
-                "</strong>?</i>",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: '#5383E8',
-            background: '#1f1e44e1',
-            color: 'whitesmoke',
-            customClass: {
-                popup: 'custom-alert',
-            },
-        }).then((result) => {
-            if (result.isConfirmed) {
-                deleteCargo(val.idCargo)
-                    .then(() => {
-                        Swal.fire({
-                            title: "Registro eliminado!",
-                            html:
-                                "<i>El cargo <strong>" +
-                                val.nCargo +
-                                "</strong> fue eliminado exitosamente!</i>",
-                            icon: "success",
-                            confirmButtonColor: '#5383E8',
-                            background: '#1f1e44e1',
-                            color: 'whitesmoke',
-                            customClass: {
-                                popup: 'custom-alert',
-                            },
-                        });
-                        getCargo();
-                    })
-                    .catch((error) => {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Oops...",
-                            text: error.response.data.message,
-                            footer: "<a>Intente más tarde</a>",
-                            confirmButtonColor: '#5383E8',
-                            background: '#1f1e44e1',
-                            color: 'whitesmoke',
-                            customClass: {
-                                popup: 'custom-alert',
-                            },
-                        });
-                    });
+        toast(
+            (t) => (
+                <div className="toast-question">
+                    <p>¿Realmente desea eliminar a <strong>{val.nCargo}</strong>?</p>
+                    <button className="toast-button-confirmed" onClick={() => {
+                        deleteCargo(val.idCargo)
+                            .then(() => {
+                                toast.dismiss(t.id);
+                                toast.success(<b>El cargo {val.nCargo} fue eliminado exitosamente!</b>);
+                                getCargo();
+                            })
+                            .catch((error) => {
+                                toast.error(<b>Error: {error.response.data.message}</b>);
+                            });
+                    }}>
+                        Confirmar
+                    </button>
+                    <button className="toast-button-delete" onClick={() => toast.dismiss(t.id)}>
+                        Cancelar
+                    </button>
+                </div>
+            ),
+            {
+                duration: 8000,
             }
-        });
+        );
     };
 
     const handleUpdateCargo = async (e) => {
@@ -119,35 +70,11 @@ const RegistroCargos = () => {
         try {
             await updateCargo(id, formData);
             limpiar();
-            Swal.fire({
-                title: "<strong>Actualización exitosa!</strong>",
-                html:
-                    "<i>El rol <strong>" +
-                    formData.nCargo +
-                    "</strong> fue actualizado con éxito! </i>",
-                icon: "success",
-                confirmButtonColor: '#5383E8',
-                background: '#1f1e44e1',
-                color: 'whitesmoke',
-                customClass: {
-                    popup: 'custom-alert',
-                },
-            });
+            toast.success(<b>El rol {formData.nCargo} fue actualizado con éxito!</b>);
             await getCargo();
         } catch (error) {
             setError(error.response.data.message);
-            Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: "No se puede actualizar la categoria!",
-                footer: '<a href="#">Intente más tarde</a>',
-                confirmButtonColor: '#5383E8',
-                background: '#1f1e44e1',
-                color: 'whitesmoke',
-                customClass: {
-                    popup: 'custom-alert',
-                },
-            });
+            toast.error(<b>No se puede actualizar la categoria! Intente más tarde.</b>);
         }
     };
 
@@ -161,7 +88,7 @@ const RegistroCargos = () => {
 
     const limpiar = () => {
         setFormData({
-            nRol: "",
+            nCargo: "",
         });
         setId("");
         setEditar(false);
@@ -199,6 +126,7 @@ const RegistroCargos = () => {
 
     return (
         <div className="w-full h-full">
+            <Toaster />
             <div className="form-comp">
                 <div className="header-comp">
                     <h1 className="title-comp">Registro de Cargo</h1>
@@ -266,21 +194,15 @@ const RegistroCargos = () => {
                                         <td>
                                             <button
                                                 className="edit-button"
-                                                onClick={() => setRol(val)}
+                                                onClick={() => setCargo(val)}
                                             >
-                                                <FaPenClip
-                                                    style={{
-                                                        marginTop: "3px"
-                                                    }} />
+                                                <i className="fi fi-br-customize-edit icon-style-components"></i>
                                             </button>
                                             <button
                                                 className="delete-button"
-                                                onClick={() => handleDeleteRol(val)}
+                                                onClick={() => handleDeleteCargo(val)}
                                             >
-                                                <FaCircleMinus
-                                                    style={{
-                                                        marginTop: "3px"
-                                                    }} />
+                                                <i className="fi fi-br-clear-alt icon-style-components"></i>
                                             </button>
                                         </td>
                                     </tr>

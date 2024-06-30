@@ -42,13 +42,9 @@ export async function registrarUsuario(documento, nombre, correo, contraseña, i
   }
 }
 
-export async function obtenerUsuarios(idUsuario) {
+export async function obtenerUsuarios() {
   try {
-    const usuarios = await Usuario.findAll({
-      where: {
-        idUsuario: idUsuario,
-      },
-    });
+    const usuarios = await Usuario.findAll();
     return usuarios.map(
       (usuario) =>
         new UsuarioDTO(
@@ -126,9 +122,15 @@ export async function iniciarSesion(correo, contraseña) {
       throw new Error("El correo electrónico no existe");
     }
 
-    if (contraseña != usuarioEncontrado.contraseña) {
+    const isMatch = await bcrypt.compare(
+      contraseña,
+      usuarioEncontrado.contraseña
+    );
+
+    if (!isMatch) {
       throw new Error("La contraseña es incorrecta");
     }
+
 
     const token = await createAccessToken({
       idUsuario: usuarioEncontrado.idUsuario,

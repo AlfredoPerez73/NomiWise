@@ -1,39 +1,25 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import {
-  FaCircleUser,
-  FaBarsStaggered,
-  FaHouse,
-  FaUsers,
-  FaCoins,
-  FaWrench,
-  FaShieldHalved,
-  FaFileContract,
-  FaDiceD20,
-  FaChevronDown,
-  FaChevronUp,
-  FaRegFolderOpen,
-  FaArrowRightFromBracket,
-  FaGear,
-  FaGavel,
-  FaFireFlameCurved
-} from "react-icons/fa6";
+import React, { useState, useEffect } from "react";
+import { Link, Outlet } from "react-router-dom";
+import { FaCircleUser, FaBarsStaggered } from "react-icons/fa6";
 import logo from "../assets/logo2.1.png";
 import "../css/menu.css";
-import FrmRol from "../components/frmRol";
-import FrmCargo from "../components/frmCargo";
-import FrmPermiso from "../components/frmPermiso";
-import FrmUsuario from "../components/frmUsuario";
 import { useAuth } from "../context/authContext";
+import { usePermiso } from "../context/permisoContext";
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const { isAuthenticated, logout, user, usuario } = useAuth();
-  const [activeContent, setActiveContent] = useState("");
+  const { isAuthenticated, logout, usuario } = useAuth();
+  const [activeContent, setActiveContent] = useState("menu");
   const [config, setConfig] = useState(false);
   const [configOpen1, setConfigOpen1] = useState(true);
   const [configOpen2, setConfigOpen2] = useState(true);
   const [configOpen3, setConfigOpen3] = useState(true);
+  const [permissions, setPermissions] = useState([]);
+  const [loaded, setLoaded] = useState(false);
+  const {
+    getPermiso,
+    permisos
+  } = usePermiso();
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -55,29 +41,33 @@ const Dashboard = () => {
     setConfigOpen3(!configOpen3);
   };
 
-
-  const renderContent = () => {
-    switch (activeContent) {
-      case "Empleados":
-      case "Liquidaciones":
-      case "Nomina":
-      case "Contratos":
-      case "Cargos":
-        return <FrmCargo />;
-      case "Roles":
-        return <FrmRol />;
-      case "Permisos":
-        return <FrmPermiso />;
-      case "Usuarios":
-        return <FrmUsuario />;
-      case "Reportes":
-      case "Inicio":
-      default:
-        return null;
-    }
+  // Función para verificar permisos basados en los roles del usuario
+  const hasPermission = (permission) => {
+    return permissions.includes(permission);
   };
 
-  const userName = user ? user.nombre : usuario ? usuario.nombre : "Desconocido";
+  useEffect(() => {
+    getPermiso();
+  }, [])
+
+  useEffect(() => {
+    const loadPermissions = async () => {
+      if (usuario && usuario.idRol) {
+        try {
+          const userPermissions = permisos
+            .filter(permiso => permiso.idRol === usuario.idRol)
+            .map(permiso => permiso.nPermiso);
+          setPermissions(userPermissions);
+        } catch (error) {
+          console.error("Error al cargar permisos:", error);
+        }
+      }
+    };
+
+    loadPermissions();
+  }, [usuario, permisos]);
+  
+  const userName = usuario ? usuario.nombre : "Desconocido";
 
   return (
     <div className="dashboard">
@@ -91,12 +81,11 @@ const Dashboard = () => {
             <FaBarsStaggered
               style={{
                 marginLeft: "10px",
-                marginRight: "5px",
-                marginTop: "15px",
+                marginRight: "-3px",
+                marginTop: "8px",
                 fontSize: "30px",
                 cursor: "pointer"
               }}
-              className="react-icon"
             />
           </button>
         </div>
@@ -104,15 +93,15 @@ const Dashboard = () => {
           <div className="usuario" onClick={toggleUsuarioSubMenu} style={{ cursor: "pointer" }}>
             <FaCircleUser style={{ fontSize: "25px", marginLeft: "auto" }} className="react-icon" />
             {config ? (
-              <FaChevronUp style={{ fontSize: "15px", marginLeft: "auto" }} className="react-icon" />
+              <i className="fi fi-br-angle-double-small-up icon-style-terceary"></i>
             ) : (
-              <FaChevronDown style={{ fontSize: "15px", marginLeft: "auto" }} className="react-icon" />
+              <i className="fi fi-br-angle-double-small-down icon-style-terceary"></i>
             )}
           </div>
           {config && (
             <div className="sub-menu">
               <div className="sub-menu-item">
-                <FaCircleUser style={{ fontSize: "20px" }} className="react-icon" />
+                <FaCircleUser style={{ fontSize: "20px" }}/>
                 <span>{userName}</span>
               </div>
             </div>
@@ -122,285 +111,169 @@ const Dashboard = () => {
 
       <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
         <ul className="sidebar-nav" id="sidebar-nav">
-          <li className="nav-item">
-            <Link
-              className={
-                activeContent === "Inicio"
-                  ? "nav-link active"
-                  : "nav-link collapsed"
-              }
-              onClick={() => setActiveContent("Inicio")}
-            >
-              <FaHouse
-                style={{
-                  marginLeft: "0px",
-                  marginRight: "5px",
-                }}
-                className="react-icon"
-              />
-              <span>Escritorio</span>
-            </Link>
-          </li>
+            <li className="nav-item">
+              <Link to="/menu"
+                   className={activeContent === "menu" ? "nav-link active" : "nav-link collapsed"}
+                   onClick={() => setActiveContent("menu")}
+              >
+                <i className="fi fi-br-house-chimney icon-style"></i>
+                <span>Escritorio</span>
+              </Link>
+            </li>
+            <li className="nav-item">
+              <div
+                className="nav-link collapsed"
+                onClick={toggleConfigSubMenu1}
+                style={{ cursor: "pointer" }}
+              >
+                <i className="fi fi-br-user-skill-gear icon-style"></i>
+                <span>Empleados</span>
+                {sidebarOpen && (configOpen1 ? (
+                  <i className="fi fi-br-angle-double-small-up icon-style-secundary"></i>
+                ) : (
+                  <i className="fi fi-br-angle-double-small-down icon-style-secundary"></i>
+                ))}
+              </div>
+              <ul className={`submenu ${configOpen1 ? "open" : ""}`}>
+                {hasPermission('Empleados') && (
+                  <li className="nav-item">
+                    <Link to="/menu/empleados"
+                         className={activeContent === "empleados" ? "nav-link active" : "nav-link collapsed"}
+                         onClick={() => setActiveContent("empleados")}
+                    >
+                      <i className="fi fi-br-target-audience icon-style"></i>
+                      <span>Empleados</span>
+                    </Link>
+                  </li>
+                )}
+                {hasPermission('Contratos') && (
+                  <li className="nav-item">
+                    <Link to="/menu/contratos"
+                         className={activeContent === "contratos" ? "nav-link active" : "nav-link collapsed"}
+                         onClick={() => setActiveContent("contratos")}
+                    >
+                      <i className="fi fi-br-clipboard-user icon-style"></i>
+                      <span>Contratos</span>
+                    </Link>
+                  </li>
+                )}
+                {hasPermission('Cargos') && (
+                  <li className="nav-item">
+                    <Link to="/menu/cargos"
+                         className={activeContent === "cargos" ? "nav-link active" : "nav-link collapsed"}
+                         onClick={() => setActiveContent("cargos")}
+                    >
+                      <i className="fi fi-br-book-user icon-style"></i>
+                      <span>Cargos</span>
+                    </Link>
+                  </li>
+                )}
+              </ul>
+            </li>
+          
 
-
-
-          <li className="nav-item">
-            <div
-              className="nav-link collapsed"
-              onClick={toggleConfigSubMenu1}
-              style={{ cursor: "pointer" }}
-            >
-              <  FaGavel
-                style={{
-                  marginLeft: "0px",
-                  marginRight: "5px",
-                  color: "mediumpurple"
-                }}
-                className="react-icon"
-              />
-              <span>Empleados</span>
-              {sidebarOpen && (configOpen1 ? (
-                <FaChevronUp style={{ fontSize: "15px", marginLeft: "auto" }} className="react-icon" />
-              ) : (
-                <FaChevronDown style={{ fontSize: "15px", marginLeft: "auto" }} className="react-icon" />
-              ))}
-            </div>
-            <ul className={`submenu ${configOpen1 ? "open" : ""}`}>
-              <li className="nav-item">
-                <Link
-                  className={
-                    activeContent === "Empleados"
-                      ? "nav-link active"
-                      : "nav-link collapsed"
-                  }
-                  onClick={() => setActiveContent("Empleados")}
-                >
-                  <FaWrench
-                    style={{
-                      marginLeft: "0px",
-                      marginRight: "5px",
-                      color: "rgb(253, 138, 114)"
-                    }}
-                    className="react-icon"
-                  />
-                  <span>Empleados</span>
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link
-                  className={
-                    activeContent === "Contratos"
-                      ? "nav-link active"
-                      : "nav-link collapsed"
-                  }
-                  onClick={() => setActiveContent("Contratos")}
-                >
-                  <FaFileContract
-                    style={{
-                      marginLeft: "0px",
-                      marginRight: "5px",
-                      color: "royalblue"
-                    }}
-                    className="react-icon"
-                  />
-                  <span>Contratos</span>
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link
-                  className={
-                    activeContent === "Cargos"
-                      ? "nav-link active"
-                      : "nav-link collapsed"
-                  }
-                  onClick={() => setActiveContent("Cargos")}
-                >
-                  <FaFileContract
-                    style={{
-                      marginLeft: "0px",
-                      marginRight: "5px",
-                      color: "rgb(95, 77, 221)"
-                    }}
-                    className="react-icon"
-                  />
-                  <span>Cargos</span>
-                </Link>
-              </li>
-            </ul>
-          </li>
-
-          <li className="nav-item">
-            <div
-              className="nav-link collapsed"
-              onClick={toggleConfigSubMenu2}
-              style={{ cursor: "pointer" }}
-            >
-              <  FaFireFlameCurved
-                style={{
-                  marginLeft: "0px",
-                  marginRight: "5px",
-                  color: "brown"
-                }}
-                className="react-icon"
-              />
-              <span>Liquidaciones</span>
-              {sidebarOpen && (configOpen2 ? (
-                <FaChevronUp style={{ fontSize: "15px", marginLeft: "auto" }} className="react-icon" />
-              ) : (
-                <FaChevronDown style={{ fontSize: "15px", marginLeft: "auto" }} className="react-icon" />
-              ))}
-            </div>
-            <ul className={`submenu ${configOpen2 ? "open" : ""}`}>
-              <li className="nav-item">
-                <Link
-                  className={
-                    activeContent === "Reportes"
-                      ? "nav-link active"
-                      : "nav-link collapsed"
-                  }
-                  onClick={() => setActiveContent("Reportes")}
-                >
-                  <FaRegFolderOpen
-                    style={{
-                      marginLeft: "0px",
-                      marginRight: "5px",
-                      color: "brown"
-                    }}
-                    className="react-icon"
-                  />
-                  <span>Reportes</span>
-                </Link>
-              </li>
-
-              <li className="nav-item">
-                <Link
-                  className={
-                    activeContent === "Liquidaciones"
-                      ? "nav-link active"
-                      : "nav-link collapsed"
-                  }
-                  onClick={() => setActiveContent("Liquidaciones")}
-                >
-                  <FaUsers
-                    style={{
-                      marginLeft: "0px",
-                      marginRight: "5px",
-                      color: "rgb(172, 126, 241)"
-                    }}
-                    className="react-icon"
-                  />
-                  <span>Liquidaciones</span>
-                </Link>
-              </li>
-
-              <li className="nav-item">
-                <Link
-                  className={
-                    activeContent === "Nomina"
-                      ? "nav-link active"
-                      : "nav-link collapsed"
-                  }
-                  onClick={() => setActiveContent("Nomina")}
-                >
-                  <FaCoins
-                    style={{
-                      marginLeft: "0px",
-                      marginRight: "5px",
-                      color: "rgb(249, 118, 176)"
-                    }}
-                    className="react-icon"
-                  />
-                  <span>Nomina</span>
-                </Link>
-              </li>
-
-            </ul>
-          </li>
-
-          <li className="nav-item">
-            <div
-              className="nav-link collapsed"
-              onClick={toggleConfigSubMenu3}
-              style={{ cursor: "pointer" }}
-            >
-              <  FaGear
-                style={{
-                  marginLeft: "0px",
-                  marginRight: "5px",
-                  color: "steelblue"
-                }}
-                className="react-icon"
-              />
-              <span>Permisos</span>
-              {sidebarOpen && (configOpen3 ? (
-                <FaChevronUp style={{ fontSize: "15px", marginLeft: "auto" }} className="react-icon" />
-              ) : (
-                <FaChevronDown style={{ fontSize: "15px", marginLeft: "auto" }} className="react-icon" />
-              ))}
-            </div>
-            <ul className={`submenu ${configOpen3 ? "open" : ""}`}>
-              <li className="nav-item">
-                <Link
-                  className={
-                    activeContent === "Usuarios"
-                      ? "nav-link active"
-                      : "nav-link collapsed"
-                  }
-                  onClick={() => setActiveContent("Usuarios")}
-                >
-                  <FaCircleUser
-                    style={{
-                      marginLeft: "0px",
-                      marginRight: "5px",
-                      color: "rgb(24, 161, 251)",
-                      fontSize: "18px"
-                    }}
-                  />
-                  <span>Usuarios</span>
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link
-                  className={
-                    activeContent === "Roles"
-                      ? "nav-link active"
-                      : "nav-link collapsed"
-                  }
-                  onClick={() => setActiveContent("Roles")}
-                >
-                  <FaDiceD20
-                    style={{
-                      marginLeft: "0px",
-                      marginRight: "5px",
-                      color: "rgb(95, 77, 221)",
-                      fontSize: "18px"
-                    }}
-                  />
-                  <span>Roles</span>
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link
-                  className={
-                    activeContent === "Permisos"
-                      ? "nav-link active"
-                      : "nav-link collapsed"
-                  }
-                  onClick={() => setActiveContent("Permisos")}
-                >
-                  <FaShieldHalved
-                    style={{
-                      marginLeft: "0px",
-                      marginRight: "5px",
-                      color: "mediumpurple",
-                      fontSize: "18px"
-                    }}
-                  />
-                  <span>Permisos</span>
-                </Link>
-              </li>
-            </ul>
-          </li>
+            <li className="nav-item">
+              <div
+                className="nav-link collapsed"
+                onClick={toggleConfigSubMenu2}
+                style={{ cursor: "pointer" }}
+              >
+                <i className="fi fi-sr-chart-pie-simple-circle-currency icon-style"></i>
+                <span>Liquidaciones</span>
+                {sidebarOpen && (configOpen2 ? (
+                  <i className="fi fi-br-angle-double-small-up icon-style-secundary"></i>
+                ) : (
+                  <i className="fi fi-br-angle-double-small-down icon-style-secundary"></i>
+                ))}
+              </div>
+              <ul className={`submenu ${configOpen2 ? "open" : ""}`}>
+                {hasPermission('Reportes') && (
+                  <li className="nav-item">
+                    <Link to="/menu/reportes"
+                         className={activeContent === "reportes" ? "nav-link active" : "nav-link collapsed"}
+                         onClick={() => setActiveContent("reportes")}
+                    >
+                      <i className="fi fi-br-file-medical-alt icon-style"></i>
+                      <span>Reportes</span>
+                    </Link>
+                  </li>
+                )}
+                {hasPermission('Liquidaciones') && (
+                  <li className="nav-item">
+                    <Link to="/menu/liquidaciones"
+                         className={activeContent === "liquidaciones" ? "nav-link active" : "nav-link collapsed"}
+                         onClick={() => setActiveContent("liquidaciones")}
+                    >
+                      <i className="fi fi-br-user-cowboy icon-style"></i>
+                      <span>Liquidaciones</span>
+                    </Link>
+                  </li>
+                )}
+                {hasPermission('Nomina') && (
+                  <li className="nav-item">
+                    <Link to="/menu/nomina"
+                         className={activeContent === "nomina" ? "nav-link active" : "nav-link collapsed"}
+                         onClick={() => setActiveContent("nomina")}
+                    >
+                      <i className="fi fi-br-coins icon-style"></i>
+                      <span>Nomina</span>
+                    </Link>
+                  </li>
+                )}
+              </ul>
+            </li>
+          
+            <li className="nav-item">
+              <div
+                className="nav-link collapsed"
+                onClick={toggleConfigSubMenu3}
+                style={{ cursor: "pointer" }}
+              >
+                <i className="fi fi-br-module icon-style"></i>
+                <span>Permisos</span>
+                {sidebarOpen && (configOpen3 ? (
+                  <i className="fi fi-br-angle-double-small-up icon-style-secundary"></i>
+                ) : (
+                  <i className="fi fi-br-angle-double-small-down icon-style-secundary"></i>
+                ))}
+              </div>
+              <ul className={`submenu ${configOpen3 ? "open" : ""}`}>
+                {hasPermission('Usuarios') && (
+                  <li className="nav-item">
+                    <Link to="/menu/usuarios"
+                         className={activeContent === "usuarios" ? "nav-link active" : "nav-link collapsed"}
+                         onClick={() => setActiveContent("usuarios")}
+                    >
+                      <i className="fi fi-br-circle-user icon-style"></i>
+                      <span>Usuarios</span>
+                    </Link>
+                  </li>
+                )}
+                {hasPermission('Roles') && (
+                  <li className="nav-item">
+                    <Link to="/menu/roles"
+                         className={activeContent === "roles" ? "nav-link active" : "nav-link collapsed"}
+                         onClick={() => setActiveContent("roles")}
+                    >
+                      <i className="fi fi-bs-dice-d8 icon-style"></i>
+                      <span>Roles</span>
+                    </Link>
+                  </li>
+                )}
+                {hasPermission('Permisos') && (
+                  <li className="nav-item">
+                    <Link to="/menu/permisos"
+                         className={activeContent === "permisos" ? "nav-link active" : "nav-link collapsed"}
+                         onClick={() => setActiveContent("permisos")}
+                    >
+                      <i className="fi fi-br-shield-keyhole icon-style"></i>
+                      <span>Permisos</span>
+                    </Link>
+                  </li>
+                )}
+              </ul>
+            </li>
+          
 
           <li className="nav-item">
             {isAuthenticated ? (
@@ -411,13 +284,7 @@ const Dashboard = () => {
                   logout();
                 }}
               >
-                <FaArrowRightFromBracket
-                  style={{
-                    marginLeft: "0px",
-                    marginRight: "5px"
-                  }}
-                  className="react-icon"
-                />
+                <i className="fi fi-br-sign-out-alt icon-style"></i>
                 <span>Salir</span>
               </Link>
             ) : (
@@ -429,7 +296,7 @@ const Dashboard = () => {
 
       <main className={`main ${sidebarOpen ? "" : "full"}`}>
         <div className="pagetitle" />
-        {renderContent()}
+        <Outlet /> 
       </main>
     </div>
   );

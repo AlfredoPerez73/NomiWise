@@ -20,7 +20,7 @@ body {
 }
 
 .container {
-    width: 90%;
+    width: 70%;
     max-width: 1600px;
     margin: 0 auto;
     display: flex;
@@ -123,6 +123,7 @@ body {
     background-color: #5383E8;
     color: white;
     font-weight: bold;
+    font-size: 12px;
     font-family: 'Poppins', sans-serif;
     border: none;
     border-radius: 20px;
