@@ -7,6 +7,8 @@ import rolRoutes from "./routes/rol.routes.js";
 import permisoRoutes from "./routes/permiso.routes.js";
 import cargoRoutes from "./routes/cargo.routes.js";
 import usuarioRoutes from "./routes/usuario.routes.js";
+import empleadoRoutes from "./routes/empleado.routes.js";
+import contratoRoutes from "./routes/contrato.routes.js";
 
 const app = express();
 
@@ -26,5 +28,7 @@ app.use("/api", usuarioRoutes);
 app.use("/api", rolRoutes);
 app.use("/api", permisoRoutes);
 app.use("/api", cargoRoutes);
+app.use("/api", empleadoRoutes);
+app.use("/api", contratoRoutes);
 
 export default app;

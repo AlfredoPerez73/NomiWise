@@ -21,7 +21,6 @@ body {
 
 .container {
     width: 70%;
-    max-width: 1600px;
     margin: 0 auto;
     display: flex;
     align-items: center;
@@ -30,8 +29,8 @@ body {
 }
 
 .login-form {
-    width: 500px;
-    height: 900px;
+    width: 370px; /* Ajustar ancho del formulario */
+    height: 650px; /* Ajustar altura automáticamente */
     margin-bottom: 0px;
     background-color: rgba(31, 30, 68, 0.9);
     padding: 30px;
@@ -46,19 +45,14 @@ body {
 }
 
 .login-form h2 {
-    margin-bottom: 40px;
-    margin-left: 80px;
-    font-size: 40px;
+    margin-bottom: 20px; /* Ajustar el margen inferior */
+    font-size: 25px; /* Ajustar el tamaño de la fuente */
     color: whitesmoke;
     font-weight: bold;
-    display: flex;
-    align-items: center;
 }
 
 .logo-img {
-    width: 300px;
-    margin-left: 0px;
-    margin-top: -30px;
+    width: 250px; /* Ajustar el ancho del logo */
 }
 
 .input-container {
@@ -68,9 +62,9 @@ body {
 
 .login-form input {
     width: 100%;
-    margin-top: 20px;
-    padding: 13px;
-    font-size: 15px;
+    margin-top: 15px;
+    padding: 10px; /* Ajustar el padding */
+    font-size: 10px; /* Ajustar el tamaño de la fuente */
     border: 1px solid #ccc;
     border-radius: 20px;
     background-color: #fff;
@@ -81,27 +75,29 @@ body {
 
 .login-form label {
     position: absolute;
-    top: 62%;
+    top: 66%;
     left: 15px;
     transform: translateY(-50%);
     background-color: transparent;
     color: rgb(31, 30, 68);
     padding: 0 5px;
-    font-size: 15px;
+    font-size: 11px; /* Ajustar el tamaño de la fuente */
     transition: 0.3s;
     pointer-events: none;
 }
 
 .info p {
+    text-align: center;
     color: whitesmoke;
-    margin-bottom: 40px;
+    margin-bottom: 20px; /* Ajustar el margen inferior */
+    font-size: 12px; /* Ajustar el tamaño de la fuente */
 }
 
 .login-form input:focus+label,
 .login-form input:not(:placeholder-shown)+label {
-    top: 10px;
+    top: 8px;
     left: 4px;
-    font-size: 12px;
+    font-size: 10px;
     color: whitesmoke;
 }
 
@@ -119,11 +115,11 @@ body {
 
 .login-form button {
     width: 100%;
-    padding: 15px 20px;
+    padding: 10px; /* Ajustar el padding */
     background-color: #5383E8;
     color: white;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 10px; /* Ajustar el tamaño de la fuente */
     font-family: 'Poppins', sans-serif;
     border: none;
     border-radius: 20px;
@@ -150,6 +146,6 @@ body {
 }
 
 .custom-alert {
-    border-radius: 30px; /* Ajusta el valor según el grado de redondez deseado */
+    border-radius: 30px;
     font-family: 'Poppins', sans-serif;
-  }
+}

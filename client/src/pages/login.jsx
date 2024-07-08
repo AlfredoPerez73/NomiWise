@@ -59,7 +59,7 @@ const LoginPage = () => {
           </div>
           <div className="info">
           <p>
-            Administra tu negocio a otro nivel, sistema de nomina :D
+            Administra tu negocio a otro nivel, sistema de nomina :D Contactanos para utilizar nuestro producto
           </p>
           </div>
           <form onSubmit={handleSubmit}>

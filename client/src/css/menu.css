@@ -1,21 +1,22 @@
 ::-webkit-scrollbar {
     width: 10px;
+    height: 11.5px;
     margin: 0;
     background: linear-gradient(180deg, #22214a 50%, #1f1e44e1 100%);
     border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--azul1);
+    background: linear-gradient(180deg, #e68046 50%, #e8b453 100%);
     border-radius: 10px;
-    border-right: 1px solid var(--color2);
-    border-left: 1px solid var(--color2);
+    border-right: 1px solid linear-gradient(180deg, #e68046 50%, #e8b453 100%);
+    border-left: 1px solid linear-gradient(180deg, #e68046 50%, #e8b453 100%);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--azul2);
+    background: linear-gradient(180deg, #d6763e 50%, #be9343 100%);
     border-radius: 10px;
-    border-right: 1px solid var(--color2);
+    border-right: 1px solid linear-gradient(180deg, #d6763e 50%, #be9343 100%);
 }
 
 
@@ -83,7 +84,7 @@
     margin: 10px;
     padding: 15px;
     background-color: rgb(45, 43, 104);
-    color: #5383e8;
+    color: #e68046;
   }
   
   .submenu {
