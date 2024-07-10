@@ -3,6 +3,7 @@ import "../css/components.css";
 import toast, { Toaster } from "react-hot-toast";
 import { useCargo } from "../context/cargoContext";
 import { format } from "date-fns";
+import ReactPaginate from 'react-paginate';
 
 const RegistroCargos = () => {
     const [formData, setFormData] = useState({
@@ -13,6 +14,8 @@ const RegistroCargos = () => {
     const [filteredCargos, setFilteredCargos] = useState([]);
     const [filterValue, setFilterValue] = useState("");
     const [error, setError] = useState("");
+    const [currentPage, setCurrentPage] = useState(0);
+    const [perPage] = useState(5); // Cambia esto al número de elementos por página que desees
     const {
         createCargo,
         getCargo,
@@ -68,13 +71,17 @@ const RegistroCargos = () => {
     const handleUpdateCargo = async (e) => {
         e.preventDefault();
         try {
+            const cargoExistente = cargos.find((cargo) => cargo.nCargo.toLowerCase() === formData.nCargo.toLowerCase() && cargo.idCargo !== id);
+            if (cargoExistente) {
+                throw new Error("El nuevo nombre del cargo ya está registrado");
+            }
             await updateCargo(id, formData);
             limpiar();
-            toast.success(<b>El rol {formData.nCargo} fue actualizado con éxito!</b>);
+            toast.success(<b>El cargo {formData.nCargo} fue actualizado con éxito!</b>);
             await getCargo();
         } catch (error) {
-            setError(error.response.data.message);
-            toast.error(<b>No se puede actualizar la categoria! Intente más tarde.</b>);
+            setError(error.message);
+            toast.error(<b>No se puede actualizar el cargo: {error.message}</b>);
         }
     };
 
@@ -123,6 +130,14 @@ const RegistroCargos = () => {
     const formatFecha = (fecha) => {
         return format(new Date(fecha), "dd/MM/yyyy");
     };
+
+    const handlePageClick = ({ selected }) => {
+        setCurrentPage(selected);
+    };
+
+    const offset = currentPage * perPage;
+    const currentCargo = filteredCargos.slice(offset, offset + perPage);
+    const pageCount = Math.max(Math.ceil(filteredCargos.length / perPage), 1);
 
     return (
         <div className="w-full h-full">
@@ -186,7 +201,7 @@ const RegistroCargos = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredCargos.map((val, key) => {
+                            {currentCargo.map((val, key) => {
                                 return (
                                     <tr key={val.idCargo}>
                                         <td>{val.nCargo}</td>
@@ -210,6 +225,24 @@ const RegistroCargos = () => {
                             })}
                         </tbody>
                     </table>
+                    <ReactPaginate
+                        previousLabel={
+                            <i className="fi fi-br-angle-double-small-left icon-style-pagination" ></i>
+                        }
+                        nextLabel={
+                            <i className="fi fi-br-angle-double-small-right icon-style-pagination"></i>
+                        }
+                        breakLabel={"..."}
+                        breakClassName={"break-me"}
+                        pageCount={pageCount}
+                        marginPagesDisplayed={2}
+                        pageRangeDisplayed={5}
+                        onPageChange={handlePageClick}
+                        containerClassName={"pagination"}
+                        subContainerClassName={"pages pagination"}
+                        activeClassName={"active"}
+                        forcePage={Math.min(currentPage, pageCount - 1)}
+                    />
                 </div>
             </div>
         </div>

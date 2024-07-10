@@ -7,11 +7,11 @@ export async function postEmpleado(req, res) {
         const detallesContrato = { fechaInicio, fechaFin, salario, tipoContrato };
 
         const newEmpleado = await empleadoService.registrarEmpleado(
-            documento, 
-            nombre, 
-            estado, 
-            idCargo, 
-            detallesContrato, 
+            documento,
+            nombre,
+            estado,
+            idCargo,
+            detallesContrato,
             idUsuario
         );
         res.json(newEmpleado);
@@ -30,11 +30,24 @@ export async function getEmpleado(req, res) {
     }
 }
 
-export async function getEmpleadosByUsuario(req, res) {
+export async function putEmpleado(req, res) {
     try {
         const idUsuario = req.usuario.idUsuario;
-        const empleados = await empleadoService.obtenerEmpleadosActualizadosPorUsuario(idUsuario);
-        res.json(empleados);
+        const { idEmpleado } = req.params;
+        const { nombre, idCargo, detallesContrato } = req.body;
+        const empleadoActualizado = await empleadoService.actualizarEmpleado(idEmpleado, idUsuario, nombre, idCargo, detallesContrato);
+        res.json(empleadoActualizado);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+export async function deleteEmpleado(req, res) {
+    try {
+        const idUsuario = req.usuario.idUsuario;
+        const { idEmpleado } = req.params;
+        await empleadoService.eliminarEmpleado(idEmpleado, idUsuario);
+        res.sendStatus(204);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

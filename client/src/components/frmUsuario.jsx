@@ -5,6 +5,7 @@ import { useUsuario } from "../context/usuarioContext";
 import { useRol } from "../context/rolContext";
 import { format } from "date-fns";
 import RegistroUsuarioForm from "./frmRUsuario";
+import ReactPaginate from 'react-paginate';
 
 const RegistroUsuarios = () => {
     const [id, setId] = useState("");
@@ -14,6 +15,8 @@ const RegistroUsuarios = () => {
     const [filterValue, setFilterValue] = useState("");
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [usuarioToEdit, setUsuarioToEdit] = useState(null);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [perPage] = useState(10); // Cambia esto al número de elementos por página que desees
 
     const { getUsuario, usuarios, deleteUsuario } = useUsuario();
     const { getRol, roles } = useRol();
@@ -98,6 +101,14 @@ const RegistroUsuarios = () => {
         return rol ? rol.nRol : "Desconocido";
     };
 
+    const handlePageClick = ({ selected }) => {
+        setCurrentPage(selected);
+    };
+
+    const offset = currentPage * perPage;
+    const currentUsuarios = filteredUsuarios.slice(offset, offset + perPage);
+    const pageCount = Math.max(Math.ceil(filteredUsuarios.length / perPage), 1);
+
     return (
         <div className="w-full h-full">
             <Toaster />
@@ -149,7 +160,7 @@ const RegistroUsuarios = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredUsuarios.map((val, key) => {
+                                {currentUsuarios.map((val, key) => {
                                     return (
                                         <tr key={val.idUsuario}>
                                             <td>{val.documento}</td>
@@ -176,6 +187,24 @@ const RegistroUsuarios = () => {
                                 })}
                             </tbody>
                         </table>
+                        <ReactPaginate
+                        previousLabel={
+                            <i className="fi fi-br-angle-double-small-left icon-style-pagination" ></i>
+                        }
+                        nextLabel={
+                            <i className="fi fi-br-angle-double-small-right icon-style-pagination"></i>
+                        }
+                        breakLabel={"..."}
+                        breakClassName={"break-me"}
+                        pageCount={pageCount}
+                        marginPagesDisplayed={2}
+                        pageRangeDisplayed={5}
+                        onPageChange={handlePageClick}
+                        containerClassName={"pagination"}
+                        subContainerClassName={"pages pagination"}
+                        activeClassName={"active"}
+                        forcePage={Math.min(currentPage, pageCount - 1)}
+                    />
                     </div>
                 </div>
             )}

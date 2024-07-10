@@ -3,6 +3,7 @@ import "../css/components.css";
 import toast, { Toaster } from "react-hot-toast";
 import { useRol } from "../context/rolContext";
 import { format } from "date-fns";
+import ReactPaginate from 'react-paginate';
 
 const RegistroRoles = () => {
     const [formData, setFormData] = useState({
@@ -13,6 +14,8 @@ const RegistroRoles = () => {
     const [filteredRoles, setFilteredRoles] = useState([]);
     const [filterValue, setFilterValue] = useState("");
     const [error, setError] = useState("");
+    const [currentPage, setCurrentPage] = useState(0);
+    const [perPage] = useState(5); // Cambia esto al número de elementos por página que desees
     const {
         createRol,
         getRol,
@@ -70,13 +73,17 @@ const RegistroRoles = () => {
     const handleUpdateRol = async (e) => {
         e.preventDefault();
         try {
+            const rolExistente = roles.find((rol) => rol.nRol.toLowerCase() === formData.nRol.toLowerCase() && rol.idRol !== id);
+            if (rolExistente) {
+                throw new Error("El nuevo nombre del Rol ya está registrado");
+            }
             await updateRol(id, formData);
             limpiar();
             toast.success(<b>El rol {formData.nRol} fue actualizado con éxito!</b>);
             await getRol();
         } catch (error) {
-            setError(error.response.data.message);
-            toast.error(<b>No se puede actualizar el rol! Intente más tarde.</b>);
+            setError(error.message);
+            toast.error(<b>No se puede actualizar el rol: {error.message}</b>);
         }
     };
 
@@ -125,6 +132,14 @@ const RegistroRoles = () => {
     const formatFecha = (fecha) => {
         return format(new Date(fecha), "dd/MM/yyyy");
     };
+
+    const handlePageClick = ({ selected }) => {
+        setCurrentPage(selected);
+    };
+
+    const offset = currentPage * perPage;
+    const currentRol = filteredRoles.slice(offset, offset + perPage);
+    const pageCount = Math.max(Math.ceil(filteredRoles.length / perPage), 1);
 
     return (
         <div className="w-full h-full">
@@ -188,7 +203,7 @@ const RegistroRoles = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredRoles.map((val, key) => {
+                            {currentRol.map((val, key) => {
                                 return (
                                     <tr key={val.idRol}>
                                         <td>{val.nRol}</td>
@@ -212,6 +227,24 @@ const RegistroRoles = () => {
                             })}
                         </tbody>
                     </table>
+                    <ReactPaginate
+                        previousLabel={
+                            <i className="fi fi-br-angle-double-small-left icon-style-pagination" ></i>
+                        }
+                        nextLabel={
+                            <i className="fi fi-br-angle-double-small-right icon-style-pagination"></i>
+                        }
+                        breakLabel={"..."}
+                        breakClassName={"break-me"}
+                        pageCount={pageCount}
+                        marginPagesDisplayed={2}
+                        pageRangeDisplayed={5}
+                        onPageChange={handlePageClick}
+                        containerClassName={"pagination"}
+                        subContainerClassName={"pages pagination"}
+                        activeClassName={"active"}
+                        forcePage={Math.min(currentPage, pageCount - 1)}
+                    />
                 </div>
             </div>
         </div>

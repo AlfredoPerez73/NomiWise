@@ -9,7 +9,7 @@ async function validarCargo(nCargo, idUsuario) {
     });
 
     if (cargoEncontrado) {
-        throw new Error("El cargo ya está en registrado");
+        throw new Error("El cargo ya está registrado");
     }
 }
 

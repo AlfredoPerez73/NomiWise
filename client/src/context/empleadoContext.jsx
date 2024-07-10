@@ -1,7 +1,9 @@
 import { createContext, useContext, useState } from "react";
 import {
     createEmpleadosRequest,
-    getEmpleadoRequest
+    getEmpleadoRequest,
+    deleteEmpleadosRequest,
+    updateEmpleadosRequest
 } from '../api/empleado/empleadoAuth';
 
 const EmpleadoContext  = createContext();
@@ -32,11 +34,11 @@ export function EmpleadoProvider({ children }) {
         console.log(res);
     }
 
-/*     const deleteRol = async (idRol) => {
+    const deleteEmpleado = async (idEmpleado) => {
         try {
-          const res = await deleteRolesRequest(idRol);
+          const res = await deleteEmpleadosRequest(idEmpleado);
           if (res.status == 204) {
-            setRol(roles.filter((rol) => rol.idRol != idRol));
+            setEmpleado(empleados.filter((e) => e.idEmpleado != idEmpleado));
           }
         } catch (error) {
           throw error;
@@ -44,20 +46,21 @@ export function EmpleadoProvider({ children }) {
       };
       
 
-    const updateRol = async (idRol, rol) => {
+    const updateEmpleado = async (idEmpleado, empleado) => {
         try {
-            await updateRolesRequest(idRol, rol);
+            await updateEmpleadosRequest(idEmpleado, empleado);
         } catch (error) {
             console.log(error);
         }
-    } */
+    }
 
     return(
         <EmpleadoContext.Provider value={{
             empleados,
             createEmpleado,
+            updateEmpleado,
+            deleteEmpleado,
             getEmpleado
-
         }}>
             {children}
         </EmpleadoContext.Provider>

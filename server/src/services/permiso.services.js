@@ -1,26 +1,24 @@
 import { Permiso } from "../models/permiso.js";
 import { PermisoDTO } from "../dtos/permiso.dto.js";
+import { Op } from 'sequelize';
 
-/* async function validarPermisos(nRol, idSUsuario) {
-    const empleadoEncontrado = await Empleado.findOne({
-        where: { correo: correo },
-      });
-    
-    if (empleadoEncontrado) {
-        throw new Error("El correo ya está en uso por un empleado");
-    }
-    
-    const rolEncontrado = await Rol.findOne({
-        where: { nRol: nRol, idSUsuario: idSUsuario },
+async function validarPermisoUnico(nPermiso, idRol) {
+    const permisoExistente = await Permiso.findOne({
+        where: {
+            nPermiso: nPermiso,
+            idRol: idRol
+        }
     });
 
-    if (rolEncontrado) {
-        throw new Error("El rol ya está en registrado");
+    if (permisoExistente) {
+        throw new Error("La combinación de permiso y rol ya está registrada");
     }
-} */
+}
 
 export async function crearPermiso(nPermiso, idRol) {
     try {
+        await validarPermisoUnico(nPermiso, idRol);
+
         const newPermiso = await Permiso.create({
             idRol,
             nPermiso,

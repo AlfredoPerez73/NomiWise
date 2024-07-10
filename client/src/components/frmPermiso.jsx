@@ -4,6 +4,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { usePermiso } from "../context/permisoContext";
 import { useRol } from "../context/rolContext";
 import { format } from "date-fns";
+import ReactPaginate from 'react-paginate';
 
 const RegistroPermisos = () => {
     const [formData, setFormData] = useState({
@@ -20,6 +21,9 @@ const RegistroPermisos = () => {
     const [filterValuePermiso, setFilterValuePermiso] = useState("");
     const [filterValueRol, setFilterValueRol] = useState("");
     const [error, setError] = useState("");
+    const [currentPage, setCurrentPage] = useState(0);
+    const [perPage] = useState(5); // Cambia esto al número de elementos por página que desees
+
     const {
         createPermiso,
         getPermiso,
@@ -193,6 +197,14 @@ const RegistroPermisos = () => {
         return format(new Date(fecha), "dd/MM/yyyy");
     };
 
+    const handlePageClick = ({ selected }) => {
+        setCurrentPage(selected);
+    };
+
+    const offset = currentPage * perPage;
+    const currentPermisos = filteredPermisos.slice(offset, offset + perPage);
+    const pageCount = Math.max(Math.ceil(filteredPermisos.length / perPage), 1);
+
     return (
         <div className="w-full h-full">
             <Toaster />
@@ -257,7 +269,7 @@ const RegistroPermisos = () => {
                     </form>
                 </div>
                 <div className="table-card">
-                    <h1 className="sub-titles-copm">Permisos Registradas</h1>
+                    <h1 className="sub-titles-copm">Permisos Registrados</h1>
                     <div className="search-bar">
                         <select
                             id="permiso-filter"
@@ -300,31 +312,47 @@ const RegistroPermisos = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredPermisos.map((val, key) => {
-                                return (
-                                    <tr key={val.idPermiso}>
-                                        <td>{val.nPermiso}</td>
-                                        <td>{getRolName(val.idRol)}</td>
-                                        <td>{formatFecha(val.fechaRegistro)}</td>
-                                        <td>
-                                            <button
-                                                className="edit-button"
-                                                onClick={() => setPermiso(val)}
-                                            >
-                                                <i className="fi fi-br-customize-edit icon-style-components"></i>
-                                            </button>
-                                            <button
-                                                className="delete-button"
-                                                onClick={() => handleDeletePermiso(val)}
-                                            >
-                                                <i className="fi fi-br-clear-alt icon-style-components"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
+                            {currentPermisos.map((val, key) => (
+                                <tr key={val.idPermiso}>
+                                    <td>{val.nPermiso}</td>
+                                    <td>{getRolName(val.idRol)}</td>
+                                    <td>{formatFecha(val.fechaRegistro)}</td>
+                                    <td>
+                                        <button
+                                            className="edit-button"
+                                            onClick={() => setPermiso(val)}
+                                        >
+                                            <i className="fi fi-br-customize-edit icon-style-components"></i>
+                                        </button>
+                                        <button
+                                            className="delete-button"
+                                            onClick={() => handleDeletePermiso(val)}
+                                        >
+                                            <i className="fi fi-br-clear-alt icon-style-components"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
+                    <ReactPaginate
+                        previousLabel={
+                            <i className="fi fi-br-angle-double-small-left icon-style-pagination" ></i>
+                        }
+                        nextLabel={
+                            <i className="fi fi-br-angle-double-small-right icon-style-pagination"></i>
+                        }
+                        breakLabel={"..."}
+                        breakClassName={"break-me"}
+                        pageCount={pageCount}
+                        marginPagesDisplayed={2}
+                        pageRangeDisplayed={5}
+                        onPageChange={handlePageClick}
+                        containerClassName={"pagination"}
+                        subContainerClassName={"pages pagination"}
+                        activeClassName={"active"}
+                        forcePage={Math.min(currentPage, pageCount - 1)}
+                    />
                 </div>
             </div>
             {isModalOpen && (

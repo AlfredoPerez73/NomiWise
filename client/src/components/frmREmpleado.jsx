@@ -3,8 +3,9 @@ import "../css/components.css";
 import { useEmpleado } from "../context/empleadoContext";
 import { useContrato } from "../context/contratoContext";
 import { Toaster, toast } from "react-hot-toast";
+import { format } from "date-fns";
 
-const RegistroEmpleadoForm = ({ onClose, empleadoToEdit, cargos, contratos }) => {
+const RegistroEmpleadoForm = ({ onClose, empleadoToEdit, cargos }) => {
     const [formData, setFormData] = useState({
         documento: "",
         nombre: "",
@@ -22,24 +23,24 @@ const RegistroEmpleadoForm = ({ onClose, empleadoToEdit, cargos, contratos }) =>
     ];
     const [error, setError] = useState("");
 
-    const { createEmpleado, getEmpleado } = useEmpleado();
+    const { createEmpleado, getEmpleado, updateEmpleado } = useEmpleado();
     const { getContrato } = useContrato();
 
-/*     useEffect(() => {
+    useEffect(() => {
         if (empleadoToEdit) {
+            const contrato = empleadoToEdit.contrato || {};
             setFormData({
                 documento: empleadoToEdit.documento,
                 nombre: empleadoToEdit.nombre,
                 idCargo: empleadoToEdit.idCargo,
-                fechaInicio: empleadoToEdit.fechaInicio,
-                fechaFin: empleadoToEdit.fechaFin,
-                salario: empleadoToEdit.salario,
-                tipoContato: empleadoToEdit.tipoContato,
-
+                fechaInicio: contrato.fechaInicio ? format(new Date(contrato.fechaInicio), "yyyy-MM-dd") : "",
+                fechaFin: contrato.fechaFin ? format(new Date(contrato.fechaFin), "yyyy-MM-dd") : "",
+                salario: contrato.salario || "",
+                tipoContrato: contrato.tipoContrato || "",
             });
         }
     }, [empleadoToEdit]);
- */
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevState) => ({
@@ -48,23 +49,53 @@ const RegistroEmpleadoForm = ({ onClose, empleadoToEdit, cargos, contratos }) =>
         }));
     };
 
+    const validateDates = () => {
+        const { fechaInicio, fechaFin } = formData;
+        const startDate = new Date(fechaInicio);
+        const endDate = new Date(fechaFin);
+        const oneMonthLater = new Date(startDate);
+        oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
+
+        if (endDate <= startDate) {
+            return <b>La fecha de fin no puede ser menor o igual a la fecha de inicio.</b>
+        }
+        if (endDate < oneMonthLater) {
+            return <b>La fecha de fin debe ser al menos un mes después de la fecha de inicio.</b>
+        }
+        return null;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const dateError = validateDates();
+        if (dateError) {
+            setError(dateError);
+            toast.error(dateError);
+            return;
+        }
         try {
-            await createEmpleado(formData);
-            toast.success(<b>El empleado ha sido registrado correctamente.</b>);
-/*             if (usuarioToEdit) {
-                await updateUsuario(usuarioToEdit.idUsuario, formData);
-                toast.success(<b>El usuario fue actualizado con éxito!</b>);
+            if (empleadoToEdit) {
+                await updateEmpleado(empleadoToEdit.idEmpleado, {
+                    nombre: formData.nombre,
+                    idCargo: formData.idCargo,
+                    detallesContrato: {
+                        fechaInicio: formData.fechaInicio,
+                        fechaFin: formData.fechaFin,
+                        salario: formData.salario,
+                        tipoContrato: formData.tipoContrato
+                    }
+                });
+                toast.success(<b>El empleado fue actualizado con éxito!</b>);
             } else {
-
-            } */
+                await createEmpleado(formData);
+                toast.success(<b>El empleado ha sido registrado correctamente.</b>);
+            }
             await getEmpleado();
             await getContrato();
             onClose();
         } catch (error) {
-            setError(error.response.data.message);
-            toast.error(`Error: ${error.response.data.message}`);
+            setError(error.response?.data?.message || error.message);
+            toast.error(`Error: ${error.response?.data?.message || error.message}`);
         }
     };
 

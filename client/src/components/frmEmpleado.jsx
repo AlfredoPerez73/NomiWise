@@ -6,32 +6,42 @@ import { useCargo } from "../context/cargoContext";
 import { useContrato } from "../context/contratoContext";
 import { format } from "date-fns";
 import RegistroEmpleadoForm from "./frmREmpleado";
+import ReactPaginate from 'react-paginate';
 
 const RegistroEmpleados = () => {
-    const [id, setId] = useState("");
     const [editar, setEditar] = useState(false);
     const [filteredEmpleados, setFilteredEmpleados] = useState([]);
     const [filterValueCargo, setFilterValueCargo] = useState("");
+    const [filterValueEstado, setFilterValueEstado] = useState("");
     const [filterValue, setFilterValue] = useState("");
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [empleadoToEdit, setEmpleadoToEdit] = useState(null);
+    const [selectedEmpleado, setSelectedEmpleado] = useState(null);
+    const [isVisible, setIsVisible] = useState(false);
+    const [isExiting, setIsExiting] = useState(false);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [perPage] = useState(10); // Cambia esto al número de elementos por página que desees
 
-    const { getEmpleado, empleados } = useEmpleado();
+    const { getEmpleado, empleados, deleteEmpleado } = useEmpleado();
     const { getCargo, cargos } = useCargo();
     const { getContrato, contratos } = useContrato();
+    const sEstado = [
+        "ACTIVO", 
+        "INACTIVO"
+    ];
 
     const handleDeleteEmpleado = (val) => {
-/*         toast(
+        toast(
             (t) => (
                 <div style={{ textAlign: "center", fontWeight: "bold" }}>
                     <p>¿Realmente desea eliminar a <strong>{val.nombre}</strong>?</p>
                     <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '10px' }}>
                         <button className="toast-button-confirmed" onClick={() => {
-                            deleteUsuario(val.idEmpleado)
+                            deleteEmpleado(val.idEmpleado)
                                 .then(() => {
                                     toast.dismiss(t.id);
                                     toast.success(<b>El empleado {val.nombre} fue eliminado exitosamente!</b>);
-                                    getUsuario();
+                                    getEmpleado();
                                 })
                                 .catch((error) => {
                                     toast.error(<b>Error: {error.response.data.message}</b>);
@@ -48,12 +58,17 @@ const RegistroEmpleados = () => {
             {
                 duration: 8000,
             }
-        ); */
+        );
     };
 
     const setEmpleado = (val) => {
+        const contrato = contratos.find(c => c.idContrato === val.idContrato) || {};
         setEditar(true);
-        setEmpleadoToEdit(val);
+        setEmpleadoToEdit({
+                ...val,
+                contrato
+            }
+        );
         setIsFormOpen(true);
     };
 
@@ -71,6 +86,21 @@ const RegistroEmpleados = () => {
     useEffect(() => {
         setFilteredEmpleados(empleados);
     }, [empleados]);
+
+    useEffect(() => {
+        applyFilters();
+    }, [empleados, filterValueEstado]);
+
+    const applyFilters = () => {
+        const filtered = empleados.filter((n) => {
+            const matchesEstado = filterValueEstado ? n.estado.toLowerCase() === filterValueEstado.toLowerCase() : true;
+
+            return (
+                matchesEstado
+            );
+        });
+        setFilteredEmpleados(filtered);
+    };
 
     const handleFilterChangeCargo = (e) => {
         const query = e.target.value.toLowerCase();
@@ -94,7 +124,11 @@ const RegistroEmpleados = () => {
                 getContratoSalario(n.idContrato).toLowerCase().includes(query)
             )
         );
-    };    
+    };
+
+    const handleFilterChangeEstado = (e) => {
+        setFilterValueEstado(e.target.value);
+    };
 
     const formatFecha = (fecha) => {
         return format(new Date(fecha), "dd/MM/yyyy");
@@ -109,36 +143,56 @@ const RegistroEmpleados = () => {
         const contrato = contratos.find((c) => c.idContrato === idContrato);
         return contrato ? format(new Date(contrato.fechaInicio), "dd/MM/yyyy") : "Desconocida";
     };
-    
+
     const getContratoFechaFin = (idContrato) => {
         const contrato = contratos.find((c) => c.idContrato === idContrato);
         return contrato ? format(new Date(contrato.fechaFin), "dd/MM/yyyy") : "Desconocida";
     };
-    
+
     const getContratoSalario = (idContrato) => {
         const contrato = contratos.find((c) => c.idContrato === idContrato);
-        return contrato ? contrato.salario.toLocaleString() : "Desconocido";
+        return contrato ? contrato.salario : "Desconocido";
     };
-    
+
     const getContratoTipo = (idContrato) => {
         const contrato = contratos.find((c) => c.idContrato === idContrato);
         return contrato ? contrato.tipoContrato : "Desconocido";
     };
 
+    const handleRowClick = (empleado) => {
+        setSelectedEmpleado(empleado);
+        setIsVisible(true);
+    };
 
+    const handleCloseModal = () => {
+        setIsExiting(true);
+        setTimeout(() => {
+            setIsVisible(false);
+            setIsExiting(false);
+            setSelectedEmpleado(null);
+        }, 500);
+    };
+
+    const handlePageClick = ({ selected }) => {
+        setCurrentPage(selected);
+    };
+
+    const offset = currentPage * perPage;
+    const currentEmpleados = filteredEmpleados.slice(offset, offset + perPage);
+    const pageCount = Math.max(Math.ceil(filteredEmpleados.length / perPage), 1);
 
     return (
         <div className="w-full h-full">
             <Toaster />
             {isFormOpen ? (
-                <RegistroEmpleadoForm onClose={handleFormClose} empleadoToEdit={empleadoToEdit}  cargos={cargos} contratos={contratos} />
+                <RegistroEmpleadoForm onClose={handleFormClose} empleadoToEdit={empleadoToEdit} cargos={cargos} />
             ) : (
                 <div className="form-comp">
                     <div className="header-comp">
                         <h1 className="title-comp">Registro de Empleados</h1>
                     </div>
                     <button type="button" className="open-modal-button" onClick={() => setIsFormOpen(true)}>Registrar</button>
-                    <div className="table-card">
+                    <div className="table-card-empleados">
                         <h1 className="sub-titles-copm">Empleados Registrados</h1>
                         <div className="search-bar">
                             <input
@@ -165,54 +219,108 @@ const RegistroEmpleados = () => {
                                     </option>
                                 ))}
                             </select>
+                            <select
+                                id="estado-filter"
+                                name="estado-filter"
+                                value={filterValueEstado}
+                                onChange={handleFilterChangeEstado}
+                            >
+                                <option value="">
+                                    Seleccionar Estado
+                                </option>
+                                {sEstado.map((modulo, index) => (
+                                    <option key={index} value={modulo}>
+                                        {modulo}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                         <table>
                             <thead>
                                 <tr>
                                     <th>Documento</th>
                                     <th>Empleado</th>
-                                    <th>Cargo</th>
-                                    <th>Fecha de Inicio</th>
-                                    <th>Fecha de Fin</th>
-                                    <th>Salario</th>
-                                    <th>Contrato</th>
                                     <th>Estado</th>
                                     <th>Fecha de registro</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredEmpleados.map((val, key) => {
-                                    return (
-                                        <tr key={val.idEmpleado}>
-                                            <td>{val.documento}</td>
-                                            <td>{val.nombre}</td>
-                                            <td>{getCargoName(val.idCargo)}</td>
-                                            <td>{getContratoFechaInicio(val.idContrato)}</td>
-                                            <td>{getContratoFechaFin(val.idContrato)}</td>
-                                            <td>{getContratoSalario(val.idContrato)}</td>
-                                            <td>{getContratoTipo(val.idContrato)}</td>
-                                            <td>{val.estado}</td>
-                                            <td>{formatFecha(val.fechaRegistro)}</td>
-                                            <td>
-                                                <button
-                                                    className="edit-button"
-                                                    onClick={() => setEmpleado(val)}
-                                                >
-                                                    <i className="fi fi-br-customize-edit icon-style-components"></i>
-                                                </button>
-                                                <button
-                                                    className="delete-button"
-                                                    onClick={() => handleDeleteEmpleado(val)}
-                                                >
-                                                    <i className="fi fi-br-clear-alt icon-style-components"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
+                                {currentEmpleados.map((val, key) => (
+                                    <tr key={val.idEmpleado} onClick={() => handleRowClick(val)}>
+                                        <td>{val.documento}</td>
+                                        <td>{val.nombre}</td>
+                                        <td>
+                                            <span className={val.estado === "ACTIVO" ? "estado-activo" : "estado-inactivo"}>
+                                                {val.estado === "ACTIVO" ? (
+                                                    <i className="fi fi-br-time-check icon-style-components"></i>
+                                                ) : (
+                                                    <i className="fi fi-br-time-delete icon-style-components"></i>
+                                                )}
+                                            </span>
+                                        </td>
+                                        <td>{formatFecha(val.fechaRegistro)}</td>
+                                        <td>
+                                            <button
+                                                className="edit-button"
+                                                onClick={(e) => { e.stopPropagation(); setEmpleado(val); }}
+                                            >
+                                                <i className="fi fi-br-customize-edit icon-style-components"></i>
+                                            </button>
+                                            <button
+                                                className="delete-button"
+                                                onClick={(e) => { e.stopPropagation(); handleDeleteEmpleado(val); }}
+                                            >
+                                                <i className="fi fi-br-clear-alt icon-style-components"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
+                        <ReactPaginate
+                            previousLabel={
+                                <i className="fi fi-br-angle-double-small-left icon-style-pagination" ></i>
+                            }
+                            nextLabel={
+                                <i className="fi fi-br-angle-double-small-right icon-style-pagination"></i>
+                            }
+                            breakLabel={"..."}
+                            breakClassName={"break-me"}
+                            pageCount={pageCount}
+                            marginPagesDisplayed={2}
+                            pageRangeDisplayed={5}
+                            onPageChange={handlePageClick}
+                            containerClassName={"pagination"}
+                            subContainerClassName={"pages pagination"}
+                            activeClassName={"active"}
+                            forcePage={Math.min(currentPage, pageCount - 1)}
+                        />
+                        {selectedEmpleado && (
+                            <div className={`overlay ${isExiting ? "hidden" : "visible"}`} onClick={handleCloseModal}>
+                                <div className={`detalle-empleado-card ${isExiting ? "exiting" : ""}`} onClick={(e) => e.stopPropagation()}>
+                                    <h2>Información del Empleado</h2>
+                                    <p><strong>Documento:</strong> {selectedEmpleado.documento}</p>
+                                    <p><strong>Empleado:</strong> {selectedEmpleado.nombre}</p>
+                                    <p><strong>Cargo:</strong> {getCargoName(selectedEmpleado.idCargo)}</p>
+                                    <p><strong>Fecha de Inicio:</strong> {getContratoFechaInicio(selectedEmpleado.idContrato)}</p>
+                                    <p><strong>Fecha de Fin:</strong> {getContratoFechaFin(selectedEmpleado.idContrato)}</p>
+                                    <p><strong>Salario:</strong> {"$ " + Number(getContratoSalario(selectedEmpleado.idContrato)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                    <p><strong>Contrato:</strong> {getContratoTipo(selectedEmpleado.idContrato)}</p>
+                                    <p><strong>Estado:</strong>
+                                        <span className={selectedEmpleado.estado === "ACTIVO" ? "estado-activo" : "estado-inactivo"}>
+                                            {selectedEmpleado.estado === "ACTIVO" ? (
+                                                <i className="fi fi-br-time-check icon-style-components"></i>
+                                            ) : (
+                                                <i className="fi fi-br-time-delete icon-style-components"></i>
+                                            )}
+                                        </span>
+                                    </p>
+                                    <p><strong>Fecha de registro:</strong> {formatFecha(selectedEmpleado.fechaRegistro)}</p>
+                                    <button className="cerrar-button" onClick={handleCloseModal}>Cerrar</button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

@@ -9,7 +9,7 @@ async function validarRol(nRol) {
     });
 
     if (rolEncontrado) {
-        throw new Error("El rol ya está en registrado");
+        throw new Error("El rol ya está registrado");
     }
 }
 
@@ -55,6 +55,9 @@ export async function actualizarRol(
                 idRol: idRol,
             },
         });
+
+        await validarRol(nRol);
+
         rol.nRol = nRol;
         await rol.save();
         return new RolDTO(
