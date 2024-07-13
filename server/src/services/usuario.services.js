@@ -122,6 +122,11 @@ export async function iniciarSesion(correo, contraseña) {
       throw new Error("El correo electrónico no existe");
     }
 
+
+/*     if (contraseña != usuarioEncontrado.contraseña) {
+      throw new Error("La contraseña es incorrecta");
+    }
+ */
     const isMatch = await bcrypt.compare(
       contraseña,
       usuarioEncontrado.contraseña

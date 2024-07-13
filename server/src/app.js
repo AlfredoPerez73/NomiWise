@@ -9,6 +9,7 @@ import cargoRoutes from "./routes/cargo.routes.js";
 import usuarioRoutes from "./routes/usuario.routes.js";
 import empleadoRoutes from "./routes/empleado.routes.js";
 import contratoRoutes from "./routes/contrato.routes.js";
+import detallesRoutes from "./routes/detalleLiquidacion.routes.js";
 
 const app = express();
 
@@ -30,5 +31,6 @@ app.use("/api", permisoRoutes);
 app.use("/api", cargoRoutes);
 app.use("/api", empleadoRoutes);
 app.use("/api", contratoRoutes);
+app.use("/api", detallesRoutes);
 
 export default app;

@@ -4,73 +4,32 @@ import toast, { Toaster } from "react-hot-toast";
 import { useEmpleado } from "../context/empleadoContext";
 import { useCargo } from "../context/cargoContext";
 import { useContrato } from "../context/contratoContext";
+import { useDetalle } from "../context/detalleLiquidacionContext"
 import { format } from "date-fns";
-import RegistroEmpleadoForm from "./frmREmpleado";
+import GuardarLiquidaciones from "./frmLiquidar";
 import ReactPaginate from 'react-paginate';
 
-const RegistroEmpleados = () => {
+const RegistroLiquidaciones = () => {
     const [editar, setEditar] = useState(false);
     const [filteredEmpleados, setFilteredEmpleados] = useState([]);
+    const [filteredDetalle, setFilteredDetalle] = useState([]);
     const [filterValueCargo, setFilterValueCargo] = useState("");
     const [filterValueEstado, setFilterValueEstado] = useState("");
     const [filterValue, setFilterValue] = useState("");
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [empleadoToEdit, setEmpleadoToEdit] = useState(null);
     const [selectedEmpleado, setSelectedEmpleado] = useState(null);
+    const [selectedDetalle, setSelectedDetalle] = useState([]);
     const [isVisible, setIsVisible] = useState(false);
     const [isExiting, setIsExiting] = useState(false);
     const [currentPage, setCurrentPage] = useState(0);
-    const [perPage] = useState(10); // Cambia esto al número de elementos por página que desees
+    const [perPage] = useState(10);
 
-    const { getEmpleado, empleados, deleteEmpleado } = useEmpleado();
+    const { getEmpleado, empleados } = useEmpleado();
     const { getCargo, cargos } = useCargo();
     const { getContrato, contratos } = useContrato();
-    const sEstado = [
-        "ACTIVO", 
-        "INACTIVO"
-    ];
-
-    const handleDeleteEmpleado = (val) => {
-        toast(
-            (t) => (
-                <div style={{ textAlign: "center", fontWeight: "bold" }}>
-                    <p>¿Realmente desea eliminar a <strong>{val.nombre}</strong>?</p>
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '10px' }}>
-                        <button className="toast-button-confirmed" onClick={() => {
-                            deleteEmpleado(val.idEmpleado)
-                                .then(() => {
-                                    toast.dismiss(t.id);
-                                    toast.success(<b>El empleado {val.nombre} fue eliminado exitosamente!</b>);
-                                    getEmpleado();
-                                })
-                                .catch((error) => {
-                                    toast.error(<b>Error: {error.response.data.message}</b>);
-                                });
-                        }}>
-                            Confirmar
-                        </button>
-                        <button className="toast-button-delete" onClick={() => toast.dismiss(t.id)}>
-                            Cancelar
-                        </button>
-                    </div>
-                </div>
-            ),
-            {
-                duration: 8000,
-            }
-        );
-    };
-
-    const setEmpleado = (val) => {
-        const contrato = contratos.find(c => c.idContrato === val.idContrato) || {};
-        setEditar(true);
-        setEmpleadoToEdit({
-                ...val,
-                contrato
-            }
-        );
-        setIsFormOpen(true);
-    };
+    const { getDetalles, detalles } = useDetalle();
+    const sEstado = ["ACTIVO", "INACTIVO"];
 
     const handleFormClose = () => {
         setIsFormOpen(false);
@@ -78,52 +37,56 @@ const RegistroEmpleados = () => {
     };
 
     useEffect(() => {
+        getDetalles();
         getEmpleado();
         getCargo();
         getContrato();
     }, []);
 
     useEffect(() => {
-        setFilteredEmpleados(empleados);
-    }, [empleados]);
+        if (detalles) {
+            setFilteredDetalle(detalles);
+        }
+    }, [detalles]);
 
     useEffect(() => {
         applyFilters();
     }, [empleados, filterValueEstado]);
 
     const applyFilters = () => {
-        const filtered = empleados.filter((n) => {
-            const matchesEstado = filterValueEstado ? n.estado.toLowerCase() === filterValueEstado.toLowerCase() : true;
-
-            return (
-                matchesEstado
-            );
-        });
-        setFilteredEmpleados(filtered);
+        if (empleados) {
+            const filtered = empleados.filter((n) => {
+                const matchesEstado = filterValueEstado ? n.estado.toLowerCase() === filterValueEstado.toLowerCase() : true;
+                return matchesEstado;
+            });
+            setFilteredEmpleados(filtered);
+        }
     };
 
     const handleFilterChangeCargo = (e) => {
         const query = e.target.value.toLowerCase();
         setFilterValueCargo(e.target.value);
-        setFilteredEmpleados(
-            empleados.filter((empleado) =>
-                String(empleado.idCargo).toLowerCase().includes(query)
-            )
-        );
+        if (empleados) {
+            setFilteredEmpleados(
+                empleados.filter((empleado) => String(empleado.idCargo).toLowerCase().includes(query))
+            );
+        }
     };
 
     const handleFilterChange = (e) => {
         const query = e.target.value.toLowerCase();
         setFilterValue(query);
-        setFilteredEmpleados(
-            empleados.filter((n) =>
-                n.documento.toLowerCase().includes(query) ||
-                n.nombre.toLowerCase().includes(query) ||
-                getContratoTipo(n.idContrato).toLowerCase().includes(query) ||
-                getCargoName(n.idCargo).toLowerCase().includes(query) ||
-                getContratoSalario(n.idContrato).toLowerCase().includes(query)
-            )
-        );
+        if (empleados) {
+            setFilteredEmpleados(
+                empleados.filter((n) =>
+                    n.documento.toLowerCase().includes(query) ||
+                    n.nombre.toLowerCase().includes(query) ||
+                    getContratoTipo(n.idContrato).toLowerCase().includes(query) ||
+                    getCargoName(n.idCargo).toLowerCase().includes(query) ||
+                    getContratoSalario(n.idContrato).toLowerCase().includes(query)
+                )
+            );
+        }
     };
 
     const handleFilterChangeEstado = (e) => {
@@ -132,6 +95,10 @@ const RegistroEmpleados = () => {
 
     const formatFecha = (fecha) => {
         return format(new Date(fecha), "dd/MM/yyyy");
+    };
+
+    const getEmpleadoInfo = (idEmpleado, empleados) => {
+        return empleados.find((empleado) => empleado.idEmpleado === idEmpleado) || {};
     };
 
     const getCargoName = (idCargo) => {
@@ -161,6 +128,8 @@ const RegistroEmpleados = () => {
 
     const handleRowClick = (empleado) => {
         setSelectedEmpleado(empleado);
+        const detallesEmpleado = detalles ? detalles.filter((detalle) => detalle.idEmpleado === empleado.idEmpleado) : [];
+        setSelectedDetalle(detallesEmpleado);
         setIsVisible(true);
     };
 
@@ -170,6 +139,7 @@ const RegistroEmpleados = () => {
             setIsVisible(false);
             setIsExiting(false);
             setSelectedEmpleado(null);
+            setSelectedDetalle([]);
         }, 500);
     };
 
@@ -178,22 +148,22 @@ const RegistroEmpleados = () => {
     };
 
     const offset = currentPage * perPage;
-    const currentEmpleados = filteredEmpleados.slice(offset, offset + perPage);
-    const pageCount = Math.max(Math.ceil(filteredEmpleados.length / perPage), 1);
+    const currentDetalles = filteredDetalle ? filteredDetalle.slice(offset, offset + perPage) : [];
+    const pageCount = filteredDetalle ? Math.max(Math.ceil(filteredDetalle.length / perPage), 1) : 1;
 
     return (
         <div className="w-full h-full">
             <Toaster />
             {isFormOpen ? (
-                <RegistroEmpleadoForm onClose={handleFormClose} empleadoToEdit={empleadoToEdit} cargos={cargos} isReadOnly={false} />
+                <GuardarLiquidaciones onClose={handleFormClose} empleadoToEdit={empleadoToEdit} cargos={cargos} />
             ) : (
                 <div className="form-comp">
                     <div className="header-comp">
-                        <h1 className="title-comp">Registro de Empleados</h1>
+                        <h1 className="title-comp">Registro de Liquidaciones</h1>
                     </div>
-                    <button type="button" className="open-modal-button" onClick={() => setIsFormOpen(true)}>Registrar</button>
+                    <button type="button" className="open-modal-button" onClick={() => setIsFormOpen(true)}>Liquidacion</button>
                     <div className="table-card-empleados">
-                        <h1 className="sub-titles-copm">Empleados Registrados</h1>
+                        <h1 className="sub-titles-copm">Liquidaciones Registradas</h1>
                         <div className="search-bar">
                             <input
                                 type="text"
@@ -241,41 +211,35 @@ const RegistroEmpleados = () => {
                                     <th>Documento</th>
                                     <th>Empleado</th>
                                     <th>Estado</th>
-                                    <th>Fecha de registro</th>
-                                    <th>Acciones</th>
+                                    <th>Cargo</th>
+                                    <th>Contrato</th>
+                                    <th>Fecha de Fin</th>
+                                    <th>Fecha de Registro</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {currentEmpleados.map((val, key) => (
-                                    <tr key={val.idEmpleado} onClick={() => handleRowClick(val)}>
-                                        <td>{val.documento}</td>
-                                        <td>{val.nombre}</td>
-                                        <td>
-                                            <span className={val.estado === "ACTIVO" ? "estado-activo" : "estado-inactivo"}>
-                                                {val.estado === "ACTIVO" ? (
-                                                    <i className="fi fi-br-time-check icon-style-components"></i>
-                                                ) : (
-                                                    <i className="fi fi-br-time-delete icon-style-components"></i>
-                                                )}
-                                            </span>
-                                        </td>
-                                        <td>{formatFecha(val.fechaRegistro)}</td>
-                                        <td>
-                                            <button
-                                                className="edit-button"
-                                                onClick={(e) => { e.stopPropagation(); setEmpleado(val); }}
-                                            >
-                                                <i className="fi fi-br-customize-edit icon-style-components"></i>
-                                            </button>
-                                            <button
-                                                className="delete-button"
-                                                onClick={(e) => { e.stopPropagation(); handleDeleteEmpleado(val); }}
-                                            >
-                                                <i className="fi fi-br-clear-alt icon-style-components"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
+                                {currentDetalles.map((val, key) => {
+                                    const empleadoInfo = getEmpleadoInfo(val.idEmpleado, empleados);
+                                    return (
+                                        <tr key={val.idDetalleLiquidacion} onClick={() => handleRowClick(empleadoInfo)}>
+                                            <td>{empleadoInfo?.documento || "Desconocido"}</td>
+                                            <td>{empleadoInfo?.nombre || "Desconocido"}</td>
+                                            <td>
+                                                <span className={empleadoInfo?.estado === "ACTIVO" ? "estado-activo" : "estado-inactivo"}>
+                                                    {empleadoInfo?.estado === "ACTIVO" ? (
+                                                        <i className="fi fi-br-time-check icon-style-components"></i>
+                                                    ) : (
+                                                        <i className="fi fi-br-time-delete icon-style-components"></i>
+                                                    )}
+                                                </span>
+                                            </td>
+                                            <td>{getCargoName(empleadoInfo?.idCargo)}</td>
+                                            <td>{getContratoTipo(empleadoInfo?.idContrato)}</td>
+                                            <td>{getContratoFechaFin(empleadoInfo?.idContrato)}</td>
+                                            <td>{formatFecha(val.fechaRegistro)}</td>
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
                         </table>
                         <ReactPaginate
@@ -296,9 +260,9 @@ const RegistroEmpleados = () => {
                             activeClassName={"active"}
                             forcePage={Math.min(currentPage, pageCount - 1)}
                         />
-                        {selectedEmpleado && (
+                        {selectedDetalle.length > 0 && (
                             <div className={`overlay ${isExiting ? "hidden" : "visible"}`} onClick={handleCloseModal}>
-                                <div className={`detalle-empleado-card ${isExiting ? "exiting" : ""}`} onClick={(e) => e.stopPropagation()}>
+                                <div className={`detalle-liquidacion-card ${isExiting ? "exiting" : ""}`} onClick={(e) => e.stopPropagation()}>
                                     <h2>Información del Empleado</h2>
                                     <p><strong>Documento:</strong> {selectedEmpleado.documento}</p>
                                     <p><strong>Empleado:</strong> {selectedEmpleado.nombre}</p>
@@ -306,6 +270,24 @@ const RegistroEmpleados = () => {
                                     <p><strong>Fecha de Inicio:</strong> {getContratoFechaInicio(selectedEmpleado.idContrato)}</p>
                                     <p><strong>Fecha de Fin:</strong> {getContratoFechaFin(selectedEmpleado.idContrato)}</p>
                                     <p><strong>Salario:</strong> {"$ " + Number(getContratoSalario(selectedEmpleado.idContrato)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                    {selectedDetalle.map((detalle, index) => (
+                                        <div key={index}>
+                                            <p><strong>Año:</strong> {detalle.año}</p>
+                                            <p><strong>Mes:</strong> {detalle.mes}</p>
+                                            <p><strong>Dias Trabajados:</strong> {detalle.diasTrabajados}</p>
+                                            <p><strong>Horas Extras:</strong> {detalle.horasExtras}</p>
+                                            <p><strong>Salud:</strong> {"$ " + Number(detalle.salud).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                            <p><strong>Pension:</strong> {"$ " + Number(detalle.pension).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                            <p><strong>Aux. Transporte:</strong> {"$ " + Number(detalle.auxTransporte).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                            <p><strong>Bon. de servicios:</strong> {"$ " + Number(detalle.bonificacionServicio).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                            <p><strong>Aux. Alimentacion:</strong> {"$ " + Number(detalle.auxAlimentacion).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                            <p><strong>Prima de Navidad:</strong> {"$ " + Number(detalle.primaNavidad).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                            <p><strong>Vacaciones:</strong> {"$ " + Number(detalle.vacaciones).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                            <p><strong>Cesantias:</strong> {"$ " + Number(detalle.cesantias).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                            <p><strong>Int. Cesantias:</strong> {"$ " + Number(detalle.interesesCesantias).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                            <p><strong>Devengado:</strong> {"$ " + Number(detalle.devengado).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                        </div>
+                                    ))}
                                     <p><strong>Contrato:</strong> {getContratoTipo(selectedEmpleado.idContrato)}</p>
                                     <p><strong>Estado:</strong>
                                         <span className={selectedEmpleado.estado === "ACTIVO" ? "estado-activo" : "estado-inactivo"}>
@@ -328,4 +310,4 @@ const RegistroEmpleados = () => {
     );
 };
 
-export default RegistroEmpleados;
+export default RegistroLiquidaciones;

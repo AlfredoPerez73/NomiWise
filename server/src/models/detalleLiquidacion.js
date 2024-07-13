@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../database/database.js";
-import { Liquidacion } from "../models/liquidacion.js";
 
 export const DetalleLiquidacion = sequelize.define(
     "detalleLiquidaciones",
@@ -9,6 +8,12 @@ export const DetalleLiquidacion = sequelize.define(
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
+        },
+        año: {
+            type: DataTypes.INTEGER,
+        },
+        mes: {
+            type: DataTypes.INTEGER,
         },
         diasTrabajados: {
             type: DataTypes.INTEGER,
@@ -55,21 +60,9 @@ export const DetalleLiquidacion = sequelize.define(
         },
         idLiquidacion: {
             type: DataTypes.INTEGER,
-            unique: true
         },
         idUsuario: {
             type: DataTypes.INTEGER,
         },
     },
 );
-
-
-DetalleLiquidacion.hasMany(Liquidacion, {
-    foreignKey: "idLiquidacion",
-    sourceKey: "idLiquidacion",
-});
-
-Liquidacion.belongsTo(DetalleLiquidacion, {
-    foreignKey: "idLiquidacion",
-    targetKey: "idLiquidacion",
-});

@@ -146,17 +146,6 @@ const Dashboard = () => {
                     </Link>
                   </li>
                 )}
-                {hasPermission('Contratos') && (
-                  <li className="nav-item">
-                    <Link to="/menu/contratos"
-                         className={activeContent === "contratos" ? "nav-link active" : "nav-link collapsed"}
-                         onClick={() => setActiveContent("contratos")}
-                    >
-                      <i className="fi fi-br-clipboard-user icon-style"></i>
-                      <span>Contratos</span>
-                    </Link>
-                  </li>
-                )}
                 {hasPermission('Cargos') && (
                   <li className="nav-item">
                     <Link to="/menu/cargos"
@@ -187,17 +176,6 @@ const Dashboard = () => {
                 ))}
               </div>
               <ul className={`submenu ${configOpen2 ? "open" : ""}`}>
-                {hasPermission('Reportes') && (
-                  <li className="nav-item">
-                    <Link to="/menu/reportes"
-                         className={activeContent === "reportes" ? "nav-link active" : "nav-link collapsed"}
-                         onClick={() => setActiveContent("reportes")}
-                    >
-                      <i className="fi fi-br-file-medical-alt icon-style"></i>
-                      <span>Reportes</span>
-                    </Link>
-                  </li>
-                )}
                 {hasPermission('Liquidaciones') && (
                   <li className="nav-item">
                     <Link to="/menu/liquidaciones"

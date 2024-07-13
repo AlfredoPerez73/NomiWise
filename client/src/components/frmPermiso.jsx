@@ -41,12 +41,10 @@ const RegistroPermisos = () => {
         "Empleados",
         "Liquidaciones",
         "Nomina",
-        "Contratos",
         "Cargos",
         "Usuarios",
         "Roles",
         "Permisos",
-        "Reportes"
     ];
 
     const handleCreatePermiso = async (e) => {

@@ -6,15 +6,17 @@ import { useCargo } from "../context/cargoContext";
 import { useContrato } from "../context/contratoContext";
 import { format } from "date-fns";
 import RegistroEmpleadoForm from "./frmREmpleado";
+import LiquidarEmpleadoForm from "./frmRLiquidacion";
 import ReactPaginate from 'react-paginate';
 
-const RegistroEmpleados = () => {
+const GuardarLiquidaciones = ({ onClose }) => {
     const [editar, setEditar] = useState(false);
     const [filteredEmpleados, setFilteredEmpleados] = useState([]);
     const [filterValueCargo, setFilterValueCargo] = useState("");
     const [filterValueEstado, setFilterValueEstado] = useState("");
     const [filterValue, setFilterValue] = useState("");
     const [isFormOpen, setIsFormOpen] = useState(false);
+    const [isLiquidarFormOpen, setIsLiquidarFormOpen] = useState(false);
     const [empleadoToEdit, setEmpleadoToEdit] = useState(null);
     const [selectedEmpleado, setSelectedEmpleado] = useState(null);
     const [isVisible, setIsVisible] = useState(false);
@@ -61,7 +63,7 @@ const RegistroEmpleados = () => {
         );
     };
 
-    const setEmpleado = (val) => {
+    const setEmpleado = (val, showExtra = false) => {
         const contrato = contratos.find(c => c.idContrato === val.idContrato) || {};
         setEditar(true);
         setEmpleadoToEdit({
@@ -70,6 +72,7 @@ const RegistroEmpleados = () => {
             }
         );
         setIsFormOpen(true);
+        setIsLiquidarFormOpen(showExtra);
     };
 
     const handleFormClose = () => {
@@ -185,13 +188,17 @@ const RegistroEmpleados = () => {
         <div className="w-full h-full">
             <Toaster />
             {isFormOpen ? (
-                <RegistroEmpleadoForm onClose={handleFormClose} empleadoToEdit={empleadoToEdit} cargos={cargos} isReadOnly={false} />
+                isLiquidarFormOpen ? (
+                    <LiquidarEmpleadoForm onClose={handleFormClose} empleadoToEdit={empleadoToEdit} cargos={cargos} />
+                ) : (
+                    <RegistroEmpleadoForm onClose={handleFormClose} empleadoToEdit={empleadoToEdit} cargos={cargos} isReadOnly={false} />
+                )
             ) : (
                 <div className="form-comp">
                     <div className="header-comp">
                         <h1 className="title-comp">Registro de Empleados</h1>
                     </div>
-                    <button type="button" className="open-modal-button" onClick={() => setIsFormOpen(true)}>Registrar</button>
+                    <button type="button" className="open-modal-button" onClick={onClose}>Cerrar</button>
                     <div className="table-card-empleados">
                         <h1 className="sub-titles-copm">Empleados Registrados</h1>
                         <div className="search-bar">
@@ -241,9 +248,12 @@ const RegistroEmpleados = () => {
                                     <th>Documento</th>
                                     <th>Empleado</th>
                                     <th>Estado</th>
+                                    <th>Cargo</th>
+                                    <th>Contato</th>
+                                    <th>Fecha de Fin</th>
                                     <th>Fecha de registro</th>
                                     <th>Acciones</th>
-                                </tr>
+                                    </tr>
                             </thead>
                             <tbody>
                                 {currentEmpleados.map((val, key) => (
@@ -259,11 +269,14 @@ const RegistroEmpleados = () => {
                                                 )}
                                             </span>
                                         </td>
+                                        <td>{getCargoName(val.idCargo)}</td>
+                                        <td>{getContratoTipo(val.idContrato)}</td>
+                                        <td>{getContratoFechaFin(val.idContrato)}</td>
                                         <td>{formatFecha(val.fechaRegistro)}</td>
                                         <td>
                                             <button
                                                 className="edit-button"
-                                                onClick={(e) => { e.stopPropagation(); setEmpleado(val); }}
+                                                onClick={(e) => { e.stopPropagation(); setEmpleado(val, false); }}
                                             >
                                                 <i className="fi fi-br-customize-edit icon-style-components"></i>
                                             </button>
@@ -272,6 +285,12 @@ const RegistroEmpleados = () => {
                                                 onClick={(e) => { e.stopPropagation(); handleDeleteEmpleado(val); }}
                                             >
                                                 <i className="fi fi-br-clear-alt icon-style-components"></i>
+                                            </button>
+                                            <button
+                                                className="liquidar-button"
+                                                onClick={(e) => { e.stopPropagation(); setEmpleado(val, true); }}
+                                            >
+                                                <i className="fi fi-br-usd-circle icon-style-components"></i>
                                             </button>
                                         </td>
                                     </tr>
@@ -328,4 +347,4 @@ const RegistroEmpleados = () => {
     );
 };
 
-export default RegistroEmpleados;
+export default GuardarLiquidaciones;

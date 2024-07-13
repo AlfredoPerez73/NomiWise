@@ -5,7 +5,7 @@ import { useContrato } from "../context/contratoContext";
 import { Toaster, toast } from "react-hot-toast";
 import { format } from "date-fns";
 
-const RegistroEmpleadoForm = ({ onClose, empleadoToEdit, cargos }) => {
+const RegistroEmpleadoForm = ({ onClose, empleadoToEdit, cargos, isReadOnly }) => {
     const [formData, setFormData] = useState({
         documento: "",
         nombre: "",
@@ -120,6 +120,7 @@ const RegistroEmpleadoForm = ({ onClose, empleadoToEdit, cargos }) => {
                                     required
                                     placeholder=" "
                                     autoComplete="off"
+                                    disabled={isReadOnly}
                                 />
                                 <label htmlFor="documento">Documento</label>
                             </div>
@@ -133,6 +134,7 @@ const RegistroEmpleadoForm = ({ onClose, empleadoToEdit, cargos }) => {
                                     required
                                     placeholder=" "
                                     autoComplete="off"
+                                    disabled={isReadOnly}
                                 />
                                 <label htmlFor="nombre">Nombre</label>
                             </div>
@@ -143,6 +145,7 @@ const RegistroEmpleadoForm = ({ onClose, empleadoToEdit, cargos }) => {
                                     onChange={handleChange}
                                     required
                                     placeholder=" "
+                                    disabled={isReadOnly}
                                 >
                                     <option value="">Seleccionar Cargo</option>
                                     {cargos.map((c) => (
@@ -161,6 +164,7 @@ const RegistroEmpleadoForm = ({ onClose, empleadoToEdit, cargos }) => {
                                     required
                                     placeholder=" "
                                     autoComplete="off"
+                                    disabled={isReadOnly}
                                 />
                                 
                                 <input
@@ -172,6 +176,7 @@ const RegistroEmpleadoForm = ({ onClose, empleadoToEdit, cargos }) => {
                                     required
                                     placeholder=" "
                                     autoComplete="off"
+                                    disabled={isReadOnly}
                                 />
                                 
                                 <div className="input-container">
@@ -184,6 +189,7 @@ const RegistroEmpleadoForm = ({ onClose, empleadoToEdit, cargos }) => {
                                     required
                                     placeholder=" "
                                     autoComplete="off"
+                                    disabled={isReadOnly}
                                 />
                                 <label htmlFor="salario">Salario</label>
                             </div>
@@ -194,6 +200,7 @@ const RegistroEmpleadoForm = ({ onClose, empleadoToEdit, cargos }) => {
                                     onChange={handleChange}
                                     required
                                     placeholder=" "
+                                    disabled={isReadOnly}
                                 >
                                 <option value="">
                                     Seleccionar Contrato

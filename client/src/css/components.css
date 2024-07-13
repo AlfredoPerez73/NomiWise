@@ -302,12 +302,29 @@ h6 {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.liquidar-button {
+  align-items: center;
+  background-color: #e68046;
+  color: #fff;
+  padding: 0.2rem 0.6rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-right: 0.3rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 .edit-button:hover {
   background-color: var(--azul2);
 }
 
 .delete-button:hover {
   background-color: var(--rojo2);
+}
+
+.liquidar-button:hover {
+  background-color: #d6763e;
 }
 
 /*CSS TABLAS*/
@@ -851,6 +868,130 @@ h6 {
 }
 
 .detalle-card-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: -40px;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.overlay.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.detalle-liquidacion-card {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  background-color: rgba(31, 30, 68, 0.61);
+  backdrop-filter: blur(10px);
+  /* Efecto de desenfoque */
+  padding: 20px;
+  border-radius: 20px;
+  width: 80%;
+  height: 80%;
+  max-width: 450px;
+  max-height: 800px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  opacity: 0;
+  animation: enterAnimation 0.5s ease forwards;
+  font-family: "Poppins", sans-serif;
+}
+
+@keyframes enterAnimation {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes exitAnimation {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  to {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0;
+  }
+}
+
+.detalle-liquidacion-card.exiting {
+  animation: exitAnimation 0.5s ease forwards;
+}
+
+.detalle-liquidacion-card h2 {
+  text-align: center;
+  font-size: 25px;
+  margin-bottom: 3rem;
+  border-bottom: 2px solid var(--text-color);
+  padding-bottom: 0.5rem;
+}
+
+.detalle-liquidacion-card p,
+.detalle-liquidacion-card li {
+  margin: 0.8rem 70px;
+  margin-left: 95px;
+}
+
+.detalle-liquidacion-card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.detalle-liquidacion-card li {
+  border-bottom: 1px solid var(--text-color);
+  padding: 0.5rem 0;
+}
+
+.detalle-liquidacion-card strong {
+  display: inline-block;
+  width: 100px;
+}
+
+.detalle-liquidacion-card button {
+  display: block;
+  margin: 1rem auto 0;
+  margin-top: 30px;
+  padding: 0.5rem 1rem;
+  background-color: var(--rojo1);
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.detalle-liquidacion-card button:hover {
+  background-color: var(--rojo2);
+}
+
+.detalle-card-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: -40px;
+}
+
+.detalle-liquidacion-container {
   display: flex;
   justify-content: space-between;
   margin-top: -40px;
