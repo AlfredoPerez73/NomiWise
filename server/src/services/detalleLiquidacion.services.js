@@ -108,6 +108,18 @@ export async function createDetalleLiquidacion(detalle, idUsuario) {
     const año = now.getFullYear();
 
     try {
+        const detalleExistente = await DetalleLiquidacion.findOne({
+            where: {
+                idEmpleado: detalle.idEmpleado,
+                mes: mes,
+                año: año
+            }
+        });
+
+        if (detalleExistente) {
+            throw new Error(`El empleado con el codigo ${detalle.idEmpleado} ya ha sido liquidado en el mes ${mes} del año ${año}`);
+        }
+
         let liquidacionExistente = await Liquidacion.findOne({
             where: {
                 mes: mes,
@@ -155,7 +167,6 @@ export async function createDetalleLiquidacion(detalle, idUsuario) {
 
         await newDetalleLiquidacion.save({ transaction: t });
 
-        // Actualizar los totales de la liquidación después de insertar el nuevo detalle
         await actualizarTotalesLiquidacion(año, mes);
 
         await t.commit();
@@ -181,43 +192,42 @@ export async function createDetalleLiquidacion(detalle, idUsuario) {
         );
     } catch (error) {
         await t.rollback();
-        console.error("Error en la transacción:", error.message);
-        throw new Error(`Error creating DetalleLiquidacion: ${error.message}`);
+        throw new Error(`Error creando DetalleLiquidacion: ${error.message}`);
     }
 };
 
 export async function obtenerDetalles(idUsuario) {
     try {
-      const detalles = await DetalleLiquidacion.findAll({
-        where: {
-          idUsuario: idUsuario
-        }
-      });
-      return detalles.map(
-        (detalle) =>
-          new DetalleLiquidacionDTO(
-            detalle.idDetalleLiquidacion,
-            detalle.idLiquidacion,
-            detalle.idEmpleado,
-            detalle.idUsuario,
-            detalle.año,
-            detalle.mes,
-            detalle.diasTrabajados,
-            detalle.horasExtras,
-            detalle.salud,
-            detalle.pension,
-            detalle.auxTransporte,
-            detalle.bonificacionServicio,
-            detalle.auxAlimentacion,
-            detalle.primaNavidad,
-            detalle.vacaciones,
-            detalle.cesantias,
-            detalle.interesesCesantias,
-            detalle.devengado,
-            detalle.fechaRegistro,
-          )
-      );
+        const detalles = await DetalleLiquidacion.findAll({
+            where: {
+                idUsuario: idUsuario
+            }
+        });
+        return detalles.map(
+            (detalle) =>
+                new DetalleLiquidacionDTO(
+                    detalle.idDetalleLiquidacion,
+                    detalle.idLiquidacion,
+                    detalle.idEmpleado,
+                    detalle.idUsuario,
+                    detalle.año,
+                    detalle.mes,
+                    detalle.diasTrabajados,
+                    detalle.horasExtras,
+                    detalle.salud,
+                    detalle.pension,
+                    detalle.auxTransporte,
+                    detalle.bonificacionServicio,
+                    detalle.auxAlimentacion,
+                    detalle.primaNavidad,
+                    detalle.vacaciones,
+                    detalle.cesantias,
+                    detalle.interesesCesantias,
+                    detalle.devengado,
+                    detalle.fechaRegistro,
+                )
+        );
     } catch (error) {
-      throw new Error(error.message);
+        throw new Error(error.message);
     }
-  }
+}

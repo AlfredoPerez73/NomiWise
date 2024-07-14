@@ -5,16 +5,19 @@ import { useEmpleado } from "../context/empleadoContext";
 import { useCargo } from "../context/cargoContext";
 import { useContrato } from "../context/contratoContext";
 import { useDetalle } from "../context/detalleLiquidacionContext"
-import { format } from "date-fns";
+import { format, startOfDay, endOfDay } from "date-fns";
 import GuardarLiquidaciones from "./frmLiquidar";
 import ReactPaginate from 'react-paginate';
 
 const RegistroLiquidaciones = () => {
-    const [editar, setEditar] = useState(false);
-    const [filteredEmpleados, setFilteredEmpleados] = useState([]);
     const [filteredDetalle, setFilteredDetalle] = useState([]);
     const [filterValueCargo, setFilterValueCargo] = useState("");
+    const [filterValueContrato, setFilterValueContrato] = useState("");
     const [filterValueEstado, setFilterValueEstado] = useState("");
+    const [filterValueAño, setFilterValueAño] = useState("");
+    const [filterValueMes, setFilterValueMes] = useState("");
+    const [fechaInicio, setFechaInicio] = useState(null);
+    const [fechaFin, setFechaFin] = useState(null);
     const [filterValue, setFilterValue] = useState("");
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [empleadoToEdit, setEmpleadoToEdit] = useState(null);
@@ -30,6 +33,15 @@ const RegistroLiquidaciones = () => {
     const { getContrato, contratos } = useContrato();
     const { getDetalles, detalles } = useDetalle();
     const sEstado = ["ACTIVO", "INACTIVO"];
+
+    const uniqueYears = [...new Set(detalles.map(detalle => detalle.año))].sort();
+    const uniqueMonths = [...new Set(detalles.map(detalle => detalle.mes))].sort((a, b) => a - b);
+
+    const tcontratos = [
+        "TERMINO INDEFINIDO",
+        "TERMINO FIJO",
+        "PERSTACION DE SERVICIOS"
+    ];
 
     const handleFormClose = () => {
         setIsFormOpen(false);
@@ -50,42 +62,94 @@ const RegistroLiquidaciones = () => {
     }, [detalles]);
 
     useEffect(() => {
+        setFilteredDetalle(
+            detalles.filter((detalle) => {
+                const fecha = new Date(detalle.fechaRegistro);
+                const isWithinDateRange =
+                    (!fechaInicio || fecha >= startOfDay(fechaInicio)) &&
+                    (!fechaFin || fecha <= endOfDay(fechaFin));
+                return isWithinDateRange;
+            })
+        );
+    }, [detalles, filterValue, fechaInicio, fechaFin]);
+
+
+    const getEmpleadoInfo = (idEmpleado, empleados) => {
+        return empleados.find((empleado) => empleado.idEmpleado === idEmpleado) || {};
+    };
+
+    const getContratoInfo = (idContrato) => {
+        const contrato = contratos.find((c) => c.idContrato === idContrato) || {};
+        return {
+            tipoContrato: contrato.tipoContrato || "Desconocido",
+            fechaInicio: contrato.fechaInicio ? format(new Date(contrato.fechaInicio), "dd/MM/yyyy") : "Desconocida",
+            fechaFin: contrato.fechaFin ? format(new Date(contrato.fechaFin), "dd/MM/yyyy") : "Desconocida",
+            salario: contrato.salario || "Desconocido",
+        };
+    };
+
+    useEffect(() => {
         applyFilters();
-    }, [empleados, filterValueEstado]);
+    }, [detalles, filterValueEstado, filterValueAño, filterValueMes]);
 
     const applyFilters = () => {
-        if (empleados) {
-            const filtered = empleados.filter((n) => {
-                const matchesEstado = filterValueEstado ? n.estado.toLowerCase() === filterValueEstado.toLowerCase() : true;
-                return matchesEstado;
+        if (detalles) {
+            const filtered = detalles.filter((n) => {
+                const empleadoInfo = getEmpleadoInfo(n.idEmpleado, empleados);
+                const matchesEstado = filterValueEstado ? empleadoInfo.estado.toLowerCase() === filterValueEstado.toLowerCase() : true;
+                const matchesAño = filterValueAño ? String(n.año).includes(filterValueAño) : true;
+                const matchesMes = filterValueMes ? String(n.mes).includes(filterValueMes) : true;
+                return matchesEstado && matchesAño && matchesMes;
             });
-            setFilteredEmpleados(filtered);
+            setFilteredDetalle(filtered);
         }
     };
 
     const handleFilterChangeCargo = (e) => {
         const query = e.target.value.toLowerCase();
         setFilterValueCargo(e.target.value);
-        if (empleados) {
-            setFilteredEmpleados(
-                empleados.filter((empleado) => String(empleado.idCargo).toLowerCase().includes(query))
-            );
+        if (detalles) {
+            const filtered = detalles.filter((detalle) => {
+                const empleado = getEmpleadoInfo(detalle.idEmpleado, empleados);
+                return String(empleado.idCargo).toLowerCase().includes(query);
+            });
+            setFilteredDetalle(filtered);
         }
+    };
+
+    const handleFilterChangeContrato = (e) => {
+        const query = e.target.value.toLowerCase();
+        setFilterValueContrato(e.target.value);
+        if (detalles) {
+            const filtered = detalles.filter((detalle) => {
+                const empleado = getEmpleadoInfo(detalle.idEmpleado, empleados);
+                return getContratoInfo(empleado.idContrato).tipoContrato.toLowerCase().includes(query);
+            });
+            setFilteredDetalle(filtered);
+        }
+    };
+
+    const handleFilterChangeAño = (e) => {
+        setFilterValueAño(e.target.value);
+    };
+
+    const handleFilterChangeMes = (e) => {
+        setFilterValueMes(e.target.value);
     };
 
     const handleFilterChange = (e) => {
         const query = e.target.value.toLowerCase();
-        setFilterValue(query);
-        if (empleados) {
-            setFilteredEmpleados(
-                empleados.filter((n) =>
-                    n.documento.toLowerCase().includes(query) ||
-                    n.nombre.toLowerCase().includes(query) ||
-                    getContratoTipo(n.idContrato).toLowerCase().includes(query) ||
-                    getCargoName(n.idCargo).toLowerCase().includes(query) ||
-                    getContratoSalario(n.idContrato).toLowerCase().includes(query)
-                )
-            );
+        setFilterValue(e.target.value);
+        if (detalles) {
+            const filtered = detalles.filter((detalle) => {
+                const empleado = getEmpleadoInfo(detalle.idEmpleado, empleados);
+                return empleado.documento.toLowerCase().includes(query) ||
+                    empleado.nombre.toLowerCase().includes(query) ||
+                    getContratoInfo(empleado.idContrato).tipoContrato.toLowerCase().includes(query) ||
+                    getCargoName(empleado.idCargo).toLowerCase().includes(query) ||
+                    getContratoInfo(empleado.idContrato).salario.toLowerCase().includes(query)
+            });
+            setFilteredDetalle(filtered);
         }
     };
 
@@ -97,33 +161,9 @@ const RegistroLiquidaciones = () => {
         return format(new Date(fecha), "dd/MM/yyyy");
     };
 
-    const getEmpleadoInfo = (idEmpleado, empleados) => {
-        return empleados.find((empleado) => empleado.idEmpleado === idEmpleado) || {};
-    };
-
     const getCargoName = (idCargo) => {
         const cargo = cargos.find((c) => c.idCargo === idCargo);
         return cargo ? cargo.nCargo : "Desconocido";
-    };
-
-    const getContratoFechaInicio = (idContrato) => {
-        const contrato = contratos.find((c) => c.idContrato === idContrato);
-        return contrato ? format(new Date(contrato.fechaInicio), "dd/MM/yyyy") : "Desconocida";
-    };
-
-    const getContratoFechaFin = (idContrato) => {
-        const contrato = contratos.find((c) => c.idContrato === idContrato);
-        return contrato ? format(new Date(contrato.fechaFin), "dd/MM/yyyy") : "Desconocida";
-    };
-
-    const getContratoSalario = (idContrato) => {
-        const contrato = contratos.find((c) => c.idContrato === idContrato);
-        return contrato ? contrato.salario : "Desconocido";
-    };
-
-    const getContratoTipo = (idContrato) => {
-        const contrato = contratos.find((c) => c.idContrato === idContrato);
-        return contrato ? contrato.tipoContrato : "Desconocido";
     };
 
     const handleRowClick = (empleado) => {
@@ -160,6 +200,58 @@ const RegistroLiquidaciones = () => {
                 <div className="form-comp">
                     <div className="header-comp">
                         <h1 className="title-comp">Registro de Liquidaciones</h1>
+                        <div className="search-bar-2">
+                            <input
+                                type="date"
+                                id="fecha-inicio"
+                                name="fecha-inicio"
+                                placeholder="Fecha inicio"
+                                autoComplete="off"
+                                onChange={(e) =>
+                                    setFechaInicio(e.target.value ? startOfDay(new Date(e.target.value)) : null)
+                                }
+                            />
+                            <input
+                                type="date"
+                                id="fecha-fin"
+                                name="fecha-fin"
+                                placeholder="Fecha fin"
+                                autoComplete="off"
+                                onChange={(e) =>
+                                    setFechaFin(e.target.value ? endOfDay(new Date(e.target.value)) : null)
+                                }
+                            />
+                            <select
+                                id="año-filter"
+                                name="año-filter"
+                                value={filterValueAño}
+                                onChange={handleFilterChangeAño}
+                            >
+                                <option value="">
+                                    Seleccionar el Año
+                                </option>
+                                {uniqueYears.map((año, index) => (
+                                    <option key={index} value={año}>
+                                        {año}
+                                    </option>
+                                ))}
+                            </select>
+                            <select
+                                id="mes-filter"
+                                name="mes-filter"
+                                value={filterValueMes}
+                                onChange={handleFilterChangeMes}
+                            >
+                                <option value="">
+                                    Seleccionar el Mes
+                                </option>
+                                {uniqueMonths.map((mes, index) => (
+                                    <option key={index} value={mes}>
+                                        {mes}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
                     <button type="button" className="open-modal-button" onClick={() => setIsFormOpen(true)}>Liquidacion</button>
                     <div className="table-card-empleados">
@@ -186,6 +278,21 @@ const RegistroLiquidaciones = () => {
                                 {cargos.map((cargo) => (
                                     <option key={cargo.idCargo} value={cargo.idCargo}>
                                         {cargo.nCargo}
+                                    </option>
+                                ))}
+                            </select>
+                            <select
+                                id="contrato-filter"
+                                name="contrato-filter"
+                                value={filterValueContrato}
+                                onChange={handleFilterChangeContrato}
+                            >
+                                <option value="">
+                                    Seleccionar Contrato
+                                </option>
+                                {tcontratos.map((modulo, index) => (
+                                    <option key={index} value={modulo}>
+                                        {modulo}
                                     </option>
                                 ))}
                             </select>
@@ -234,8 +341,8 @@ const RegistroLiquidaciones = () => {
                                                 </span>
                                             </td>
                                             <td>{getCargoName(empleadoInfo?.idCargo)}</td>
-                                            <td>{getContratoTipo(empleadoInfo?.idContrato)}</td>
-                                            <td>{getContratoFechaFin(empleadoInfo?.idContrato)}</td>
+                                            <td>{getContratoInfo(empleadoInfo?.idContrato).tipoContrato}</td>
+                                            <td>{getContratoInfo(empleadoInfo?.idContrato).fechaFin}</td>
                                             <td>{formatFecha(val.fechaRegistro)}</td>
                                         </tr>
                                     );
@@ -267,9 +374,9 @@ const RegistroLiquidaciones = () => {
                                     <p><strong>Documento:</strong> {selectedEmpleado.documento}</p>
                                     <p><strong>Empleado:</strong> {selectedEmpleado.nombre}</p>
                                     <p><strong>Cargo:</strong> {getCargoName(selectedEmpleado.idCargo)}</p>
-                                    <p><strong>Fecha de Inicio:</strong> {getContratoFechaInicio(selectedEmpleado.idContrato)}</p>
-                                    <p><strong>Fecha de Fin:</strong> {getContratoFechaFin(selectedEmpleado.idContrato)}</p>
-                                    <p><strong>Salario:</strong> {"$ " + Number(getContratoSalario(selectedEmpleado.idContrato)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                    <p><strong>Fecha de Inicio:</strong> {getContratoInfo(selectedEmpleado.idContrato).fechaInicio}</p>
+                                    <p><strong>Fecha de Fin:</strong> {getContratoInfo(selectedEmpleado.idContrato).fechaInicio}</p>
+                                    <p><strong>Salario:</strong> {"$ " + Number(getContratoInfo(selectedEmpleado.idContrato).salario).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
                                     {selectedDetalle.map((detalle, index) => (
                                         <div key={index}>
                                             <p><strong>Año:</strong> {detalle.año}</p>
@@ -286,9 +393,10 @@ const RegistroLiquidaciones = () => {
                                             <p><strong>Cesantias:</strong> {"$ " + Number(detalle.cesantias).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
                                             <p><strong>Int. Cesantias:</strong> {"$ " + Number(detalle.interesesCesantias).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
                                             <p><strong>Devengado:</strong> {"$ " + Number(detalle.devengado).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                            <p><strong>Fecha de registro:</strong> {formatFecha(detalle.fechaRegistro)}</p>
                                         </div>
                                     ))}
-                                    <p><strong>Contrato:</strong> {getContratoTipo(selectedEmpleado.idContrato)}</p>
+                                    <p><strong>Contrato:</strong> {getContratoInfo(selectedEmpleado.idContrato).tipoContrato}</p>
                                     <p><strong>Estado:</strong>
                                         <span className={selectedEmpleado.estado === "ACTIVO" ? "estado-activo" : "estado-inactivo"}>
                                             {selectedEmpleado.estado === "ACTIVO" ? (
@@ -298,7 +406,6 @@ const RegistroLiquidaciones = () => {
                                             )}
                                         </span>
                                     </p>
-                                    <p><strong>Fecha de registro:</strong> {formatFecha(selectedEmpleado.fechaRegistro)}</p>
                                     <button className="cerrar-button" onClick={handleCloseModal}>Cerrar</button>
                                 </div>
                             </div>

@@ -95,7 +95,7 @@ const RegistroEmpleadoForm = ({ onClose, empleadoToEdit, cargos, isReadOnly }) =
             onClose();
         } catch (error) {
             setError(error.response?.data?.message || error.message);
-            toast.error(`Error: ${error.response?.data?.message || error.message}`);
+            toast.error(<b>Error: {error.response?.data?.message || error.message}</b>);
         }
     };
 

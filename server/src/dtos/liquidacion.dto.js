@@ -1,5 +1,5 @@
 export class LiquidacionDTO {
-    constructor(idLiquidacion, salarioTotal, año, mes,
+    constructor(idLiquidacion,  año, mes, salarioTotal,
         saludTotal, pensionTotal, auxTransporteTotal, bonificacionServicioTotal, auxAlimentacionTotal,
         primaNavidadTotal, vacacionesTotal, cesantiasTotal, interesesCesantiasTotal, total, fechaRegistro, idUsuario) {
       this.idLiquidacion = idLiquidacion;

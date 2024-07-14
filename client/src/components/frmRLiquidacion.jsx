@@ -21,10 +21,10 @@ const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos }) => {
     const { createDetalle } = useDetalle();
     const { getEmpleado } = useEmpleado();
     const { getContrato } = useContrato();
+    const { getDetalles } = useDetalle();
 
     useEffect(() => {
         if (empleadoToEdit) {
-            const contrato = empleadoToEdit.contrato || {};
             setFormData({
                 idEmpleado: empleadoToEdit.idEmpleado,
                 diasTrabajados: "",
@@ -33,6 +33,11 @@ const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos }) => {
         }
     }, [empleadoToEdit]);
 
+    useEffect(() => {
+        getEmpleado();
+        getContrato();
+    }, []);
+    
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevState) => ({
@@ -41,20 +46,33 @@ const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos }) => {
         }));
     };
 
-    useEffect(() => {
-        getEmpleado();
-        getContrato();
-    }, []);
+    const validateForm = () => {
+        const { diasTrabajados, horasExtras } = formData;
+        if (diasTrabajados <= 0 || diasTrabajados > 30) {
+             return <b>Los días trabajados deben ser mayores a 0 y menores o iguales a 30.</b>;
+        }
+        if (horasExtras < 0) {
+            return <b>Las horas extras no pueden ser negativas.</b>
+        }
+        return null;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const dateError = validateForm();
+        if (dateError) {
+            setError(dateError);
+            toast.error(dateError);
+            return;
+        }
         try {
             await createDetalle(formData);
             toast.success(<b>La liquidación ha sido registrada correctamente.</b>);
+            getDetalles();
             onClose();
         } catch (error) {
             setError(error.message);
-            toast.error(<b>Error: {error.message}</b>);
+            toast.error(<b>Error: {error.response?.data?.message || error.message}</b>);
         }
     };
 
@@ -72,8 +90,8 @@ const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos }) => {
                             <div className="input-container">
                                 <input
                                     type="number"
-                                    id="idEmpleado"
-                                    name="idEmpleado"
+                                    id="id"
+                                    name="id"
                                     value={formData.idEmpleado}
                                     onChange={handleChange}
                                     required
@@ -81,14 +99,14 @@ const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos }) => {
                                     autoComplete="off"
                                     readOnly
                                 />
-                                <label htmlFor="documento">Documento</label>
+                                <label htmlFor="id">Codigo</label>
                             </div>
                             <div className="input-container">
                                 <input
                                     type="number"
                                     id="documento"
                                     name="documento"
-                                    value={formData.documento}
+                                    value={empleadoToEdit ? empleadoToEdit.documento : ""}
                                     onChange={handleChange}
                                     required
                                     placeholder=" "
@@ -102,7 +120,7 @@ const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos }) => {
                                     type="text"
                                     id="nombre"
                                     name="nombre"
-                                    value={formData.nombre}
+                                    value={empleadoToEdit ? empleadoToEdit.nombre : ""}
                                     onChange={handleChange}
                                     required
                                     placeholder=" "
@@ -115,7 +133,7 @@ const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos }) => {
                             <select
                                 id="idCargo"
                                 name="idCargo"
-                                value={formData.idCargo}
+                                value={empleadoToEdit ? empleadoToEdit.idCargo : ""}
                                 onChange={handleChange}
                                 required
                                 placeholder=" "
@@ -134,7 +152,7 @@ const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos }) => {
                                 type="date"
                                 id="fechaInicio"
                                 name="fechaInicio"
-                                value={formData.fechaInicio}
+                                value={empleadoToEdit ? format(new Date(empleadoToEdit.contrato.fechaInicio), "yyyy-MM-dd") : ""}
                                 onChange={handleChange}
                                 required
                                 placeholder=" "
@@ -147,7 +165,7 @@ const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos }) => {
                                 type="date"
                                 id="fechaFin"
                                 name="fechaFin"
-                                value={formData.fechaFin}
+                                value={empleadoToEdit ? format(new Date(empleadoToEdit.contrato.fechaFin), "yyyy-MM-dd") : ""}
                                 onChange={handleChange}
                                 required
                                 placeholder=" "
@@ -161,7 +179,7 @@ const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos }) => {
                                     type="number"
                                     id="salario"
                                     name="salario"
-                                    value={formData.salario}
+                                    value={empleadoToEdit ? empleadoToEdit.contrato.salario : ""}
                                     onChange={handleChange}
                                     required
                                     placeholder=" "
@@ -174,7 +192,7 @@ const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos }) => {
                             <select
                                 id="tipoContrato"
                                 name="tipoContrato"
-                                value={formData.tipoContrato}
+                                value={empleadoToEdit ? empleadoToEdit.contrato.tipoContrato : ""}
                                 onChange={handleChange}
                                 required
                                 placeholder=" "

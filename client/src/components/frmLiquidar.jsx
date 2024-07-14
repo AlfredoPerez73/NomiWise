@@ -13,6 +13,7 @@ const GuardarLiquidaciones = ({ onClose }) => {
     const [editar, setEditar] = useState(false);
     const [filteredEmpleados, setFilteredEmpleados] = useState([]);
     const [filterValueCargo, setFilterValueCargo] = useState("");
+    const [filterValueContrato, setFilterValueContrato] = useState("");
     const [filterValueEstado, setFilterValueEstado] = useState("");
     const [filterValue, setFilterValue] = useState("");
     const [isFormOpen, setIsFormOpen] = useState(false);
@@ -30,6 +31,11 @@ const GuardarLiquidaciones = ({ onClose }) => {
     const sEstado = [
         "ACTIVO", 
         "INACTIVO"
+    ];
+    const tcontratos = [
+        "TERMINO INDEFINIDO",
+        "TERMINO FIJO",
+        "PERSTACION DE SERVICIOS"
     ];
 
     const handleDeleteEmpleado = (val) => {
@@ -86,6 +92,16 @@ const GuardarLiquidaciones = ({ onClose }) => {
         getContrato();
     }, []);
 
+    const getContratoInfo = (idContrato) => {
+        const contrato = contratos.find((c) => c.idContrato === idContrato) || {};
+        return {
+            tipoContrato: contrato.tipoContrato || "Desconocido",
+            fechaInicio: contrato.fechaInicio ? format(new Date(contrato.fechaInicio), "dd/MM/yyyy") : "Desconocida",
+            fechaFin: contrato.fechaFin ? format(new Date(contrato.fechaFin), "dd/MM/yyyy") : "Desconocida",
+            salario: contrato.salario || "Desconocido",
+        };
+    };
+
     useEffect(() => {
         setFilteredEmpleados(empleados);
     }, [empleados]);
@@ -115,6 +131,16 @@ const GuardarLiquidaciones = ({ onClose }) => {
         );
     };
 
+    const handleFilterChangeContrato = (e) => {
+        const query = e.target.value.toLowerCase();
+        setFilterValueContrato(e.target.value);
+        setFilteredEmpleados(
+            empleados.filter((empleado) =>
+                getContratoInfo(empleado.idContrato).tipoContrato.toLowerCase().includes(query)
+            )
+        );
+    };
+
     const handleFilterChange = (e) => {
         const query = e.target.value.toLowerCase();
         setFilterValue(query);
@@ -122,9 +148,9 @@ const GuardarLiquidaciones = ({ onClose }) => {
             empleados.filter((n) =>
                 n.documento.toLowerCase().includes(query) ||
                 n.nombre.toLowerCase().includes(query) ||
-                getContratoTipo(n.idContrato).toLowerCase().includes(query) ||
+                getContratoInfo(n.idContrato).tipoContrato.toLowerCase().includes(query) ||
                 getCargoName(n.idCargo).toLowerCase().includes(query) ||
-                getContratoSalario(n.idContrato).toLowerCase().includes(query)
+                getContratoInfo(n.idContrato).salario.toLowerCase().includes(query)
             )
         );
     };
@@ -140,26 +166,6 @@ const GuardarLiquidaciones = ({ onClose }) => {
     const getCargoName = (idCargo) => {
         const cargo = cargos.find((c) => c.idCargo === idCargo);
         return cargo ? cargo.nCargo : "Desconocido";
-    };
-
-    const getContratoFechaInicio = (idContrato) => {
-        const contrato = contratos.find((c) => c.idContrato === idContrato);
-        return contrato ? format(new Date(contrato.fechaInicio), "dd/MM/yyyy") : "Desconocida";
-    };
-
-    const getContratoFechaFin = (idContrato) => {
-        const contrato = contratos.find((c) => c.idContrato === idContrato);
-        return contrato ? format(new Date(contrato.fechaFin), "dd/MM/yyyy") : "Desconocida";
-    };
-
-    const getContratoSalario = (idContrato) => {
-        const contrato = contratos.find((c) => c.idContrato === idContrato);
-        return contrato ? contrato.salario : "Desconocido";
-    };
-
-    const getContratoTipo = (idContrato) => {
-        const contrato = contratos.find((c) => c.idContrato === idContrato);
-        return contrato ? contrato.tipoContrato : "Desconocido";
     };
 
     const handleRowClick = (empleado) => {
@@ -227,6 +233,21 @@ const GuardarLiquidaciones = ({ onClose }) => {
                                 ))}
                             </select>
                             <select
+                                id="contrato-filter"
+                                name="contrato-filter"
+                                value={filterValueContrato}
+                                onChange={handleFilterChangeContrato}
+                            >
+                                <option value="">
+                                    Seleccionar Contrato
+                                </option>
+                                {tcontratos.map((modulo, index) => (
+                                    <option key={index} value={modulo}>
+                                        {modulo}
+                                    </option>
+                                ))}
+                            </select>
+                            <select
                                 id="estado-filter"
                                 name="estado-filter"
                                 value={filterValueEstado}
@@ -270,8 +291,8 @@ const GuardarLiquidaciones = ({ onClose }) => {
                                             </span>
                                         </td>
                                         <td>{getCargoName(val.idCargo)}</td>
-                                        <td>{getContratoTipo(val.idContrato)}</td>
-                                        <td>{getContratoFechaFin(val.idContrato)}</td>
+                                        <td>{getContratoInfo(val.idContrato).tipoContrato}</td>
+                                        <td>{getContratoInfo(val.idContrato).fechaFin}</td>
                                         <td>{formatFecha(val.fechaRegistro)}</td>
                                         <td>
                                             <button
@@ -286,12 +307,14 @@ const GuardarLiquidaciones = ({ onClose }) => {
                                             >
                                                 <i className="fi fi-br-clear-alt icon-style-components"></i>
                                             </button>
-                                            <button
-                                                className="liquidar-button"
-                                                onClick={(e) => { e.stopPropagation(); setEmpleado(val, true); }}
-                                            >
-                                                <i className="fi fi-br-usd-circle icon-style-components"></i>
-                                            </button>
+                                            {val?.estado === "ACTIVO" && (
+                                                    <button
+                                                        className="liquidar-button"
+                                                        onClick={(e) => { e.stopPropagation(); setEmpleado(val, true); }}
+                                                    >
+                                                        <i className="fi fi-br-usd-circle icon-style-components"></i>
+                                                    </button>
+                                                )}
                                         </td>
                                     </tr>
                                 ))}
@@ -322,10 +345,10 @@ const GuardarLiquidaciones = ({ onClose }) => {
                                     <p><strong>Documento:</strong> {selectedEmpleado.documento}</p>
                                     <p><strong>Empleado:</strong> {selectedEmpleado.nombre}</p>
                                     <p><strong>Cargo:</strong> {getCargoName(selectedEmpleado.idCargo)}</p>
-                                    <p><strong>Fecha de Inicio:</strong> {getContratoFechaInicio(selectedEmpleado.idContrato)}</p>
-                                    <p><strong>Fecha de Fin:</strong> {getContratoFechaFin(selectedEmpleado.idContrato)}</p>
-                                    <p><strong>Salario:</strong> {"$ " + Number(getContratoSalario(selectedEmpleado.idContrato)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
-                                    <p><strong>Contrato:</strong> {getContratoTipo(selectedEmpleado.idContrato)}</p>
+                                    <p><strong>Fecha de Inicio:</strong> {getContratoInfo(selectedEmpleado.idContrato).fechaInicio}</p>
+                                    <p><strong>Fecha de Fin:</strong> {getContratoInfo(selectedEmpleado.idContrato).fechaFin}</p>
+                                    <p><strong>Salario:</strong> {"$ " + Number(getContratoInfo(selectedEmpleado.idContrato).salario).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                    <p><strong>Contrato:</strong> {getContratoInfo(selectedEmpleado.idContrato).tipoContrato}</p>
                                     <p><strong>Estado:</strong>
                                         <span className={selectedEmpleado.estado === "ACTIVO" ? "estado-activo" : "estado-inactivo"}>
                                             {selectedEmpleado.estado === "ACTIVO" ? (
