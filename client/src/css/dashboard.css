@@ -1,0 +1,282 @@
+.dashboard-cards {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  .card-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .card-detalle {
+    font-weight: bold;
+    color: var(--text-color);
+  }
+  
+  .card-dashboard-1 {
+    background: linear-gradient(to bottom right, #1E2736, #1D4E89);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 250px;
+    height: 150px;
+    margin: 5px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .card-dashboard-2 {
+    background: linear-gradient(to bottom right, #2C2A4A, #4F518C);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 250px;
+    height: 150px;
+    margin: 5px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .card-dashboard-3 {
+    background: linear-gradient(to bottom right, #0471A6, #061826);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 250px;
+    height: 150px;
+    margin: 5px;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .card-dashboard-detalle {
+    background: linear-gradient(to bottom, #911919, #881a1a);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    width: 250px;
+    height: 150px;
+    margin: 5px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .card-dashboard-detalle-1 {
+    background: linear-gradient(to bottom right, #1E2736, #2E294E);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    width: 250px;
+    height: 150px;
+    margin: 5px;
+    margin: 10px;
+    padding: 20px;
+    text-align: center;
+  }
+
+
+  .card-dashboard-detalle-2 {
+    background: linear-gradient(to bottom, #1A74CF, #5E8FD7);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 250px;
+    height: 150px;
+    margin: 5px;
+    padding: 20px;
+    text-align: center;
+
+  }
+
+  .card-dashboard-detalle-3 {
+    background: linear-gradient(to bottom, #1d123a, #714cb1);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 400px;
+    height: 200px;
+    margin: 5px;
+    padding: 20px;
+    text-align: left;
+    margin-left: 820px;
+  }
+
+  .card-dashboard-detalle-4 {
+    background: linear-gradient(to bottom, #7ba0d6, #1d3977);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 390px;
+    height: 200px;
+    margin: 5px;
+    padding: 20px;
+    text-align: left;
+    margin-left: auto;
+  }
+
+  .card-icon {
+    font-size: 60px;
+    margin-bottom: 10px;
+    margin-left: -150px;
+    color: whitesmoke;
+
+  }
+
+  .card-icon-2 {
+    font-size: 60px;
+    margin-bottom: 0px;
+    margin-left: -300px;
+    color: whitesmoke;
+
+  }
+
+  .card-icon-3 {
+    font-size: 50px;
+    margin-bottom: 0px;
+    margin-left: -300px;
+    color: whitesmoke;
+
+  }
+
+  .card-info h3 {
+    margin-left: 30px;
+    font-size: 18px;
+    color: whitesmoke
+  }
+  
+  .card-info p {
+    margin-top: -85px;
+    margin-left: 60px;
+    font-size: 17px;
+    font-weight: bold;
+    color: whitesmoke
+  }
+
+  .card-info-2 h3 {
+    margin-left: -5px;
+    font-size: 18px;
+    color: whitesmoke
+  }
+  
+  .card-info-2 p {
+    margin-top: -80px;
+    margin-left: -10px;
+    font-size: 17px;
+    font-weight: bold;
+    color: whitesmoke
+  }
+
+  .card-info-3 h3 {
+    margin-left: -90px;
+    font-size: 14px;
+    color: whitesmoke
+  }
+  
+  .card-info-3 p {
+    margin-top: -65px;
+    margin-left: -90px;
+    font-size: 12px;
+    font-weight: bold;
+    color: whitesmoke
+  }
+
+  .charts-container {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  
+  .card-dashboard-chart-1 {
+    border: 1px solid var(--color2);
+    background-color: var(--color1);
+    border-radius: 70px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 49%;
+    height: 500px;
+    margin-top: -200px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .card-dashboard-chart-11 {
+    border: 1px solid var(--color2);
+    background-color: var(--color1);
+    border-radius: 70px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 49%;
+    height: 41rem;
+    margin-top: -250px;
+    padding: 20px;
+    text-align: left;
+  }
+    
+  .card-dashboard-chart-2 {
+    border: 1px solid var(--color2);
+    background-color: var(--color1);
+    border-radius: 70px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 49%;
+    height: 41rem;
+    margin-top: 20px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .card-dashboard-chart-22 {
+    border: 1px solid var(--color2);
+    background-color: var(--color1);
+    border-radius: 70px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 49%;
+    height: 41rem;
+    margin-top: 20px;
+    padding: 20px;
+    text-align: center;
+  }

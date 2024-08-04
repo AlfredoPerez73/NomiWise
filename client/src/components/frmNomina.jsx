@@ -11,7 +11,7 @@ const Nomina = () => {
     const [fechaInicio, setFechaInicio] = useState(null);
     const [fechaFin, setFechaFin] = useState(null);
     const [filterValue, setFilterValue] = useState("");
-    const [selectedNomina, setSelectedNomina] = useState([]);
+    const [selectedNomina, setSelectedNomina] = useState(null);
     const [isVisible, setIsVisible] = useState(false);
     const [isExiting, setIsExiting] = useState(false);
     const [currentPage, setCurrentPage] = useState(0);

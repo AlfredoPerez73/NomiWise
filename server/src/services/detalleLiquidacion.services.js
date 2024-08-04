@@ -6,15 +6,11 @@ import { DetalleLiquidacionDTO } from "../dtos/detalleLiquidacion.dto.js";
 import { sequelize } from '../database/database.js';
 
 const calcularValoresAutomaticos = async (detalle, idEmpleado) => {
-    const empleado = await Empleado.findOne({
-        where: { idEmpleado: idEmpleado },
-    });
+    const empleado = await Empleado.findOne({ where: { idEmpleado: idEmpleado } });
+    if (!empleado) throw new Error("Empleado no encontrado");
 
     const contrato = await Contrato.findByPk(empleado.idContrato);
-
-    if (!contrato) {
-        throw new Error("Contrato no encontrado para el empleado");
-    }
+    if (!contrato) throw new Error("Contrato no encontrado para el empleado");
 
     const salario = contrato.salario;
     const diasTrabajados = detalle.diasTrabajados;
@@ -23,25 +19,31 @@ const calcularValoresAutomaticos = async (detalle, idEmpleado) => {
 
     let salud = salario * 0.04;
     let pension = salario * 0.04;
-    let auxTransporte = salario <= (1300000 * 2) ? 162000 : 0;
-    let auxAlimentacion = salario / diasTrabajados;
+    let auxTransporte = salario <= 2 * 1300000 ? 162000 : 0; // Ajustar comparación si es necesario
+    let auxAlimentacion = salario / diasTrabajados; // Verificar si el cálculo es correcto
     let bonificacionServicio = 0;
     let primaServicios = 0;
     let primaNavidad = 0;
     let vacaciones = 0;
     let cesantias = 0;
     let interesesCesantias = 0;
-    let valorHorasExtra = horasExtras > 0 ? salario / horasExtras : 0;
+    let valorHorasExtra = horasExtras > 0 ? (salario / 240) * 1.25 * horasExtras : 0; // Asumiendo jornada de 240 horas mensuales y recargo del 25%
 
-    if (contrato.tipoContrato === "TERMINO FIJO" || contrato.tipoContrato === "TERMINO INDEFINIDO") {
+    if (["TERMINO FIJO", "TERMINO INDEFINIDO"].includes(contrato.tipoContrato)) {
         bonificacionServicio = salario < 1400000 ? salario * 0.5 : 0;
-        primaServicios = mesLiquidacion === 6 ? (salario * diasTrabajados) / 180 :
-            mesLiquidacion === 12 ? (salario * diasTrabajados) / 360 : 0;
-        primaNavidad = mesLiquidacion === 12 ? salario * 0.5 : 0;
+
+        if (mesLiquidacion === 6 || mesLiquidacion === 12) {
+            primaServicios = (salario * diasTrabajados) / 360; // Proporcional al tiempo trabajado en el semestre
+        }
+
+        if (mesLiquidacion === 12) {
+            primaNavidad = salario * (diasTrabajados / 360); // Proporcional al tiempo trabajado
+        }
+
         vacaciones = (salario * diasTrabajados) / 720;
         cesantias = (salario * diasTrabajados) / 360;
         interesesCesantias = cesantias * 0.12;
-    } else if (contrato.tipoContrato === "PRESTACION DE SERVICIO") {
+    } else if (contrato.tipoContrato === "PERSTACION DE SERVICIOS") {
         salud = 0;
         pension = 0;
         auxTransporte = 0;
@@ -50,8 +52,8 @@ const calcularValoresAutomaticos = async (detalle, idEmpleado) => {
     }
 
     const devengado = salario - salud - pension + auxTransporte + bonificacionServicio +
-        primaServicios + auxAlimentacion + primaNavidad + valorHorasExtra + cesantias +
-        interesesCesantias + vacaciones;
+        auxAlimentacion + primaServicios + primaNavidad + valorHorasExtra +
+        cesantias + interesesCesantias + vacaciones;
 
     return {
         salud,
@@ -67,8 +69,15 @@ const calcularValoresAutomaticos = async (detalle, idEmpleado) => {
     };
 };
 
-const actualizarTotalesLiquidacion = async (año, mes) => {
-    const detalles = await DetalleLiquidacion.findAll({ where: { año, mes } });
+
+const actualizarTotalesLiquidacion = async (año, mes, t) => {
+    const detalles = await DetalleLiquidacion.findAll({ 
+        where: { 
+            año, 
+            mes 
+        },
+        transaction: t
+    });
 
     const totales = detalles.reduce((totales, detalle) => {
         totales.salarioTotal += parseFloat(detalle.devengado);
@@ -97,7 +106,7 @@ const actualizarTotalesLiquidacion = async (año, mes) => {
         total: 0,
     });
 
-    await Liquidacion.update(totales, { where: { año, mes } });
+    await Liquidacion.update(totales, { where: { año, mes }, transaction: t });
 };
 
 export async function createDetalleLiquidacion(detalle, idUsuario) {
@@ -167,7 +176,7 @@ export async function createDetalleLiquidacion(detalle, idUsuario) {
 
         await newDetalleLiquidacion.save({ transaction: t });
 
-        await actualizarTotalesLiquidacion(año, mes);
+        await actualizarTotalesLiquidacion(año, mes, t);
 
         await t.commit();
 

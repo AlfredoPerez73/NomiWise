@@ -55,6 +55,18 @@ const RegistroLiquidaciones = () => {
         getContrato();
     }, []);
 
+    const clearFilters = () => {
+        setFilterValueCargo("");
+        setFilterValueContrato("");
+        setFilterValueEstado("");
+        setFilterValueAño("");
+        setFilterValueMes("");
+        setFechaInicio(null);
+        setFechaFin(null);
+        setFilterValue("");
+        setFilteredDetalle(detalles);
+    };
+
     useEffect(() => {
         if (detalles) {
             setFilteredDetalle(detalles);
@@ -66,8 +78,8 @@ const RegistroLiquidaciones = () => {
             detalles.filter((detalle) => {
                 const fecha = new Date(detalle.fechaRegistro);
                 const isWithinDateRange =
-                    (!fechaInicio || fecha >= startOfDay(fechaInicio)) &&
-                    (!fechaFin || fecha <= endOfDay(fechaFin));
+                    (!fechaInicio || fecha >= startOfDay(new Date(fechaInicio))) &&
+                    (!fechaFin || fecha <= endOfDay(new Date(fechaFin)));
                 return isWithinDateRange;
             })
         );

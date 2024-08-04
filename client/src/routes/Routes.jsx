@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "../context/authContext";
 import ProtectedRoutes from "../ProtectedRoutes";
 import ProtectedRouteWithPermission from "../ProtectedRouteWithPermission";
@@ -22,6 +22,7 @@ import FrmUsuario from "../components/frmUsuario";
 import FrmEmpleado from "../components/frmEmpleado";
 import FrmLiquidaciones from "../components/frmLiquidacion";
 import FrmNomnina from "../components/frmNomina";
+import DashboardCards from "../components/Dashboard";
 
 
 const AppRoutes = () => {
@@ -42,6 +43,10 @@ const AppRoutes = () => {
 
                             <Route element={<ProtectedRoutes />}>
                               <Route path="/menu" element={<Menu />}>
+                              <Route path="" element={<Navigate to="inicio" />} />
+                                <Route element={<ProtectedRouteWithPermission requiredPermission="Inicio" />}>
+                                  <Route path="inicio" element={<DashboardCards />} />
+                                </Route>
                                 <Route element={<ProtectedRouteWithPermission requiredPermission="Empleados" />}>
                                   <Route path="empleados" element={<FrmEmpleado />} />
                                 </Route>
