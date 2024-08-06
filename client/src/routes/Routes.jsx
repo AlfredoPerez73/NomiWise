@@ -43,10 +43,9 @@ const AppRoutes = () => {
 
                             <Route element={<ProtectedRoutes />}>
                               <Route path="/menu" element={<Menu />}>
-                              <Route path="" element={<Navigate to="inicio" />} />
-                                <Route element={<ProtectedRouteWithPermission requiredPermission="Inicio" />}>
-                                  <Route path="inicio" element={<DashboardCards />} />
-                                </Route>
+                              <Route path="/menu" element={<ProtectedRouteWithPermission requiredPermission="Inicio" />}>
+                                <Route index element={<DashboardCards />} />
+                              </Route>
                                 <Route element={<ProtectedRouteWithPermission requiredPermission="Empleados" />}>
                                   <Route path="empleados" element={<FrmEmpleado />} />
                                 </Route>

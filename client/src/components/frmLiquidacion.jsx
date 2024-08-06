@@ -22,7 +22,7 @@ const RegistroLiquidaciones = () => {
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [empleadoToEdit, setEmpleadoToEdit] = useState(null);
     const [selectedEmpleado, setSelectedEmpleado] = useState(null);
-    const [selectedDetalle, setSelectedDetalle] = useState([]);
+    const [selectedDetalle, setSelectedDetalle] = useState(null);
     const [isVisible, setIsVisible] = useState(false);
     const [isExiting, setIsExiting] = useState(false);
     const [currentPage, setCurrentPage] = useState(0);
@@ -178,10 +178,9 @@ const RegistroLiquidaciones = () => {
         return cargo ? cargo.nCargo : "Desconocido";
     };
 
-    const handleRowClick = (empleado) => {
+    const handleRowClick = (empleado, val) => {
         setSelectedEmpleado(empleado);
-        const detallesEmpleado = detalles ? detalles.filter((detalle) => detalle.idEmpleado === empleado.idEmpleado) : [];
-        setSelectedDetalle(detallesEmpleado);
+        setSelectedDetalle(val);
         setIsVisible(true);
     };
 
@@ -191,7 +190,7 @@ const RegistroLiquidaciones = () => {
             setIsVisible(false);
             setIsExiting(false);
             setSelectedEmpleado(null);
-            setSelectedDetalle([]);
+            setSelectedDetalle(null);
         }, 500);
     };
 
@@ -340,7 +339,7 @@ const RegistroLiquidaciones = () => {
                                 {currentDetalles.map((val, key) => {
                                     const empleadoInfo = getEmpleadoInfo(val.idEmpleado, empleados);
                                     return (
-                                        <tr key={val.idDetalleLiquidacion} onClick={() => handleRowClick(empleadoInfo)}>
+                                        <tr key={val.idDetalleLiquidacion} onClick={() => handleRowClick(empleadoInfo, val)}>
                                             <td>{empleadoInfo?.documento || "Desconocido"}</td>
                                             <td>{empleadoInfo?.nombre || "Desconocido"}</td>
                                             <td>
@@ -379,7 +378,7 @@ const RegistroLiquidaciones = () => {
                             activeClassName={"active"}
                             forcePage={Math.min(currentPage, pageCount - 1)}
                         />
-                        {selectedDetalle.length > 0 && (
+                        {selectedDetalle && (
                             <div className={`overlay ${isExiting ? "hidden" : "visible"}`} onClick={handleCloseModal}>
                                 <div className={`detalle-liquidacion-card ${isExiting ? "exiting" : ""}`} onClick={(e) => e.stopPropagation()}>
                                     <h2>Información del Empleado</h2>
@@ -387,27 +386,28 @@ const RegistroLiquidaciones = () => {
                                     <p><strong>Empleado:</strong> {selectedEmpleado.nombre}</p>
                                     <p><strong>Cargo:</strong> {getCargoName(selectedEmpleado.idCargo)}</p>
                                     <p><strong>Fecha de Inicio:</strong> {getContratoInfo(selectedEmpleado.idContrato).fechaInicio}</p>
-                                    <p><strong>Fecha de Fin:</strong> {getContratoInfo(selectedEmpleado.idContrato).fechaInicio}</p>
+                                    <p><strong>Fecha de Fin:</strong> {getContratoInfo(selectedEmpleado.idContrato).fechaFin}</p>
                                     <p><strong>Salario:</strong> {"$ " + Number(getContratoInfo(selectedEmpleado.idContrato).salario).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
-                                    {selectedDetalle.map((detalle, index) => (
-                                        <div key={index}>
-                                            <p><strong>Año:</strong> {detalle.año}</p>
-                                            <p><strong>Mes:</strong> {detalle.mes}</p>
-                                            <p><strong>Dias Trabajados:</strong> {detalle.diasTrabajados}</p>
-                                            <p><strong>Horas Extras:</strong> {detalle.horasExtras}</p>
-                                            <p><strong>Salud:</strong> {"$ " + Number(detalle.salud).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
-                                            <p><strong>Pension:</strong> {"$ " + Number(detalle.pension).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
-                                            <p><strong>Aux. Transporte:</strong> {"$ " + Number(detalle.auxTransporte).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
-                                            <p><strong>Bon. de servicios:</strong> {"$ " + Number(detalle.bonificacionServicio).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
-                                            <p><strong>Aux. Alimentacion:</strong> {"$ " + Number(detalle.auxAlimentacion).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
-                                            <p><strong>Prima de Navidad:</strong> {"$ " + Number(detalle.primaNavidad).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
-                                            <p><strong>Vacaciones:</strong> {"$ " + Number(detalle.vacaciones).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
-                                            <p><strong>Cesantias:</strong> {"$ " + Number(detalle.cesantias).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
-                                            <p><strong>Int. Cesantias:</strong> {"$ " + Number(detalle.interesesCesantias).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
-                                            <p><strong>Devengado:</strong> {"$ " + Number(detalle.devengado).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
-                                            <p><strong>Fecha de registro:</strong> {formatFecha(detalle.fechaRegistro)}</p>
-                                        </div>
-                                    ))}
+
+                                    {/* Displaying selectedDetalle object */}
+                                    <div>
+                                        <p><strong>Año:</strong> {selectedDetalle.año}</p>
+                                        <p><strong>Mes:</strong> {selectedDetalle.mes}</p>
+                                        <p><strong>Dias Trabajados:</strong> {selectedDetalle.diasTrabajados}</p>
+                                        <p><strong>Horas Extras:</strong> {selectedDetalle.horasExtras}</p>
+                                        <p><strong>Salud:</strong> {"$ " + Number(selectedDetalle.salud).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                        <p><strong>Pension:</strong> {"$ " + Number(selectedDetalle.pension).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                        <p><strong>Aux. Transporte:</strong> {"$ " + Number(selectedDetalle.auxTransporte).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                        <p><strong>Bon. de servicios:</strong> {"$ " + Number(selectedDetalle.bonificacionServicio).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                        <p><strong>Aux. Alimentacion:</strong> {"$ " + Number(selectedDetalle.auxAlimentacion).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                        <p><strong>Prima de Navidad:</strong> {"$ " + Number(selectedDetalle.primaNavidad).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                        <p><strong>Vacaciones:</strong> {"$ " + Number(selectedDetalle.vacaciones).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                        <p><strong>Cesantias:</strong> {"$ " + Number(selectedDetalle.cesantias).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                        <p><strong>Int. Cesantias:</strong> {"$ " + Number(selectedDetalle.interesesCesantias).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                        <p><strong>Devengado:</strong> {"$ " + Number(selectedDetalle.devengado).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                        <p><strong>Fecha de registro:</strong> {formatFecha(selectedDetalle.fechaRegistro)}</p>
+                                    </div>
+
                                     <p><strong>Contrato:</strong> {getContratoInfo(selectedEmpleado.idContrato).tipoContrato}</p>
                                     <p><strong>Estado:</strong>
                                         <span className={selectedEmpleado.estado === "ACTIVO" ? "estado-activo" : "estado-inactivo"}>
