@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Chart as ChartJS, BarElement, BarController, CategoryScale, LinearScale, Title, Tooltip, Legend } from 'chart.js';
-import { Bar } from "react-chartjs-2";
+import { Chart as ChartJS, BarElement, BarController, CategoryScale, LinearScale, Title, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Bar, Pie } from "react-chartjs-2";
 import { parseISO, format } from "date-fns";
 
 // Register necessary components
-ChartJS.register(BarElement, BarController, CategoryScale, LinearScale, Title, Tooltip, Legend);
+ChartJS.register(BarElement, BarController, CategoryScale, LinearScale, Title, ArcElement, Tooltip, Legend);
 
 export function NominaFechaChart({ nominas }) {
     const [chartData, setChartData] = useState({});
@@ -37,9 +37,9 @@ export function NominaFechaChart({ nominas }) {
                         }
                         // Create a linear gradient
                         const gradient = ctx.createLinearGradient(
-                            chartArea.left, 
-                            chartArea.top, 
-                            chartArea.left, 
+                            chartArea.left,
+                            chartArea.top,
+                            chartArea.left,
                             chartArea.bottom
                         );
                         gradient.addColorStop(0, 'rgba(255, 0, 0, 0.5)'); // Red color
@@ -125,6 +125,96 @@ export function NominaFechaChart({ nominas }) {
     );
 };
 
+function generateGradient(ctx, startColor, endColor) {
+    const gradient = ctx.createLinearGradient(0, 0, 500, 0);
+    gradient.addColorStop(0, startColor);
+    gradient.addColorStop(1, endColor);
+    return gradient;
+}
+
+function truncateLabel(label, maxLength) {
+    return label.length > maxLength ? `${label.slice(0, maxLength)}...` : label;
+}
+
+export function EmpleadosMasLiquidadosChart({ detalles, empleados }) {
+    const [chartData, setChartData] = useState(null);
+
+    useEffect(() => {
+        const data = detalles.reduce((acc, detalle) => {
+            const empleado = empleados.find(e => e.idEmpleado === detalle.idEmpleado);
+            const nombreEmpleado = empleado ? empleado.nombre : 'Nombre desconocido';
+            if (!acc[detalle.idEmpleado]) {
+                acc[detalle.idEmpleado] = {
+                    idEmpleado: detalle.idEmpleado,
+                    nombre: nombreEmpleado,
+                    count: 0,
+                    devengado: 0
+                };
+            }
+            acc[detalle.idEmpleado].count += 1;
+            acc[detalle.idEmpleado].devengado += detalle.devengado;
+            return acc;
+        }, {});
+
+        const values = Object.values(data);
+
+        values.sort((a, b) => b.count - a.count);
+        const top5Values = values.slice(0, 5);
+
+        const labels = top5Values.map(detalle => truncateLabel(detalle.nombre, 13));
+        const dataSet = top5Values.map(detalle => detalle.count);
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        const gradients = [
+            generateGradient(ctx, '#FAA6FF', '#FAA6FF01'),  // Mauve
+            generateGradient(ctx, '#7353BA', '#7353BA01'),  // Royal purple
+            generateGradient(ctx, '#2F195F', '#2F195F01'),  // Russian violet
+            generateGradient(ctx, '#0F1020', '#0F102001'),  // Rich black
+            generateGradient(ctx, '#EFC3F5', '#EFC3F501'),  // Pink lavender
+        ];
+
+        const backgroundColors = dataSet.map((_, index) => {
+            return gradients[index % gradients.length];
+        });
+
+        const chartData = {
+            labels,
+            datasets: [{
+                data: dataSet,
+                backgroundColor: backgroundColors,
+                borderColor: 'transparent',
+                borderWidth: 0,
+            }]
+        };
+
+        setChartData(chartData);
+    }, [detalles,empleados]);
+
+    const options = {
+        plugins: {
+            legend: {
+                display: true,
+                position: 'right',
+                labels: {
+                    color: "whitesmoke",
+                    font: {
+                        family: 'Poppins',
+                        size: 10,
+                        weight: 'bold',
+                    },
+                }
+            }
+        }
+    };
+
+    return (
+        <div style={{ width: "500px", height: "500px", marginTop: "-170px", marginBottom: "-40px" }}>
+            {chartData ? <Pie data={chartData} options={options} /> : <p>No data available</p>}
+        </div>
+    );
+};
 
 /* export function EmpleadosMasLiquidadosChart ({ detalles }) {
   const chartContainerRef = useRef();

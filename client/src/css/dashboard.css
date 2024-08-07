@@ -219,6 +219,14 @@
     color: whitesmoke
   }
 
+  .chart-info-2 p {
+    margin-bottom: 120px;
+    margin-left: 50px;
+    font-size: 30px;
+    font-weight: bold;
+    color: whitesmoke
+  }
+
   .charts-container {
     display: flex;
     justify-content: space-around;

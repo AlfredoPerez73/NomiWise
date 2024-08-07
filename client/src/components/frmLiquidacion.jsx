@@ -388,8 +388,6 @@ const RegistroLiquidaciones = () => {
                                     <p><strong>Fecha de Inicio:</strong> {getContratoInfo(selectedEmpleado.idContrato).fechaInicio}</p>
                                     <p><strong>Fecha de Fin:</strong> {getContratoInfo(selectedEmpleado.idContrato).fechaFin}</p>
                                     <p><strong>Salario:</strong> {"$ " + Number(getContratoInfo(selectedEmpleado.idContrato).salario).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
-
-                                    {/* Displaying selectedDetalle object */}
                                     <div>
                                         <p><strong>Año:</strong> {selectedDetalle.año}</p>
                                         <p><strong>Mes:</strong> {selectedDetalle.mes}</p>
@@ -407,7 +405,6 @@ const RegistroLiquidaciones = () => {
                                         <p><strong>Devengado:</strong> {"$ " + Number(selectedDetalle.devengado).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
                                         <p><strong>Fecha de registro:</strong> {formatFecha(selectedDetalle.fechaRegistro)}</p>
                                     </div>
-
                                     <p><strong>Contrato:</strong> {getContratoInfo(selectedEmpleado.idContrato).tipoContrato}</p>
                                     <p><strong>Estado:</strong>
                                         <span className={selectedEmpleado.estado === "ACTIVO" ? "estado-activo" : "estado-inactivo"}>

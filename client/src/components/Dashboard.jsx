@@ -3,7 +3,7 @@ import { useUsuario } from "../context/usuarioContext";
 import { useEmpleado } from "../context/empleadoContext";
 import { useNomina } from "../context/nominaContext";
 import { useDetalle } from "../context/detalleLiquidacionContext";
-import { NominaFechaChart } from './Charts';
+import { NominaFechaChart, EmpleadosMasLiquidadosChart } from './Charts';
 import "../css/dashboard.css";
 
 const DashboardCards = () => {
@@ -42,8 +42,8 @@ const DashboardCards = () => {
       const mayorLiquidacion = detalles.reduce((max, item) => Math.max(max, Number(item.devengado)), 0);
       const currentMonth = new Date().getMonth();
       const liquidacionesMesActual = detalles.filter(item => new Date(item.fechaRegistro).getMonth() === currentMonth);
-      const liquMes = liquidacionesMesActual.length > 0 
-        ? liquidacionesMesActual.reduce((max, item) => Math.max(max, Number(item.devengado)), 0) 
+      const liquMes = liquidacionesMesActual.length > 0
+        ? liquidacionesMesActual.reduce((max, item) => Math.max(max, Number(item.devengado)), 0)
         : 0;
       const mayorNomina = nominas.reduce((max, item) => Math.max(max, Number(item.total)), 0);
       const totalHorasExtras = detalles.reduce((sum, item) => sum + Number(item.horasExtras), 0);
@@ -135,7 +135,7 @@ const DashboardCards = () => {
       </div>
       <div className="charts-container">
         <div className="card-dashboard-chart-1">
-        <div className="chart-info">
+          <div className="chart-info">
             <p>Nomina</p>
             <NominaFechaChart nominas={nominas} />
           </div>
@@ -143,6 +143,10 @@ const DashboardCards = () => {
         <div className="card-dashboard-chart-2">
         </div>
         <div className="card-dashboard-chart-11">
+          <div className="chart-info-2">
+            <p>Empleados + Liquidados</p>
+            <EmpleadosMasLiquidadosChart detalles={detalles} empleados={empleados} />
+          </div>
         </div>
         <div className="card-dashboard-chart-22">
         </div>
