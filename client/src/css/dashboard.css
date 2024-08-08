@@ -76,6 +76,7 @@
     margin: 5px;
     padding: 20px;
     text-align: center;
+    transition: all 0.3s ease-out;
   }
 
   .card-dashboard-detalle-1 {
@@ -93,6 +94,7 @@
     margin: 5px;
     padding: 20px;
     text-align: center;
+    transition: all 0.3s ease-out;
   }
 
 
@@ -110,7 +112,28 @@
     margin: 5px;
     padding: 20px;
     text-align: center;
+    transition: all 0.3s ease-out;
+  }
 
+  .card-dashboard-detalle:hover {
+    margin: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(121, 121, 121, 0.137);
+    transition: all 0.3s ease;
+  }
+
+  .card-dashboard-detalle-1:hover {
+    margin: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(121, 121, 121, 0.137);
+    transition: all 0.3s ease;
+}
+
+  .card-dashboard-detalle-2:hover {
+    margin: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(121, 121, 121, 0.137);
+    transition: all 0.3s ease-out;
   }
 
   .card-dashboard-detalle-3 {
@@ -227,6 +250,14 @@
     color: whitesmoke
   }
 
+  .chart-info-3 p {
+    margin-bottom: -60px;
+    margin-left: 50px;
+    font-size: 30px;
+    font-weight: bold;
+    color: whitesmoke
+  }
+
   .charts-container {
     display: flex;
     justify-content: space-around;
@@ -297,3 +328,172 @@
     padding: 20px;
     text-align: center;
   }
+
+  /* modal.css */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+}
+
+.modal-content ul {
+  list-style: none;
+  padding: 0;
+}
+
+.modal-content li {
+  margin-bottom: 10px;
+}
+
+.modal-content button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-content button:hover {
+  background-color: #0056b3;
+}
+
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.overlay.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.detalle-card {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  background-color: rgba(31, 30, 68, 0.61);
+  backdrop-filter: blur(10px);
+  /* Efecto de desenfoque */
+  padding: 20px;
+  border-radius: 20px;
+  width: 80%;
+  height: 80%;
+  max-width: 450px;
+  max-height: 1000px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  opacity: 0;
+  animation: enterAnimation 0.5s ease forwards;
+  font-family: "Poppins", sans-serif;
+}
+
+@keyframes enterAnimation {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes exitAnimation {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  to {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0;
+  }
+}
+
+.detalle-card.exiting {
+  animation: exitAnimation 0.5s ease forwards;
+}
+
+.detalle-card h2 {
+  text-align: center;
+  font-size: 25px;
+  margin-bottom: 3rem;
+  border-bottom: 2px solid var(--text-color);
+  padding-bottom: 0.5rem;
+  color: whitesmoke;
+}
+
+.detalle-card p,
+.detalle-card li {
+  margin: 0.8rem 70px;
+  margin-left: 95px;
+  color: whitesmoke;
+}
+
+.detalle-card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.detalle-card li {
+  border-bottom: 1px solid var(--text-color);
+  padding: 0.5rem 0;
+}
+
+.detalle-card strong {
+  display: inline-block;
+  width: 100px;
+}
+
+.detalle-card button {
+  display: block;
+  margin: 1rem auto 0;
+  margin-top: 30px;
+  padding: 0.5rem 1rem;
+  background-color: var(--rojo1);
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.detalle-card button:hover {
+  background-color: var(--rojo2);
+}
+
+.detalle-card-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: -40px;
+}

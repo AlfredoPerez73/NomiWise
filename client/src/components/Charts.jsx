@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Chart as ChartJS, BarElement, BarController, CategoryScale, LinearScale, Title, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Bar, Pie } from "react-chartjs-2";
+import { Chart as ChartJS, BarElement, BarController, CategoryScale, LinearScale, Title, ArcElement, PointElement, LineElement, Tooltip, Legend, Filler } from 'chart.js';
+import { Bar, Pie, Line, Doughnut } from "react-chartjs-2";
 import { parseISO, format } from "date-fns";
 
-// Register necessary components
-ChartJS.register(BarElement, BarController, CategoryScale, LinearScale, Title, ArcElement, Tooltip, Legend);
+ChartJS.register(BarElement, BarController, CategoryScale, LinearScale, Title, ArcElement, PointElement, LineElement, Tooltip, Legend, Filler);
 
 export function NominaFechaChart({ nominas }) {
     const [chartData, setChartData] = useState({});
@@ -35,15 +34,14 @@ export function NominaFechaChart({ nominas }) {
                         if (!chartArea) {
                             return null;
                         }
-                        // Create a linear gradient
                         const gradient = ctx.createLinearGradient(
                             chartArea.left,
                             chartArea.top,
                             chartArea.left,
                             chartArea.bottom
                         );
-                        gradient.addColorStop(0, 'rgba(255, 0, 0, 0.5)'); // Red color
-                        gradient.addColorStop(1, 'rgba(255, 182, 193, 0.5)'); // Light purple color
+                        gradient.addColorStop(0, 'rgba(255, 0, 0, 0.5)');
+                        gradient.addColorStop(1, 'rgba(255, 182, 193, 0.5)');
 
                         return gradient;
                     },
@@ -70,8 +68,8 @@ export function NominaFechaChart({ nominas }) {
                     },
                 },
                 border: {
-                    color: 'white', // Color del borde del eje x
-                    width: 1, // Ancho del borde del eje x
+                    color: 'white',
+                    width: 1,
                 },
             },
             y: {
@@ -88,8 +86,8 @@ export function NominaFechaChart({ nominas }) {
                     },
                 },
                 border: {
-                    color: 'white', // Color del borde del eje y
-                    width: 1, // Ancho del borde del eje y
+                    color: 'white',
+                    width: 1,
                 },
             },
         },
@@ -140,9 +138,12 @@ export function EmpleadosMasLiquidadosChart({ detalles, empleados }) {
     const [chartData, setChartData] = useState(null);
 
     useEffect(() => {
+        const empleadoMap = empleados.reduce((acc, empleado) => {
+            acc[empleado.idEmpleado] = empleado.nombre;
+            return acc;
+        }, {});
         const data = detalles.reduce((acc, detalle) => {
-            const empleado = empleados.find(e => e.idEmpleado === detalle.idEmpleado);
-            const nombreEmpleado = empleado ? empleado.nombre : 'Nombre desconocido';
+            const nombreEmpleado = empleadoMap[detalle.idEmpleado] || 'Desconocido';
             if (!acc[detalle.idEmpleado]) {
                 acc[detalle.idEmpleado] = {
                     idEmpleado: detalle.idEmpleado,
@@ -168,11 +169,11 @@ export function EmpleadosMasLiquidadosChart({ detalles, empleados }) {
         const ctx = canvas.getContext('2d');
 
         const gradients = [
-            generateGradient(ctx, '#FAA6FF', '#FAA6FF01'),  // Mauve
-            generateGradient(ctx, '#7353BA', '#7353BA01'),  // Royal purple
-            generateGradient(ctx, '#2F195F', '#2F195F01'),  // Russian violet
-            generateGradient(ctx, '#0F1020', '#0F102001'),  // Rich black
-            generateGradient(ctx, '#EFC3F5', '#EFC3F501'),  // Pink lavender
+            generateGradient(ctx, '#FAA6FF', '#FAA6FF01'),
+            generateGradient(ctx, '#7353BA', '#7353BA01'),
+            generateGradient(ctx, '#2F195F', '#2F195F01'),
+            generateGradient(ctx, '#0F1020', '#0F102001'),
+            generateGradient(ctx, '#EFC3F5', '#EFC3F501'),
         ];
 
         const backgroundColors = dataSet.map((_, index) => {
@@ -190,7 +191,7 @@ export function EmpleadosMasLiquidadosChart({ detalles, empleados }) {
         };
 
         setChartData(chartData);
-    }, [detalles,empleados]);
+    }, [detalles, empleados]);
 
     const options = {
         plugins: {
@@ -210,74 +211,193 @@ export function EmpleadosMasLiquidadosChart({ detalles, empleados }) {
     };
 
     return (
-        <div style={{ width: "500px", height: "500px", marginTop: "-170px", marginBottom: "-40px" }}>
+        <div style={{ width: "500px", height: "500px", marginTop: "-170px", marginBottom: "-40px", marginLeft: "-150px" }}>
             {chartData ? <Pie data={chartData} options={options} /> : <p>No data available</p>}
         </div>
     );
 };
 
-/* export function EmpleadosMasLiquidadosChart ({ detalles }) {
-  const chartContainerRef = useRef();
+export function EmpleadosMasHorasChart({ detalles, empleados }) {
+    const [chartData, setChartData] = useState(null);
 
-  useEffect(() => {
-    const chart = createChart(chartContainerRef.current, { width: 600, height: 300 });
-    const barSeries = chart.addBarSeries();
-    
-    const data = detalles.reduce((acc, detalle) => {
-      if (!acc[detalle.empleadoId]) {
-        acc[detalle.empleadoId] = { time: detalle.empleadoId, value: 0 };
-      }
-      acc[detalle.empleadoId].value += detalle.valor;
-      return acc;
-    }, {});
+    useEffect(() => {
 
-    barSeries.setData(Object.values(data));
+        const empleadoMap = empleados.reduce((acc, empleado) => {
+            acc[empleado.idEmpleado] = empleado.nombre;
+            return acc;
+        }, {});
 
-    return () => chart.remove();
-  }, [detalles]);
+        const data = detalles.reduce((acc, detalle) => {
+            const nombreEmpleado = empleadoMap[detalle.idEmpleado] || 'Desconocido';
+            if (!acc[detalle.idEmpleado]) {
+                acc[detalle.idEmpleado] = {
+                    idEmpleado: detalle.idEmpleado,
+                    nombre: nombreEmpleado,
+                    horasExtras: 0
+                };
+            }
+            acc[detalle.idEmpleado].horasExtras += detalle.horasExtras;
+            return acc;
+        }, {});
 
-  return <div ref={chartContainerRef} />;
-};
+        const values = Object.values(data);
 
-export function EmpleadosMasHorasChart ({ detalles }) {
-  const chartContainerRef = useRef();
+        values.sort((a, b) => b.horasExtras - a.horasExtras);
+        const topValues = values.slice(0, 5);
 
-  useEffect(() => {
-    const chart = createChart(chartContainerRef.current, { width: 600, height: 300 });
-    const barSeries = chart.addBarSeries();
-    
-    const data = detalles.reduce((acc, detalle) => {
-      if (!acc[detalle.empleadoId]) {
-        acc[detalle.empleadoId] = { time: detalle.empleadoId, value: 0 };
-      }
-      acc[detalle.empleadoId].value += detalle.horasExtras;
-      return acc;
-    }, {});
+        const labels = topValues.map(detalle => truncateLabel(detalle.nombre, 13));
+        const dataSet = topValues.map(detalle => detalle.horasExtras);
 
-    barSeries.setData(Object.values(data));
+        const createGradient = (ctx) => {
+            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(0, 4, 40, 1)');
+            gradient.addColorStop(1, 'rgba(0, 78, 146, 0)');
+            return gradient;
+        };
 
-    return () => chart.remove();
-  }, [detalles]);
+        const chartData = {
+            labels,
+            datasets: [{
+                label: 'Horas Extras',
+                data: dataSet,
+                borderColor: '#004e92',
+                borderWidth: 2,
+                backgroundColor: (context) => {
+                    const ctx = context.chart.ctx;
+                    return createGradient(ctx);
+                },
+                fill: true,
+            }]
+        };
 
-  return <div ref={chartContainerRef} />;
-};
+        setChartData(chartData);
+    }, [detalles, empleados]);
 
-export function Top5LiquidacionesChart ({ detalles }) {
-  const chartContainerRef = useRef();
+    return (
+        <div style={{ width: "700px", height: "500px", marginBottom: "-120px" }}>
+            {chartData ? <Line data={chartData} options={{
+                plugins: {
+                    legend: {
+                        display: true,
+                        grid: {
+                            display: false,
+                        },
+                        position: 'right',  
+                        labels: {
+                            font: {
+                                size: 11,
+                                family: 'Poppins',
+                                weight: 'bold',
+                            },
+                            color: '#FFFFFF', 
+                            boxWidth: 20,
+                            padding: 15,
+                            usePointStyle: true, 
+                            pointStyle: 'circle'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        display: true,
+                        grid: {
+                            display: false,
+                        },
+                        ticks: {
+                            color: 'whitesmoke',
+                            font: {
+                                size: 11,
+                                family: 'Poppins',
+                                weight: 'bold',
+                            },
+                        },
+                        border: {
+                            color: 'white',
+                            width: 0,
+                        },
+                    },
+                    y: {
+                        display: true,
+                        grid: {
+                            display: false,
+                        },
+                        ticks: {
+                            color: 'whitesmoke',
+                            font: {
+                                size: 11,
+                                family: 'Poppins',
+                                weight: 'bold',
+                            },
+                        },
+                        border: {
+                            color: 'white',
+                            width: 0,
+                        },
+                    }
+                }
+            }} /> : <p>No data available</p>}
+        </div>
+    );
+}
 
-  useEffect(() => {
-    const chart = createChart(chartContainerRef.current, { width: 600, height: 300 });
-    const barSeries = chart.addBarSeries();
+export function EmpleadosPorContratoChart({ empleados, contratos }) {
+    const [chartData, setChartData] = useState(null);
 
-    const top5 = detalles
-      .sort((a, b) => b.valor - a.valor)
-      .slice(0, 5)
-      .map(detalle => ({ time: detalle.empleadoId, value: detalle.valor }));
+    useEffect(() => {
+        const contratoMap = contratos.reduce((acc, contrato) => {
+            acc[contrato.idContrato] = contrato.tipoContrato;
+            return acc;
+        }, {});
 
-    barSeries.setData(top5);
+        const data = empleados.reduce((acc, empleado) => {
+            const tipoContrato = contratoMap[empleado.idContrato] || 'Desconocido';
+            if (!acc[tipoContrato]) {
+                acc[tipoContrato] = 0;
+            }
+            acc[tipoContrato]++;
+            return acc;
+        }, {});
 
-    return () => chart.remove();
-  }, [detalles]);
+        const labels = Object.keys(data);
+        const dataSet = Object.values(data);
 
-  return <div ref={chartContainerRef} />;
-}; */
+        const colors = ['#2F6690', '#3A7CA5', '#102542', '#81C3D7', '#170A1C', '#102542']; // Colores personalizados
+
+        const chartData = {
+            labels,
+            datasets: [{
+                data: dataSet,
+                backgroundColor: colors.slice(0, labels.length), // Usar solo los colores necesarios
+                hoverBackgroundColor: colors.slice(0, labels.length),
+                borderWidth: 0 // Quitar los bordes
+            }]
+        };
+
+        setChartData(chartData);
+    }, [empleados, contratos]);
+
+    return (
+        <div style={{ width: "750px", height: "550px", marginBottom: "-110px" }}>
+            {chartData ? <Doughnut data={chartData} options={{
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'right',  // Posición de las etiquetas
+                        labels: {
+                            font: {
+                                size: 11,
+                                family: 'Poppins',
+                                weight: 'bold',
+                            },
+                            color: 'whitesmoke',  // Color de la tipografía
+                            boxWidth: 20,
+                            padding: 15,
+                            usePointStyle: true, // Para usar puntos en vez de rectángulos
+                            pointStyle: 'circle'
+                        }
+                    }
+                }
+            }} /> : <p>No data available</p>}
+        </div>
+    );
+}
