@@ -78,6 +78,20 @@ const DashboardCards = () => {
     }
   }, [usuarios, empleados, nominas, detalles]);
 
+  const getTop5Empleados = () => {
+    return [...detalles]
+      .sort((a, b) => b.devengado - a.devengado) // Ordenar los detalles por devengado en orden descendente
+      .slice(0, 5) // Obtener los primeros 5
+      .map((detalle) => {
+        const empleado = getEmpleadoInfo(detalle.idEmpleado, empleados); // Obtener la información del empleado
+        return {
+          ...detalle,
+          nombre: `${empleado.nombre}`, // Añadir el nombre completo del empleado
+          estado: empleado.estado // Añadir el estado del empleado
+        };
+      });
+  };
+
   const handleCardClick = (item, type) => {
     if (!item) {
       let message = "";
@@ -287,6 +301,46 @@ const DashboardCards = () => {
             </div>
           </div>
         )}
+      </div>
+      <div className="table-card">
+      <p>Top 5 Empleados Mejores Pagados</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Empleado</th>
+              <th>Devengado</th>
+              <th>Estado</th>
+              <th>Fecha de Registro</th>
+            </tr>
+          </thead>
+          <tbody>
+            {getTop5Empleados().map((detalle, index) => (
+              <tr
+                key={index}
+                onClick={() => {
+                  const empleado = getEmpleadoInfo(detalle.idEmpleado, empleados);
+                  setSelectedDetalle(detalle);
+                  setSelectedEmpleado(empleado);
+                  setIsVisible(true);
+                }}
+              >
+                <td>{detalle.nombre}</td>
+                <td>{formatCurrency(detalle.devengado)}</td>
+                <td>
+                  <span className={detalle.estado === "ACTIVO" ? "estado-activo" : "estado-inactivo"}>
+                    {detalle.estado === "ACTIVO" ? (
+                      <i className="fi fi-br-time-check icon-style-components"></i>
+                    ) : (
+                      <i className="fi fi-br-time-delete icon-style-components"></i>
+                    )}
+                  </span>
+                </td>
+                <td>{formatFecha(detalle.fechaRegistro)}</td>
+              </tr>
+            ))}
+          </tbody>
+
+        </table>
       </div>
       <div className="charts-container">
         <div className="card-dashboard-chart-1">

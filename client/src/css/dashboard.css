@@ -112,28 +112,28 @@
     margin: 5px;
     padding: 20px;
     text-align: center;
-    transition: all 0.3s ease-out;
+    transition: all 0.4s ease-out;
   }
 
   .card-dashboard-detalle:hover {
     margin: 20px;
     padding: 30px;
     box-shadow: 0 20px 40px rgba(121, 121, 121, 0.137);
-    transition: all 0.3s ease;
+    transition: all 0.4s ease;
   }
 
   .card-dashboard-detalle-1:hover {
     margin: 20px;
     padding: 30px;
     box-shadow: 0 20px 40px rgba(121, 121, 121, 0.137);
-    transition: all 0.3s ease;
+    transition: all 0.4s ease;
 }
 
   .card-dashboard-detalle-2:hover {
     margin: 20px;
     padding: 30px;
     box-shadow: 0 20px 40px rgba(121, 121, 121, 0.137);
-    transition: all 0.3s ease-out;
+    transition: all 0.4s ease-out;
   }
 
   .card-dashboard-detalle-3 {
@@ -275,8 +275,8 @@
     align-items: center;
     justify-content: center;
     width: 49%;
-    height: 500px;
-    margin-top: -200px;
+    height: 41rem;
+    margin-top: -10px;
     padding: 20px;
     text-align: center;
   }
@@ -292,7 +292,7 @@
     justify-content: center;
     width: 49%;
     height: 41rem;
-    margin-top: -250px;
+    margin-top: 20px;
     padding: 20px;
     text-align: left;
   }
@@ -308,7 +308,7 @@
     justify-content: center;
     width: 49%;
     height: 41rem;
-    margin-top: 20px;
+    margin-top: -10px;
     padding: 20px;
     text-align: center;
   }
@@ -496,4 +496,53 @@
   display: flex;
   justify-content: space-between;
   margin-top: -40px;
+}
+
+.table-card {
+  width: 800px;
+  overflow: hidden;
+  color: whitesmoke;
+  margin-left: -820px;
+  margin-top: -200px;
+  margin-bottom: 10px;
+}
+
+.table-card p {
+  margin: 0.8rem 70px;
+  margin-left: 190px;
+  font-weight: bold;
+  font-size: 24px;
+  color: whitesmoke;
+}
+
+.table-card table {
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  border-collapse: collapse;
+  border-radius: 1.5rem;
+  cursor: pointer;
+  overflow: hidden;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.table-card table th,
+.table-card table td {
+  padding: 2px;
+  background-color: #5c1422;
+  transition: background-color 0.3s;
+}
+
+.table-card table tbody td {
+  text-align: center;
+}
+
+.table-card table tr:nth-child(odd) td {
+  background-color: #4d0f29;
+}
+
+.table-card table tr:hover td {
+  background-color: #5e1634;
 }

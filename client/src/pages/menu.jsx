@@ -80,8 +80,7 @@ const Dashboard = () => {
           <img className="logo" src={logo} alt="logo" />
           <span className="nombrelogo">NomiWise</span>
         </a>
-        <div>
-          <div className="search-bar-2">
+        <div className="search-bar-2">
             <select
               id="tipocontrato-filter"
               name="tipocontrato-filter"
@@ -96,6 +95,7 @@ const Dashboard = () => {
               ))}
             </select>
           </div>
+        <div>
           <button className="toggle-sidebar-btn" onClick={toggleSidebar}>
             <FaBarsStaggered
               style={{
