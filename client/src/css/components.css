@@ -822,6 +822,7 @@ h6 {
 }
 
 .detalle-empleado-card {
+  overflow: auto;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -922,6 +923,7 @@ h6 {
 }
 
 .detalle-nomina-card {
+  overflow: auto;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -933,7 +935,7 @@ h6 {
   width: 80%;
   height: 80%;
   max-width: 450px;
-  max-height: 600px;
+  max-height: 700px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   z-index: 1000;
   opacity: 0;
@@ -1016,6 +1018,7 @@ h6 {
 }
 
 .detalle-liquidacion-card {
+  overflow: auto;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -1025,7 +1028,7 @@ h6 {
   padding: 20px;
   border-radius: 20px;
   width: 80%;
-  height: 80%;
+  height: 82%;
   max-width: 450px;
   max-height: 800px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
