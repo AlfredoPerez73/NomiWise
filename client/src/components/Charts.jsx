@@ -5,15 +5,15 @@ import { parseISO, format } from "date-fns";
 
 ChartJS.register(BarElement, BarController, CategoryScale, LinearScale, Title, ArcElement, PointElement, LineElement, Tooltip, Legend, Filler);
 
-export function NominaFechaChart({ nominas }) {
+export function NominaFechaChart({ datos }) {
     const [chartData, setChartData] = useState({});
 
     useEffect(() => {
-        if (!nominas || !Array.isArray(nominas)) {
+        if (!datos || !Array.isArray(datos)) {
             return;
         }
 
-        const data = nominas.map((nomina) => ({
+        const data = datos.map((nomina) => ({
             date: format(parseISO(nomina.fechaRegistro), "yyyy-MM-dd"),
             total: Number(nomina.total),
         }));
@@ -25,7 +25,7 @@ export function NominaFechaChart({ nominas }) {
             labels: dates,
             datasets: [
                 {
-                    label: "Total Nomina",
+                    label: "Total Nómina",
                     data: totals,
                     backgroundColor: (context) => {
                         const { chart } = context;
@@ -50,7 +50,7 @@ export function NominaFechaChart({ nominas }) {
                 },
             ],
         });
-    }, [nominas]);
+    }, [datos]);
 
     const options = {
         scales: {
@@ -121,7 +121,7 @@ export function NominaFechaChart({ nominas }) {
             )}
         </div>
     );
-};
+}
 
 function generateGradient(ctx, startColor, endColor) {
     const gradient = ctx.createLinearGradient(0, 0, 500, 0);
@@ -212,16 +212,19 @@ export function EmpleadosMasLiquidadosChart({ detalles, empleados }) {
 
     return (
         <div style={{ width: "500px", height: "500px", marginTop: "-170px", marginBottom: "-40px", marginLeft: "-150px" }}>
-            {chartData ? <Pie data={chartData} options={options} /> : <p>No data available</p>}
+            {chartData && chartData.labels && chartData.labels.length > 0 ? (
+                <Pie data={chartData} options={options} />
+            ) : (
+                <p>No data available</p>
+            )}
         </div>
     );
-};
+}
 
 export function EmpleadosMasHorasChart({ detalles, empleados }) {
     const [chartData, setChartData] = useState(null);
 
     useEffect(() => {
-
         const empleadoMap = empleados.reduce((acc, empleado) => {
             acc[empleado.idEmpleado] = empleado.nombre;
             return acc;
@@ -275,67 +278,68 @@ export function EmpleadosMasHorasChart({ detalles, empleados }) {
 
     return (
         <div style={{ width: "700px", height: "500px", marginBottom: "-120px" }}>
-            {chartData ? <Line data={chartData} options={{
-                plugins: {
-                    legend: {
-                        display: true,
-                        grid: {
-                            display: false,
-                        },
-                        position: 'right',  
-                        labels: {
-                            font: {
-                                size: 11,
-                                family: 'Poppins',
-                                weight: 'bold',
+            {chartData && chartData.labels && chartData.labels.length > 0 ? (
+                <Line data={chartData} options={{
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'right',
+                            labels: {
+                                font: {
+                                    size: 11,
+                                    family: 'Poppins',
+                                    weight: 'bold',
+                                },
+                                color: '#FFFFFF',
+                                boxWidth: 20,
+                                padding: 15,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            grid: {
+                                display: false,
                             },
-                            color: '#FFFFFF', 
-                            boxWidth: 20,
-                            padding: 15,
-                            usePointStyle: true, 
-                            pointStyle: 'circle'
+                            ticks: {
+                                color: 'whitesmoke',
+                                font: {
+                                    size: 11,
+                                    family: 'Poppins',
+                                    weight: 'bold',
+                                },
+                            },
+                            border: {
+                                color: 'white',
+                                width: 0,
+                            },
+                        },
+                        y: {
+                            display: true,
+                            grid: {
+                                display: false,
+                            },
+                            ticks: {
+                                color: 'whitesmoke',
+                                font: {
+                                    size: 11,
+                                    family: 'Poppins',
+                                    weight: 'bold',
+                                },
+                            },
+                            border: {
+                                color: 'white',
+                                width: 0,
+                            },
                         }
                     }
-                },
-                scales: {
-                    x: {
-                        display: true,
-                        grid: {
-                            display: false,
-                        },
-                        ticks: {
-                            color: 'whitesmoke',
-                            font: {
-                                size: 11,
-                                family: 'Poppins',
-                                weight: 'bold',
-                            },
-                        },
-                        border: {
-                            color: 'white',
-                            width: 0,
-                        },
-                    },
-                    y: {
-                        display: true,
-                        grid: {
-                            display: false,
-                        },
-                        ticks: {
-                            color: 'whitesmoke',
-                            font: {
-                                size: 11,
-                                family: 'Poppins',
-                                weight: 'bold',
-                            },
-                        },
-                        border: {
-                            color: 'white',
-                            width: 0,
-                        },
-                    }
-                }
-            }} /> : <p>No data available</p>}
+                }} />
+            ) : (
+                <p>No data available</p>
+            )}
         </div>
     );
 }
@@ -361,15 +365,15 @@ export function EmpleadosPorContratoChart({ empleados, contratos }) {
         const labels = Object.keys(data);
         const dataSet = Object.values(data);
 
-        const colors = ['#2F6690', '#3A7CA5', '#102542', '#81C3D7', '#170A1C', '#102542']; // Colores personalizados
+        const colors = ['#2F6690', '#3A7CA5', '#102542', '#81C3D7', '#170A1C', '#102542'];
 
         const chartData = {
             labels,
             datasets: [{
                 data: dataSet,
-                backgroundColor: colors.slice(0, labels.length), // Usar solo los colores necesarios
+                backgroundColor: colors.slice(0, labels.length),
                 hoverBackgroundColor: colors.slice(0, labels.length),
-                borderWidth: 0 // Quitar los bordes
+                borderWidth: 0
             }]
         };
 
@@ -378,26 +382,30 @@ export function EmpleadosPorContratoChart({ empleados, contratos }) {
 
     return (
         <div style={{ width: "750px", height: "550px", marginBottom: "-110px" }}>
-            {chartData ? <Doughnut data={chartData} options={{
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'right',  // Posición de las etiquetas
-                        labels: {
-                            font: {
-                                size: 11,
-                                family: 'Poppins',
-                                weight: 'bold',
-                            },
-                            color: 'whitesmoke',  // Color de la tipografía
-                            boxWidth: 20,
-                            padding: 15,
-                            usePointStyle: true, // Para usar puntos en vez de rectángulos
-                            pointStyle: 'circle'
+            {chartData && chartData.labels && chartData.labels.length > 0 ? (
+                <Doughnut data={chartData} options={{
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'right',
+                            labels: {
+                                font: {
+                                    size: 11,
+                                    family: 'Poppins',
+                                    weight: 'bold',
+                                },
+                                color: 'whitesmoke',
+                                boxWidth: 20,
+                                padding: 15,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
                         }
                     }
-                }
-            }} /> : <p>No data available</p>}
+                }} />
+            ) : (
+                <p>No data available</p>
+            )}
         </div>
     );
 }

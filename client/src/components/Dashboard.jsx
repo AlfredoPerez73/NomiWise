@@ -10,6 +10,16 @@ import { format, isToday } from "date-fns";
 import "../css/dashboard.css";
 
 const DashboardCards = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
+  const [selectedEmpleado, setSelectedEmpleado] = useState(null);
+  const [selectedDetalle, setSelectedDetalle] = useState(null);
+  const [selectedNomina, setSelectedNomina] = useState(null);
+  const [modalMessage, setModalMessage] = useState("");
+
+  const [filteredNominas, setFilteredNominas] = useState([]);
+  const [filteredDetalles, setFilteredDetalles] = useState([]);
+  const [filteredEmpleados, setFilteredEmpleados] = useState([]);
   const [stats, setStats] = useState({
     usuarios: 0,
     empleados: 0,
@@ -21,6 +31,14 @@ const DashboardCards = () => {
     totalDiasTrabajados: 0,
     totalHorasExtras: 0,
   });
+  const [selectedCargo, setSelectedCargo] = useState("");
+  const [selectedContrato, setSelectedContrato] = useState("");
+
+  const tcontratos = [
+    "TERMINO INDEFINIDO",
+    "TERMINO FIJO",
+    "PERSTACION DE SERVICIOS"
+  ];
 
   const { usuarios, getUsuario } = useUsuario();
   const { empleados, getEmpleado } = useEmpleado();
@@ -28,14 +46,6 @@ const DashboardCards = () => {
   const { nominas, getNominas } = useNomina();
   const { getCargo, cargos } = useCargo();
   const { detalles, getDetalles } = useDetalle();
-
-  const [isVisible, setIsVisible] = useState(false);
-  const [isExiting, setIsExiting] = useState(false);
-  const [selectedEmpleado, setSelectedEmpleado] = useState(null);
-  const [selectedDetalle, setSelectedDetalle] = useState(null);
-  const [selectedNomina, setSelectedNomina] = useState(null);
-  const [modalMessage, setModalMessage] = useState("");
-
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -50,23 +60,60 @@ const DashboardCards = () => {
     fetchStats();
   }, []);
 
+  const filterData = (empleados, detalles, nominas, selectedCargo, selectedContrato) => {
+    const filteredEmpleados = empleados.filter(e =>
+        (selectedCargo ? e.idCargo === parseInt(selectedCargo, 10) : true) &&
+        (selectedContrato ? getContratoInfo(e.idContrato).tipoContrato === selectedContrato : true)
+    );
+
+    const filteredDetalles = detalles.filter(d =>
+        filteredEmpleados.some(e => e.idEmpleado === d.idEmpleado)
+    );
+
+    const groupedNominas = nominas.map(nomina => {
+        const totalFilteredNomina = filteredDetalles
+            .filter(d => {
+                const fechaDetalle = new Date(d.fechaRegistro).toISOString().split('T')[0];
+                const fechaNomina = new Date(nomina.fechaRegistro).toISOString().split('T')[0];
+                return fechaDetalle === fechaNomina;
+            })
+            .reduce((sum, detail) => sum + Number(detail.devengado), 0);
+
+        return {
+            ...nomina,
+            total: totalFilteredNomina,
+        };
+    });
+
+    return { filteredEmpleados, filteredDetalles, filteredNominas: groupedNominas };
+};
+
+
   useEffect(() => {
     if (usuarios.length > 0 && empleados.length > 0 && nominas.length > 0 && detalles.length > 0) {
-      const totalSalario = detalles.reduce((sum, item) => sum + Number(item.devengado), 0);
-      const totalNomina = nominas.reduce((sum, item) => sum + Number(item.total), 0);
-      const mayorLiquidacion = detalles.reduce((max, item) => max.devengado > Number(item.devengado) ? max : item, { devengado: 0 });
+      const { filteredEmpleados, filteredDetalles, filteredNominas } = filterData(empleados, detalles, nominas, selectedCargo, selectedContrato);
+
+      const totalSalario = filteredDetalles.reduce((sum, item) => sum + Number(item.devengado), 0);
+      const totalNomina = filteredNominas.length > 0 
+        ? filteredNominas.reduce((sum, item) => sum + Number(item.total), 0)
+        : null;
+      const mayorLiquidacion = filteredDetalles.length > 0
+        ? filteredDetalles.reduce((max, item) => max.devengado > Number(item.devengado) ? max : item, { devengado: 0 })
+        : null;
       const currentMonth = new Date().getMonth();
-      const liquidacionesMesActual = detalles.filter(item => new Date(item.fechaRegistro).getMonth() === currentMonth);
+      const liquidacionesMesActual = filteredDetalles.filter(item => new Date(item.fechaRegistro).getMonth() === currentMonth);
       const liquMes = liquidacionesMesActual.length > 0
         ? liquidacionesMesActual.reduce((max, item) => max.devengado > Number(item.devengado) ? max : item, { devengado: 0 })
         : null;
-      const mayorNomina = nominas.reduce((max, item) => max.total > Number(item.total) ? max : item, { total: 0 });
-      const totalHorasExtras = detalles.reduce((sum, item) => sum + Number(item.horasExtras), 0);
-      const totalDiasTrabajados = detalles.reduce((sum, item) => sum + Number(item.diasTrabajados), 0);
+      const mayorNomina = filteredNominas.length > 0
+        ? filteredNominas.reduce((max, item) => max.total > Number(item.total) ? max : item, { total: 0 })
+        : null;
+      const totalHorasExtras = filteredDetalles.reduce((sum, item) => sum + Number(item.horasExtras), 0);
+      const totalDiasTrabajados = filteredDetalles.reduce((sum, item) => sum + Number(item.diasTrabajados), 0);
 
       setStats({
         usuarios: usuarios.length,
-        empleados: empleados.length,
+        empleados: filteredEmpleados.length,
         totalSalario,
         totalNomina,
         mayorLiquidacion,
@@ -75,19 +122,22 @@ const DashboardCards = () => {
         totalHorasExtras,
         totalDiasTrabajados,
       });
+      setFilteredEmpleados(filteredEmpleados);
+      setFilteredDetalles(filteredDetalles);
+      setFilteredNominas(filteredNominas);
     }
-  }, [usuarios, empleados, nominas, detalles]);
+  }, [usuarios, empleados, nominas, detalles, selectedCargo, selectedContrato]);
 
   const getTop5Empleados = () => {
-    return [...detalles]
-      .sort((a, b) => b.devengado - a.devengado) // Ordenar los detalles por devengado en orden descendente
-      .slice(0, 5) // Obtener los primeros 5
+    return [...filteredDetalles]
+      .sort((a, b) => b.devengado - a.devengado)
+      .slice(0, 5)
       .map((detalle) => {
-        const empleado = getEmpleadoInfo(detalle.idEmpleado, empleados); // Obtener la información del empleado
+        const empleado = getEmpleadoInfo(detalle.idEmpleado, filteredEmpleados);
         return {
           ...detalle,
-          nombre: `${empleado.nombre}`, // Añadir el nombre completo del empleado
-          estado: empleado.estado // Añadir el estado del empleado
+          nombre: `${empleado.nombre}`,
+          estado: empleado.estado
         };
       });
   };
@@ -158,12 +208,43 @@ const DashboardCards = () => {
   };
 
   const formatCurrency = (value) => `$ ${Number(value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
-  const formatFecha = (fecha) => {
-    return format(new Date(fecha), "dd/MM/yyyy");
-  };
+  const formatFecha = (fecha) => format(new Date(fecha), "dd/MM/yyyy");
 
   return (
     <div className="dashboard-cards">
+      <div className="filtro-dashboard-1">
+        <div className="card-info">
+          <div className="search-bar-2-dashboard">
+            <select
+              id="tipocontrato-filter"
+              name="tipocontrato-filter"
+              value={selectedContrato}
+              onChange={(e) => setSelectedContrato(e.target.value)}
+            >
+              <option value="">Seleccionar el Contrato</option>
+              {tcontratos.map((contrato, index) => (
+                <option key={index} value={contrato}>
+                  {contrato}
+                </option>
+              ))}
+            </select>
+
+            <select
+              id="cargo-filter"
+              name="cargo-filter"
+              value={selectedCargo}
+              onChange={(e) => setSelectedCargo(e.target.value)}
+            >
+              <option value="">Seleccionar Cargo</option>
+              {cargos.map((c) => (
+                <option key={c.idCargo} value={c.idCargo}>
+                  {c.nCargo}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
       <div className="card-container">
         <div className="card-dashboard-1">
           <i className="fi fi-br-user-ninja card-icon"></i>
@@ -183,7 +264,7 @@ const DashboardCards = () => {
           <i className="fi fi-br-chart-pie-simple-circle-dollar card-icon"></i>
           <div className="card-info">
             <p>Nómina Total</p>
-            <h3>{formatCurrency(stats.totalNomina)}</h3>
+            <h3>{stats.totalNomina ? formatCurrency(stats.totalNomina) : "N/A"}</h3>
           </div>
         </div>
         <div className="card-dashboard-detalle" onClick={() => handleCardClick(stats.mayorLiquidacion, "mayorLiquidacion")}>
@@ -211,7 +292,7 @@ const DashboardCards = () => {
           <i className="fi fi-br-calculator-money card-icon-2"></i>
           <div className="card-info-2">
             <p>Total valor horas extras</p>
-            <h3>{formatCurrency(stats.totalSalario)}</h3>
+            <h3>{stats.totalSalario ? formatCurrency(stats.totalSalario) : "N/A"}</h3>
           </div>
           <i className="fi fi-br-hourglass-end card-icon-3"></i>
           <div className="card-info-3">
@@ -223,7 +304,7 @@ const DashboardCards = () => {
           <i className="fi fi-br-calculator-bill card-icon-2"></i>
           <div className="card-info-2">
             <p>Total valor de salario</p>
-            <h3>{formatCurrency(stats.totalSalario)}</h3>
+            <h3>{stats.totalSalario ? formatCurrency(stats.totalSalario) : "N/A"}</h3>
           </div>
           <i className="fi fi-br-calendar-payment-loan card-icon-3"></i>
           <div className="card-info-3">
@@ -302,8 +383,8 @@ const DashboardCards = () => {
           </div>
         )}
       </div>
-      <div className="table-card">
-      <p>Top 5 Empleados Mejores Pagados</p>
+      <div className="table-card-dashboard">
+        <p>Top 5 Empleados Mejores Pagados</p>
         <table>
           <thead>
             <tr>
@@ -346,25 +427,25 @@ const DashboardCards = () => {
         <div className="card-dashboard-chart-1">
           <div className="chart-info">
             <p>Nómina</p>
-            <NominaFechaChart nominas={nominas} />
+            <NominaFechaChart datos={filteredNominas} />
           </div>
         </div>
         <div className="card-dashboard-chart-2">
           <div className="chart-info-3">
             <p>Empleados + Horas Extras</p>
-            <EmpleadosMasHorasChart detalles={detalles} empleados={empleados} />
+            <EmpleadosMasHorasChart detalles={filteredDetalles} empleados={filteredEmpleados} />
           </div>
         </div>
         <div className="card-dashboard-chart-11">
           <div className="chart-info-2">
             <p>Empleados + Liquidados</p>
-            <EmpleadosMasLiquidadosChart detalles={detalles} empleados={empleados} />
+            <EmpleadosMasLiquidadosChart detalles={filteredDetalles} empleados={filteredEmpleados} />
           </div>
         </div>
         <div className="card-dashboard-chart-22">
           <div className="chart-info-3">
             <p>Contratos con + empleados</p>
-            <EmpleadosPorContratoChart empleados={empleados} contratos={contratos} />
+            <EmpleadosPorContratoChart empleados={filteredEmpleados} contratos={contratos} />
           </div>
         </div>
       </div>

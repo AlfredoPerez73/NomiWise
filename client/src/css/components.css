@@ -446,6 +446,7 @@ h6 {
   font-family: "Poppins", sans-serif;
   background-color: rgb(45, 43, 104);
   color: whitesmoke;
+  transition: all 0.4s ease;
 }
 
 .search-bar input:focus,
@@ -453,6 +454,14 @@ h6 {
   border: 2px solid var(--azul1);
   outline: none;
   color: whitesmoke;
+}
+
+.search-bar select:hover,
+.search-bar input:hover {
+  margin: -5px;
+  padding: 13px;
+  box-shadow: 0 20px 40px rgba(121, 121, 121, 0.137);
+  transition: all 0.4s ease;
 }
 
 .search-bar-2 {
@@ -479,6 +488,7 @@ h6 {
   font-family: "Poppins", sans-serif;
   background-color: rgb(45, 43, 104);
   color: whitesmoke;
+  transition: all 0.4s ease;
 }
 
 .search-bar-2 input:focus,
@@ -486,6 +496,14 @@ h6 {
   border: 2px solid var(--azul1);
   outline: none;
   color: whitesmoke;
+}
+
+.search-bar-2 select:hover, 
+.search-bar-2 input:hover {
+  margin: -5px;
+  padding: 10px;
+  box-shadow: 0 20px 40px rgba(121, 121, 121, 0.137);
+  transition: all 0.4s ease;
 }
 
 .card button[type="submit_3"] {
@@ -523,6 +541,9 @@ h6 {
 
 .open-modal-button:hover {
   background-color: #395ead;
+  margin: 0.2px;
+  padding: 10px;
+  box-shadow: 0 20px 40px rgba(121, 121, 121, 0.137);
   transition: all 0.3s ease-in-out;
 }
 

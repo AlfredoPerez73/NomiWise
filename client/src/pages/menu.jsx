@@ -19,12 +19,7 @@ const Dashboard = () => {
     getPermiso,
     permisos
   } = usePermiso();
-  const tcontratos = [
-    "TERMINO INDEFINIDO",
-    "TERMINO FIJO",
-    "PERSTACION DE SERVICIOS"
-  ];
-
+  
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
@@ -80,21 +75,6 @@ const Dashboard = () => {
           <img className="logo" src={logo} alt="logo" />
           <span className="nombrelogo">NomiWise</span>
         </a>
-        <div className="search-bar-2">
-            <select
-              id="tipocontrato-filter"
-              name="tipocontrato-filter"
-            >
-              <option value="">
-                Seleccionar el Tipo de Contrato
-              </option>
-              {tcontratos.map((modulo, index) => (
-                <option key={index} value={modulo}>
-                  {modulo}
-                </option>
-              ))}
-            </select>
-          </div>
         <div>
           <button className="toggle-sidebar-btn" onClick={toggleSidebar}>
             <FaBarsStaggered
