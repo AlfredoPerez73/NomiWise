@@ -407,7 +407,7 @@ const DashboardCards = () => {
             <h3>{stats.promedioDiasTrabajados}</h3>
           </div>
         </div>
-        <div className="card-dashboard-detalle-3">
+        <div className="card-dashboard-detalle-5">
           <i className="fi fi-br-calculator-money card-icon-2"></i>
           <div className="card-info-2">
             <p>Total valor horas extras</p>
@@ -419,7 +419,7 @@ const DashboardCards = () => {
             <h3>{stats.totalHorasExtras}</h3>
           </div>
         </div>
-        <div className="card-dashboard-detalle-4">
+        <div className="card-dashboard-detalle-6">
           <i className="fi fi-br-calculator-bill card-icon-2"></i>
           <div className="card-info-2">
             <p>Total valor de salario</p>
