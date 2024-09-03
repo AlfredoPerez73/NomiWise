@@ -9,6 +9,7 @@ import { useDetalle } from "../context/detalleLiquidacionContext"
 import { format, startOfDay, endOfDay } from "date-fns";
 import GuardarLiquidaciones from "./frmLiquidar";
 import ReactPaginate from 'react-paginate';
+import logo from '../assets/logoPDF.png'
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
@@ -196,140 +197,254 @@ const RegistroLiquidaciones = () => {
         }, 500);
     };
 
+    function generarCodigoAleatorio() {
+        // Generar un número aleatorio entre 100000 y 999999
+        const codigo = Math.floor(100000 + Math.random() * 900000);
+        return codigo.toString();
+    }
+
     const generatePDF = () => {
         const doc = new jsPDF();
-
-        // Encabezado
+        doc.setProperties({
+            title: `Reporte_Liquidaciones_${new Date().toLocaleDateString()}`,
+        });
+        const codigoLiquidacion = generarCodigoAleatorio();
         doc.setFont("Helvetica", "bold");
         doc.setFontSize(15);
-        doc.text("Liquidacion #203483", 14, 15);
+        doc.text(`Liquidacion #${codigoLiquidacion}`, 14, 15);
         doc.setFont("Helvetica", "normal");
         doc.setFontSize(8);
         doc.text(formatFecha2(new Date()), 14, 19);
 
-        // Logo y nombre de la compañía
-        doc.setFontSize(10);
-        doc.setFont("Helvetica", "bold");
-        doc.text("OneDoc, Inc.", 175.5, 28);
-        doc.setFont("Helvetica", "normal");
-        doc.text("1600 Valledupar Cesar VVCC,", 150, 33);
-        doc.text("Bogota,", 185.5, 38);
-        doc.text("DC 20001", 182, 43);
-        doc.text("La Gran Colombia Unida", 159, 48);
-        doc.setDrawColor(207, 207, 207);
-        doc.setLineWidth(0.4);
-        doc.line(15, 54, 195, 54);
-        // Datos del cliente
-        doc.setFontSize(10);
-        doc.setFont("Helvetica", "bold");
-        doc.text("Reporde de Liquidacion:", 14, 60);
-        doc.setFont("Helvetica", "normal");
-        doc.text("NomiWise", 14, 65);
-        doc.text("Valledupar 20001,", 14, 70);
-        doc.text("Departamento del Cesar,", 14, 75);
-        doc.text("La Gran Colombia Unida", 14, 80);
-        doc.setDrawColor(207, 207, 207);
-        doc.setLineWidth(0.4);
-        doc.line(15, 86, 195, 86);
-        // Descripción de los ítems
-        doc.setFontSize(10);
-        doc.text("En este PDF se tratara de presentar un reporte de todas las liquidaciones de un Empleado,", 14, 93);
-        doc.text("Teniendo en cuenta como datos importantes su salario final y contratos.", 14, 98);
+        const img = new Image();
+        img.src = logo;
 
-        // Tabla
-        const tableColumn = ["Documento", "Empleado", "Devengado", "Cargo", "Contrato", "Fecha de Fin"];
-        const tableRows = [];
-    
-        // Puedes personalizar estos datos como lo desees
-        const items = detalles.map((detalle) => {
-            const empleadoInfo = getEmpleadoInfo(detalle.idEmpleado, empleados);
-        
-            // Dividir el nombre completo en partes
-            const nombreCompleto = empleadoInfo.nombre;
-            const partesNombre = nombreCompleto.split(' ');
-        
-            // Extraer el primer nombre y el primer apellido
-            const primerNombre = partesNombre[0] || '';
-            const primerApellido = partesNombre[2] || '';
-        
-            // Formar el nombre final
-            const nombreFormateado = `${primerNombre} ${primerApellido}`;
-        
-            return [
-                empleadoInfo.documento,
-                nombreFormateado,
-                "$ " + Number(detalle?.devengado).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'),
-                getCargoName(empleadoInfo?.idCargo),
-                getContratoInfo(empleadoInfo?.idContrato).tipoContrato,
-                getContratoInfo(empleadoInfo?.idContrato).fechaFin,
-            ];
-        });
-    
-        items.forEach(item => {
-            tableRows.push(item);
-        });
-    
-        doc.autoTable({
-            head: [tableColumn],
-            body: tableRows,
-            startY: 105,
-            theme: 'plain',
-            headStyles: { fillColor: [245, 245, 245] },
-            styles: { 
-                cellPadding: 1, 
-                fontSize: 8,
-                overflow: 'linebreak',
-                cellWidth: 'wrap'
-            },
-            columnStyles: {
-                0: { cellWidth: 20 },  // Documento
-                1: { cellWidth: 30 },  // Empleado
-                3: { cellWidth: 50 },  // Devengado
-                4: { cellWidth: 50 },  // Cargo
-                5: { cellWidth: 40 },  // Contrato
-                6: { cellWidth: 25 },  // Fecha de Fin
-            }
-        });
+        img.onload = function () {
+            doc.addImage(img, 'PNG', 151.5, 1, 50, 50);
 
-        // Nota final
-        // Definir el color de fondo del rectángulo
-        doc.setFillColor(215, 234, 255);
+            doc.setFontSize(10);
+            doc.setFont("Helvetica", "bold");
+            doc.text("OneDoc, Inc.", 175.5, 33);
+            doc.setFont("Helvetica", "normal");
+            doc.text("1600 Valledupar Cesar VVCC,", 150, 38);
+            doc.text("Bogota,", 185.5, 43);
+            doc.text("DC 20001", 182, 48);
+            doc.text("La Gran Colombia Unida", 159, 53);
+            doc.setDrawColor(207, 207, 207);
+            doc.setLineWidth(0.4);
+            doc.line(15, 59, 195, 59);
+            doc.setFontSize(10);
+            doc.setFont("Helvetica", "bold");
+            doc.text("Reporde de Liquidacion:", 14, 65);
+            doc.setFont("Helvetica", "normal");
+            doc.text("NomiWise", 14, 70);
+            doc.text("Valledupar 20001,", 14, 75);
+            doc.text("Departamento del Cesar,", 14, 80);
+            doc.text("La Gran Colombia Unida", 14, 85);
+            doc.setDrawColor(207, 207, 207);
+            doc.setLineWidth(0.4);
+            doc.line(15, 91, 195, 91);
+            doc.setFontSize(10);
+            doc.text("En este PDF se tratara de presentar un reporte de todas las liquidaciones de un Empleado,", 14, 98);
+            doc.text("Teniendo en cuenta como datos importantes su salario final y contratos.", 14, 103);
 
-        // Definir el color del texto
-        doc.setTextColor(0, 0, 0); // Color negro para el texto
-        doc.setFont("Helvetica", "normal");
-        doc.setFontSize(10);
+            const tableColumn = ["Documento", "Empleado", "Devengado", "Cargo", "Contrato", "Fecha de Fin"];
+            const tableRows = [];
 
-        // Coordenadas x, y de la esquina superior izquierda del rectángulo
-        const x = 14;
-        const y = doc.lastAutoTable.finalY + 20;
-        const width = 182;
-        const height = 10;
-        const radius = 2.5; // Radio para las esquinas redondeadas
+            const items = detalles.map((detalle) => {
+                const empleadoInfo = getEmpleadoInfo(detalle.idEmpleado, empleados);
 
-        // Dibujar un rectángulo con esquinas redondeadas
-        doc.roundedRect(x, y, width, height, radius, radius, 'F');
+                const nombreCompleto = empleadoInfo.nombre;
+                const partesNombre = nombreCompleto.split(' ');
 
-        // Agregar texto dentro del panel
-        doc.setTextColor(44, 104, 172);
-        doc.text("Este PDF fue generado por: " + userName, x + 5, y + 6);
+                const primerNombre = partesNombre[0] || '';
+                const primerApellido = partesNombre[2] || '';
 
-        // Pie de página
-        doc.setTextColor(0, 0, 0);
-        doc.setFont("Helvetica", "normal");
-        doc.setFontSize(8);
-        doc.text("1. Este Reporte no incluye los detalle de liquidacion.", 14, doc.lastAutoTable.finalY + 40);
-        doc.setDrawColor(207, 207, 207);
-        doc.setLineWidth(0.4);
-        doc.line(15, doc.lastAutoTable.finalY + 45, 195, doc.lastAutoTable.finalY + 45);
-        doc.setFont("Helvetica", "normal");
-        doc.setTextColor(179, 179, 179);
-        doc.setFontSize(8);
-        doc.text("Reporte de Liquidacion #203483", 14, doc.lastAutoTable.finalY + 55);
-        // Guardar el PDF
-        doc.save(`reporte_liquidaciones_${new Date().toLocaleDateString()}.pdf`);
+                const nombreFormateado = `${primerNombre} ${primerApellido}`;
+
+                return [
+                    empleadoInfo.documento,
+                    nombreFormateado,
+                    "$ " + Number(detalle?.devengado).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'),
+                    getCargoName(empleadoInfo?.idCargo),
+                    getContratoInfo(empleadoInfo?.idContrato).tipoContrato,
+                    getContratoInfo(empleadoInfo?.idContrato).fechaFin,
+                ];
+            });
+
+            items.forEach(item => {
+                tableRows.push(item);
+            });
+
+            doc.autoTable({
+                head: [tableColumn],
+                body: tableRows,
+                startY: 110,
+                theme: 'plain',
+                headStyles: { fillColor: [245, 245, 245] },
+                styles: {
+                    cellPadding: 1,
+                    fontSize: 8,
+                    overflow: 'linebreak',
+                    cellWidth: 'wrap'
+                },
+                columnStyles: {
+                    0: { cellWidth: 20 },  // Documento
+                    1: { cellWidth: 30 },  // Empleado
+                    3: { cellWidth: 50 },  // Devengado
+                    4: { cellWidth: 50 },  // Cargo
+                    5: { cellWidth: 40 },  // Contrato
+                    6: { cellWidth: 25 },  // Fecha de Fin
+                }
+            });
+
+            doc.setFillColor(215, 234, 255);
+
+            doc.setTextColor(0, 0, 0);
+            doc.setFont("Helvetica", "normal");
+            doc.setFontSize(10);
+
+            const x = 14;
+            const y = doc.lastAutoTable.finalY + 20;
+            const width = 182;
+            const height = 10;
+            const radius = 2.5;
+
+            doc.roundedRect(x, y, width, height, radius, radius, 'F');
+
+            doc.setTextColor(44, 104, 172);
+            doc.text("Este PDF fue generado por: " + userName, x + 5, y + 6);
+
+            doc.setTextColor(0, 0, 0);
+            doc.setFont("Helvetica", "normal");
+            doc.setFontSize(8);
+            doc.text("1. Este Reporte no incluye los detalle de liquidacion.", 14, doc.lastAutoTable.finalY + 45);
+            doc.setDrawColor(207, 207, 207);
+            doc.setLineWidth(0.4);
+            doc.line(15, doc.lastAutoTable.finalY + 50, 195, doc.lastAutoTable.finalY + 50);
+            doc.setFont("Helvetica", "normal");
+            doc.setTextColor(179, 179, 179);
+            doc.setFontSize(8);
+            doc.text("Reporte de Liquidacion #203483", 14, doc.lastAutoTable.finalY + 60);
+            doc.autoPrint();
+            doc.output('dataurlnewwindow');
+        };
     };
 
+    const generatePDFdetalle = () => {
+        const doc = new jsPDF();
+        doc.setProperties({
+            title: `Reporte_Liquidacion_${new Date().toLocaleDateString()}`,
+        });
+
+        const codigoLiquidacion = generarCodigoAleatorio();
+        doc.setFont("Helvetica", "bold");
+        doc.setFontSize(15);
+        doc.text(`Liquidacion #${codigoLiquidacion}`, 14, 15);
+        doc.setFont("Helvetica", "normal");
+        doc.setFontSize(8);
+        doc.text(formatFecha2(new Date()), 14, 19);
+
+        const img = new Image();
+        img.src = logo;
+
+        img.onload = function () {
+            doc.addImage(img, 'PNG', 151.5, 1, 50, 50);
+
+            doc.setFontSize(10);
+            doc.setFont("Helvetica", "bold");
+            doc.text("OneDoc, Inc.", 175.5, 33);
+            doc.setFont("Helvetica", "normal");
+            doc.text("1600 Valledupar Cesar VVCC,", 150, 38);
+            doc.text("Bogota,", 185.5, 43);
+            doc.text("DC 20001", 182, 48);
+            doc.text("La Gran Colombia Unida", 159, 53);
+            doc.setDrawColor(207, 207, 207);
+            doc.setLineWidth(0.4);
+            doc.line(15, 59, 195, 59);
+            doc.setFontSize(10);
+            doc.setFont("Helvetica", "bold");
+            doc.text("Reporte de Liquidacion:", 14, 65);
+            doc.setFont("Helvetica", "normal");
+            doc.text("NomiWise", 14, 70);
+            doc.text("Valledupar 20001,", 14, 75);
+            doc.text("Departamento del Cesar,", 14, 80);
+            doc.text("La Gran Colombia Unida", 14, 85);
+            doc.setDrawColor(207, 207, 207);
+            doc.setLineWidth(0.4);
+            doc.line(15, 91, 195, 91);
+            doc.setFontSize(10);
+            doc.text("En este PDF se tratara de presentar un reporte del detalle de la liquidaciones de un Empleado,", 14, 98);
+            doc.text("Teniendo en cuenta como datos importantes su salario final, contrato y los de mas componentes salariales.", 14, 103);
+
+            doc.setFontSize(12);
+            doc.setFont("Helvetica", "bold");
+            doc.text("Informacion Laboral del Empleado", 14, 115);
+            doc.setFontSize(10);
+            doc.setFont("Helvetica", "normal");
+            doc.text("Documento: " + selectedEmpleado.documento, 14, 120);
+            doc.text("Empleado: " + selectedEmpleado.nombre, 14, 125);
+            doc.text("Estado: " + selectedEmpleado.estado, 14, 130);
+            doc.text("Cargo: " + getCargoName(selectedEmpleado.idCargo), 14, 140);
+            doc.text("Contrato: " + getContratoInfo(selectedEmpleado.idContrato).tipoContrato, 14, 145);
+            doc.text("Fecha de Inico: " + getContratoInfo(selectedEmpleado.idContrato).fechaFin, 14, 150);
+            doc.text("Fecha de Fin: " + getContratoInfo(selectedEmpleado.idContrato).fechaFin, 14, 155);
+            doc.text("Salario: $ " + Number(getContratoInfo(selectedEmpleado.idContrato).salario).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'), 14, 160);
+            doc.text("Fecha de Registro: " + formatFecha(selectedDetalle.fechaRegistro), 14, 165);
+
+            // Información adicional del empleado
+            doc.setFontSize(12);
+            doc.setFont("Helvetica", "bold");
+            doc.text("Informacion Nomial del Empleado", 14, 175);
+            const y = 180;
+            doc.setFontSize(10);
+            doc.setFont("Helvetica", "normal");
+            doc.text("Año: " + selectedDetalle.año, 14, y);
+            doc.text("Mes: " + selectedDetalle.mes, 14, y + 5);
+            doc.text("Días Trabajados: " + selectedDetalle.diasTrabajados, 14, y + 10);
+            doc.text("Horas Extras: " + selectedDetalle.horasExtras, 14, y + 15);
+            doc.text("Salud: $ " + Number(selectedDetalle.salud).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'), 14, y + 20);
+            doc.text("Pensión: $ " + Number(selectedDetalle.pension).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'), 14, y + 25);
+            doc.text("Aux. Transporte: $ " + Number(selectedDetalle.auxTransporte).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'), 14, y + 30);
+            doc.text("Bon. de Servicios: $ " + Number(selectedDetalle.bonificacionServicio).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'), 14, y + 35);
+            doc.text("Aux. Alimentación: $ " + Number(selectedDetalle.auxAlimentacion).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'), 14, y + 40);
+            doc.text("Prima de Navidad: $ " + Number(selectedDetalle.primaNavidad).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'), 14, y + 45);
+            doc.text("Vacaciones: $ " + Number(selectedDetalle.vacaciones).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'), 14, y + 50);
+            doc.text("Cesantías: $ " + Number(selectedDetalle.cesantias).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'), 14, y + 55);
+            doc.text("Int. Cesantías: $ " + Number(selectedDetalle.interesesCesantias).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'), 14, y + 60);
+            doc.text("Devengado: $ " + Number(selectedDetalle.devengado).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'), 14, y + 65);
+
+            doc.setFillColor(215, 234, 255);
+            doc.setTextColor(0, 0, 0);
+            doc.setFont("Helvetica", "normal");
+            doc.setFontSize(10);
+
+            const x = 14;
+            const yNote = doc.lastAutoTable ? doc.lastAutoTable.finalY + 20 : 255;
+            const width = 182;
+            const height = 10;
+            const radius = 2.5;
+
+            doc.roundedRect(x, yNote, width, height, radius, radius, 'F');
+
+            doc.setTextColor(44, 104, 172);
+            doc.text("Este PDF fue generado por: " + userName, x + 5, yNote + 6);
+
+            doc.setTextColor(0, 0, 0);
+            doc.setFont("Helvetica", "normal");
+            doc.setFontSize(8);
+            doc.text("1. Este Reporte no incluye los detalle de liquidacion.", 14, doc.lastAutoTable ? doc.lastAutoTable.finalY + 45 : 275);
+            doc.setDrawColor(207, 207, 207);
+            doc.setLineWidth(0.4);
+            doc.line(15, doc.lastAutoTable ? doc.lastAutoTable.finalY + 50 : 280, 195, doc.lastAutoTable ? doc.lastAutoTable.finalY + 50 : 280);
+            doc.setFont("Helvetica", "normal");
+            doc.setTextColor(179, 179, 179);
+            doc.setFontSize(8);
+            doc.text("Reporte de Liquidacion #203483", 14, doc.lastAutoTable ? doc.lastAutoTable.finalY + 60 : 285);
+            doc.autoPrint();
+            doc.output('dataurlnewwindow');
+        };
+    };
 
     const handlePageClick = ({ selected }) => {
         setCurrentPage(selected);
@@ -563,7 +678,7 @@ const RegistroLiquidaciones = () => {
                                     </p>
                                     <button className="cerrar-button" onClick={handleCloseModal}>Cerrar</button>
                                     <div className="button-container">
-                                        <button type="button" className="open-PDF-button-2" onClick={generatePDF}>
+                                        <button type="button" className="open-PDF-button-2" onClick={generatePDFdetalle}>
                                             <i class="fi fi-rr-file-medical-alt icon-style-pdf"></i>
                                         </button>
                                     </div>
