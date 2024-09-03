@@ -80,9 +80,18 @@ const DashboardCards = () => {
         .filter(d => {
           const fechaDetalle = new Date(d.fechaRegistro).toISOString().split('T')[0];
           const fechaNomina = new Date(nomina.fechaRegistro).toISOString().split('T')[0];
-          return fechaDetalle === fechaNomina;
+          return fechaNomina === fechaDetalle;
         })
-        .reduce((sum, detail) => sum + Number(detail.devengado), 0);
+        .reduce((sum, detail) => sum + Number(detail.devengado) + 
+          Number(detail.salud) +
+          Number(detail.pension) +
+          Number(detail.auxTransporte) +
+          Number(detail.bonificacionServicio) +
+          Number(detail.auxAlimentacion) +
+          Number(detail.primaNavidad) +
+          Number(detail.vacaciones) +
+          Number(detail.cesantias) +
+          Number(detail.interesesCesantias), 0);
 
       return {
         ...nomina,

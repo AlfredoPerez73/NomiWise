@@ -59,15 +59,12 @@
     }
   }
 
-  export async function obtenerEmpleados(idUsuario) {
+  export async function obtenerEmpleados() {
     try {
 
       const hoy = new Date();
 
       const empleadosConContratosExpirados = await Empleado.findAll({
-        where: {
-          idUsuario: idUsuario
-        },
         include: [{
           model: Contrato,
           where: {
@@ -82,11 +79,7 @@
         await empleado.update({ estado: 'INACTIVO' });
       }
 
-      const empleados = await Empleado.findAll({
-        where: {
-          idUsuario: idUsuario
-        }
-      });
+      const empleados = await Empleado.findAll();
       return empleados.map(
         (empleados) =>
           new EmpleadoDTO(

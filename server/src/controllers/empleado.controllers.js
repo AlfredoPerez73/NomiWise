@@ -22,8 +22,7 @@ export async function postEmpleado(req, res) {
 
 export async function getEmpleado(req, res) {
     try {
-        const idUsuario = req.usuario.idUsuario;
-        const empleados = await empleadoService.obtenerEmpleados(idUsuario);
+        const empleados = await empleadoService.obtenerEmpleados();
         res.json(empleados);
     } catch (error) {
         res.status(500).json({ message: error.message });

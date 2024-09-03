@@ -122,21 +122,19 @@ export async function iniciarSesion(correo, contraseña) {
       throw new Error("El correo electrónico no existe");
     }
 
-
-/*     if (contraseña != usuarioEncontrado.contraseña) {
-      throw new Error("La contraseña es incorrecta");
+    if (usuarioEncontrado.contraseña.startsWith("$2a$")) {
+      const isMatch = await bcrypt.compare(contraseña, usuarioEncontrado.contraseña);
+      if (!isMatch) {
+        throw new Error("La contraseña es incorrecta");
+      }
+    } else {
+      if (contraseña !== usuarioEncontrado.contraseña) {
+        throw new Error("La contraseña es incorrecta");
+      }
+      usuarioEncontrado.contraseña = await bcrypt.hash(contraseña, 10);
+      await usuarioEncontrado.save();
     }
- */
-    const isMatch = await bcrypt.compare(
-      contraseña,
-      usuarioEncontrado.contraseña
-    );
-
-    if (!isMatch) {
-      throw new Error("La contraseña es incorrecta");
-    }
-
-
+    
     const token = await createAccessToken({
       idUsuario: usuarioEncontrado.idUsuario,
       nombre: usuarioEncontrado.nombre,

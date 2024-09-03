@@ -21,7 +21,7 @@ const RegistroUsuarioForm = ({ onClose, usuarioToEdit, roles }) => {
                 documento: usuarioToEdit.documento,
                 nombre: usuarioToEdit.nombre,
                 correo: usuarioToEdit.correo,
-                contraseña: usuarioToEdit.contraseña,
+                contraseña: "",
                 idRol: usuarioToEdit.idRol,
             });
         }
@@ -39,6 +39,13 @@ const RegistroUsuarioForm = ({ onClose, usuarioToEdit, roles }) => {
         e.preventDefault();
         try {
             if (usuarioToEdit) {
+                const updatedData = { ...formData };
+
+                // Si el usuario no ha cambiado la contraseña, no enviar el campo de contraseña
+                if (formData.contraseña === "") {
+                    delete updatedData.contraseña;
+                }
+
                 await updateUsuario(usuarioToEdit.idUsuario, formData);
                 toast.success(<b>El usuario fue actualizado con éxito!</b>);
             } else {
@@ -59,7 +66,7 @@ const RegistroUsuarioForm = ({ onClose, usuarioToEdit, roles }) => {
             <div className="form-comp">
                 <div className="header-comp">
                     <h1 className="title-comp">{usuarioToEdit ? "Actualizar Usuario" : "Registrar Usuario"}</h1>
-                </div>  
+                </div>
                 <div className="card-grid card-centered">
                     <h1 className="sub-titles-copm">Nuevo Usuario</h1>
                     <form onSubmit={handleSubmit}>
@@ -110,27 +117,26 @@ const RegistroUsuarioForm = ({ onClose, usuarioToEdit, roles }) => {
                                     name="contraseña"
                                     value={formData.contraseña}
                                     onChange={handleChange}
-                                    required
                                     placeholder=" "
                                     autoComplete="off"
                                 />
                                 <label htmlFor="contraseña">Contraseña</label>
                             </div>
-                                <select
-                                    id="idRol"
-                                    name="idRol"
-                                    value={formData.idRol}
-                                    onChange={handleChange}
-                                    required
-                                    placeholder=" "
-                                >
-                                    <option value="">Seleccionar Rol</option>
-                                    {roles.map((rol) => (
-                                        <option key={rol.idRol} value={rol.idRol}>
-                                            {rol.nRol}
-                                        </option>
-                                    ))}
-                                </select>
+                            <select
+                                id="idRol"
+                                name="idRol"
+                                value={formData.idRol}
+                                onChange={handleChange}
+                                required
+                                placeholder=" "
+                            >
+                                <option value="">Seleccionar Rol</option>
+                                {roles.map((rol) => (
+                                    <option key={rol.idRol} value={rol.idRol}>
+                                        {rol.nRol}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                         <button type={usuarioToEdit ? "submit_2" : "submit_2"}>
                             {usuarioToEdit ? "Actualizar" : "Registrar"}

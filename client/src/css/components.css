@@ -526,6 +526,51 @@ h6 {
   align-items: center;
 }
 
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.icon-style-pdf {
+  font-size: 16px;
+}
+
+.open-PDF-button {
+  background-color: #e87653;
+  color: whitesmoke;
+  padding: 7px 10px;
+  margin-bottom: -10px;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease-out;
+}
+
+.open-PDF-button:hover {
+  background-color: #db6845;
+  padding: 8px 11px;
+  box-shadow: 0 20px 40px rgba(121, 121, 121, 0.137);
+  transition: all 0.3s ease-in-out;
+}
+
+.open-PDF-button-2 {
+  background-color: #e87653;
+  color: whitesmoke;
+  padding: 7px 10px;
+  margin-top: -30px;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease-out;
+}
+
+.open-PDF-button-2:hover {
+  background-color: #db6845;
+  padding: 8px 11px;
+  box-shadow: 0 20px 40px rgba(121, 121, 121, 0.137);
+  transition: all 0.3s ease-in-out;
+}
+
 .open-modal-button {
   width: 5%;
   background-color: #5383E8;
@@ -1095,7 +1140,7 @@ h6 {
   width: 100px;
 }
 
-.detalle-liquidacion-card button {
+.cerrar-button {
   display: block;
   margin: 1rem auto 0;
   margin-top: 30px;
@@ -1108,7 +1153,7 @@ h6 {
   transition: background-color 0.3s;
 }
 
-.detalle-liquidacion-card button:hover {
+.cerrar-button:hover {
   background-color: var(--rojo2);
 }
 

@@ -29,7 +29,7 @@ const GuardarLiquidaciones = ({ onClose }) => {
     const { getCargo, cargos } = useCargo();
     const { getContrato, contratos } = useContrato();
     const sEstado = [
-        "ACTIVO", 
+        "ACTIVO",
         "INACTIVO"
     ];
     const tcontratos = [
@@ -73,9 +73,9 @@ const GuardarLiquidaciones = ({ onClose }) => {
         const contrato = contratos.find(c => c.idContrato === val.idContrato) || {};
         setEditar(true);
         setEmpleadoToEdit({
-                ...val,
-                contrato
-            }
+            ...val,
+            contrato
+        }
         );
         setIsFormOpen(true);
         setIsLiquidarFormOpen(showExtra);
@@ -204,7 +204,9 @@ const GuardarLiquidaciones = ({ onClose }) => {
                     <div className="header-comp">
                         <h1 className="title-comp">Registro de Empleados</h1>
                     </div>
-                    <button type="button" className="open-modal-button" onClick={onClose}>Cerrar</button>
+                    <div className="button-container">
+                        <button type="button" className="open-modal-button" onClick={onClose}>Cerrar</button>
+                    </div>
                     <div className="table-card-empleados">
                         <h1 className="sub-titles-copm">Empleados Registrados</h1>
                         <div className="search-bar">
@@ -274,7 +276,7 @@ const GuardarLiquidaciones = ({ onClose }) => {
                                     <th>Fecha de Fin</th>
                                     <th>Fecha de registro</th>
                                     <th>Acciones</th>
-                                    </tr>
+                                </tr>
                             </thead>
                             <tbody>
                                 {currentEmpleados.map((val, key) => (
@@ -308,13 +310,13 @@ const GuardarLiquidaciones = ({ onClose }) => {
                                                 <i className="fi fi-br-clear-alt icon-style-components"></i>
                                             </button>
                                             {val?.estado === "ACTIVO" && (
-                                                    <button
-                                                        className="liquidar-button"
-                                                        onClick={(e) => { e.stopPropagation(); setEmpleado(val, true); }}
-                                                    >
-                                                        <i className="fi fi-br-usd-circle icon-style-components"></i>
-                                                    </button>
-                                                )}
+                                                <button
+                                                    className="liquidar-button"
+                                                    onClick={(e) => { e.stopPropagation(); setEmpleado(val, true); }}
+                                                >
+                                                    <i className="fi fi-br-usd-circle icon-style-components"></i>
+                                                </button>
+                                            )}
                                         </td>
                                     </tr>
                                 ))}

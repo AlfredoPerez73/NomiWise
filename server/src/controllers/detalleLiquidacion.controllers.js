@@ -14,8 +14,7 @@ export async function postDetalle (req, res) {
 
 export async function getDetalle(req, res) {
     try {
-        const idUsuario = req.usuario.idUsuario;
-        const detalles = await detalleLiquidacionService.obtenerDetalles(idUsuario);
+        const detalles = await detalleLiquidacionService.obtenerDetalles();
         res.json(detalles);
     } catch (error) {
         res.status(500).json({ message: error.message });

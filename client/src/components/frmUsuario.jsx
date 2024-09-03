@@ -16,7 +16,7 @@ const RegistroUsuarios = () => {
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [usuarioToEdit, setUsuarioToEdit] = useState(null);
     const [currentPage, setCurrentPage] = useState(0);
-    const [perPage] = useState(10); // Cambia esto al número de elementos por página que desees
+    const [perPage] = useState(10);
 
     const { getUsuario, usuarios, deleteUsuario } = useUsuario();
     const { getRol, roles } = useRol();
@@ -113,13 +113,15 @@ const RegistroUsuarios = () => {
         <div className="w-full h-full">
             <Toaster />
             {isFormOpen ? (
-                <RegistroUsuarioForm onClose={handleFormClose} usuarioToEdit={usuarioToEdit}  roles={roles} />
+                <RegistroUsuarioForm onClose={handleFormClose} usuarioToEdit={usuarioToEdit} roles={roles} />
             ) : (
                 <div className="form-comp">
                     <div className="header-comp">
                         <h1 className="title-comp">Registro de Usuarios</h1>
                     </div>
-                    <button type="button" className="open-modal-button" onClick={() => setIsFormOpen(true)}>Registrar</button>
+                    <div class="button-container">
+                        <button type="button" className="open-modal-button" onClick={() => setIsFormOpen(true)}>Registrar</button>
+                    </div>
                     <div className="table-card">
                         <h1 className="sub-titles-copm">Usuarios Registrados</h1>
                         <div className="search-bar">
@@ -188,23 +190,23 @@ const RegistroUsuarios = () => {
                             </tbody>
                         </table>
                         <ReactPaginate
-                        previousLabel={
-                            <i className="fi fi-br-angle-double-small-left icon-style-pagination" ></i>
-                        }
-                        nextLabel={
-                            <i className="fi fi-br-angle-double-small-right icon-style-pagination"></i>
-                        }
-                        breakLabel={"..."}
-                        breakClassName={"break-me"}
-                        pageCount={pageCount}
-                        marginPagesDisplayed={2}
-                        pageRangeDisplayed={5}
-                        onPageChange={handlePageClick}
-                        containerClassName={"pagination"}
-                        subContainerClassName={"pages pagination"}
-                        activeClassName={"active"}
-                        forcePage={Math.min(currentPage, pageCount - 1)}
-                    />
+                            previousLabel={
+                                <i className="fi fi-br-angle-double-small-left icon-style-pagination" ></i>
+                            }
+                            nextLabel={
+                                <i className="fi fi-br-angle-double-small-right icon-style-pagination"></i>
+                            }
+                            breakLabel={"..."}
+                            breakClassName={"break-me"}
+                            pageCount={pageCount}
+                            marginPagesDisplayed={2}
+                            pageRangeDisplayed={5}
+                            onPageChange={handlePageClick}
+                            containerClassName={"pagination"}
+                            subContainerClassName={"pages pagination"}
+                            activeClassName={"active"}
+                            forcePage={Math.min(currentPage, pageCount - 1)}
+                        />
                     </div>
                 </div>
             )}

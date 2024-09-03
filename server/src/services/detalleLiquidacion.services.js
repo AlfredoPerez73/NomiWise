@@ -205,13 +205,9 @@ export async function createDetalleLiquidacion(detalle, idUsuario) {
     }
 };
 
-export async function obtenerDetalles(idUsuario) {
+export async function obtenerDetalles() {
     try {
-        const detalles = await DetalleLiquidacion.findAll({
-            where: {
-                idUsuario: idUsuario
-            }
-        });
+        const detalles = await DetalleLiquidacion.findAll();
         return detalles.map(
             (detalle) =>
                 new DetalleLiquidacionDTO(

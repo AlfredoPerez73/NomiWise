@@ -276,7 +276,6 @@
 .sidebar {
   background-color: rgb(31, 30, 68);
   width: 240px;
-  transition: width 0.3s ease-in-out;
   box-shadow: 0 16px 20px rgba(0, 0, 0, 0.5);
   font-size: 0.9rem;
   color: whitesmoke;

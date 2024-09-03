@@ -27,7 +27,7 @@ const RegistroEmpleados = () => {
     const { getCargo, cargos } = useCargo();
     const { getContrato, contratos } = useContrato();
     const sEstado = [
-        "ACTIVO", 
+        "ACTIVO",
         "INACTIVO"
     ];
     const tcontratos = [
@@ -71,9 +71,9 @@ const RegistroEmpleados = () => {
         const contrato = contratos.find(c => c.idContrato === val.idContrato) || {};
         setEditar(true);
         setEmpleadoToEdit({
-                ...val,
-                contrato
-            }
+            ...val,
+            contrato
+        }
         );
         setIsFormOpen(true);
     };
@@ -197,7 +197,9 @@ const RegistroEmpleados = () => {
                     <div className="header-comp">
                         <h1 className="title-comp">Registro de Empleados</h1>
                     </div>
-                    <button type="button" className="open-modal-button" onClick={() => setIsFormOpen(true)}>Registrar</button>
+                    <div className="button-container">
+                        <button type="button" className="open-modal-button" onClick={() => setIsFormOpen(true)}>Registrar</button>
+                    </div>
                     <div className="table-card-empleados">
                         <h1 className="sub-titles-copm">Empleados Registrados</h1>
                         <div className="search-bar">
@@ -299,6 +301,11 @@ const RegistroEmpleados = () => {
                                 ))}
                             </tbody>
                         </table>
+                        <div className="button-container">
+                            <button type="button" className="open-PDF-button">
+                                <i class="fi fi-rr-file-medical-alt icon-style-pdf"></i>
+                            </button>
+                        </div>
                         <ReactPaginate
                             previousLabel={
                                 <i className="fi fi-br-angle-double-small-left icon-style-pagination" ></i>

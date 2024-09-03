@@ -1,13 +1,9 @@
 import { Liquidacion } from "../models/liquidacion.js";
 import { LiquidacionDTO } from "../dtos/liquidacion.dto.js";
 
-export async function obtenerNomina(idUsuario) {
+export async function obtenerNomina() {
     try {
-        const liquidaciones = await Liquidacion.findAll({
-            where: {
-                idUsuario: idUsuario
-            }
-        });
+        const liquidaciones = await Liquidacion.findAll();
         return liquidaciones.map(
             (liquidacion) =>
                 new LiquidacionDTO(
