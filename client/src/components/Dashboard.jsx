@@ -134,7 +134,7 @@ const DashboardCards = () => {
         ? parseFloat((totalHorasExtras / filteredDetalles.length).toFixed(2))
         : 0;
       const promedioDiasTrabajados = filteredDetalles.length > 0
-        ? totalDiasTrabajados / filteredDetalles.length
+        ? parseFloat((totalDiasTrabajados / filteredDetalles.length).toFixed(2))
         : 0;
 
       const horasExtrasPorEmpleado = filteredDetalles.reduce((acc, detalle) => {

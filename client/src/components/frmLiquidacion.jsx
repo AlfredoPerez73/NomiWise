@@ -222,18 +222,18 @@ const RegistroLiquidaciones = () => {
         img.onload = function () {
             doc.addImage(img, 'PNG', 151.5, 1, 50, 50);
 
-            doc.setFontSize(10);
+            doc.setFontSize(9);
             doc.setFont("Helvetica", "bold");
             doc.text("OneDoc, Inc.", 175.5, 33);
             doc.setFont("Helvetica", "normal");
-            doc.text("1600 Valledupar Cesar VVCC,", 150, 38);
+            doc.text("1600 Valledupar Cesar VVCC,", 153, 38);
             doc.text("Bogota,", 185.5, 43);
             doc.text("DC 20001", 182, 48);
-            doc.text("La Gran Colombia Unida", 159, 53);
+            doc.text("La Gran Colombia Unida", 161, 53);
             doc.setDrawColor(207, 207, 207);
             doc.setLineWidth(0.4);
             doc.line(15, 59, 195, 59);
-            doc.setFontSize(10);
+            doc.setFontSize(9);
             doc.setFont("Helvetica", "bold");
             doc.text("Reporde de Liquidacion:", 14, 65);
             doc.setFont("Helvetica", "normal");
@@ -244,7 +244,7 @@ const RegistroLiquidaciones = () => {
             doc.setDrawColor(207, 207, 207);
             doc.setLineWidth(0.4);
             doc.line(15, 91, 195, 91);
-            doc.setFontSize(10);
+            doc.setFontSize(9);
             doc.text("En este PDF se tratara de presentar un reporte de todas las liquidaciones de un Empleado,", 14, 98);
             doc.text("Teniendo en cuenta como datos importantes su salario final y contratos.", 14, 103);
 
@@ -284,7 +284,7 @@ const RegistroLiquidaciones = () => {
                 headStyles: { fillColor: [245, 245, 245] },
                 styles: {
                     cellPadding: 1,
-                    fontSize: 8,
+                    fontSize: 7,
                     overflow: 'linebreak',
                     cellWidth: 'wrap'
                 },
@@ -302,7 +302,7 @@ const RegistroLiquidaciones = () => {
 
             doc.setTextColor(0, 0, 0);
             doc.setFont("Helvetica", "normal");
-            doc.setFontSize(10);
+            doc.setFontSize(9);
 
             const x = 14;
             const y = doc.lastAutoTable.finalY + 20;
@@ -325,7 +325,7 @@ const RegistroLiquidaciones = () => {
             doc.setFont("Helvetica", "normal");
             doc.setTextColor(179, 179, 179);
             doc.setFontSize(8);
-            doc.text("Reporte de Liquidacion #203483", 14, doc.lastAutoTable.finalY + 60);
+            doc.text(`Liquidacion #${codigoLiquidacion}`, 14, doc.lastAutoTable.finalY + 60);
             doc.autoPrint();
             doc.output('dataurlnewwindow');
         };
@@ -351,18 +351,18 @@ const RegistroLiquidaciones = () => {
         img.onload = function () {
             doc.addImage(img, 'PNG', 151.5, 1, 50, 50);
 
-            doc.setFontSize(10);
+            doc.setFontSize(9);
             doc.setFont("Helvetica", "bold");
             doc.text("OneDoc, Inc.", 175.5, 33);
             doc.setFont("Helvetica", "normal");
-            doc.text("1600 Valledupar Cesar VVCC,", 150, 38);
+            doc.text("1600 Valledupar Cesar VVCC,", 153, 38);
             doc.text("Bogota,", 185.5, 43);
             doc.text("DC 20001", 182, 48);
-            doc.text("La Gran Colombia Unida", 159, 53);
+            doc.text("La Gran Colombia Unida", 161, 53);
             doc.setDrawColor(207, 207, 207);
             doc.setLineWidth(0.4);
             doc.line(15, 59, 195, 59);
-            doc.setFontSize(10);
+            doc.setFontSize(9);
             doc.setFont("Helvetica", "bold");
             doc.text("Reporte de Liquidacion:", 14, 65);
             doc.setFont("Helvetica", "normal");
@@ -373,31 +373,33 @@ const RegistroLiquidaciones = () => {
             doc.setDrawColor(207, 207, 207);
             doc.setLineWidth(0.4);
             doc.line(15, 91, 195, 91);
-            doc.setFontSize(10);
+            doc.setFontSize(9);
             doc.text("En este PDF se tratara de presentar un reporte del detalle de la liquidaciones de un Empleado,", 14, 98);
             doc.text("Teniendo en cuenta como datos importantes su salario final, contrato y los de mas componentes salariales.", 14, 103);
 
             doc.setFontSize(12);
             doc.setFont("Helvetica", "bold");
             doc.text("Informacion Laboral del Empleado", 14, 115);
-            doc.setFontSize(10);
+            doc.setFontSize(9);
             doc.setFont("Helvetica", "normal");
             doc.text("Documento: " + selectedEmpleado.documento, 14, 120);
             doc.text("Empleado: " + selectedEmpleado.nombre, 14, 125);
             doc.text("Estado: " + selectedEmpleado.estado, 14, 130);
             doc.text("Cargo: " + getCargoName(selectedEmpleado.idCargo), 14, 140);
             doc.text("Contrato: " + getContratoInfo(selectedEmpleado.idContrato).tipoContrato, 14, 145);
-            doc.text("Fecha de Inico: " + getContratoInfo(selectedEmpleado.idContrato).fechaFin, 14, 150);
+            doc.text("Fecha de Inico: " + getContratoInfo(selectedEmpleado.idContrato).fechaInicio, 14, 150);
             doc.text("Fecha de Fin: " + getContratoInfo(selectedEmpleado.idContrato).fechaFin, 14, 155);
             doc.text("Salario: $ " + Number(getContratoInfo(selectedEmpleado.idContrato).salario).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'), 14, 160);
             doc.text("Fecha de Registro: " + formatFecha(selectedDetalle.fechaRegistro), 14, 165);
-
+            doc.setDrawColor(207, 207, 207);
+            doc.setLineWidth(0.4);
+            doc.line(15, 170, 195, 170);
             // Información adicional del empleado
             doc.setFontSize(12);
             doc.setFont("Helvetica", "bold");
-            doc.text("Informacion Nomial del Empleado", 14, 175);
-            const y = 180;
-            doc.setFontSize(10);
+            doc.text("Informacion Nomial del Empleado", 14, 180);
+            const y = 185;
+            doc.setFontSize(9);
             doc.setFont("Helvetica", "normal");
             doc.text("Año: " + selectedDetalle.año, 14, y);
             doc.text("Mes: " + selectedDetalle.mes, 14, y + 5);
@@ -417,7 +419,7 @@ const RegistroLiquidaciones = () => {
             doc.setFillColor(215, 234, 255);
             doc.setTextColor(0, 0, 0);
             doc.setFont("Helvetica", "normal");
-            doc.setFontSize(10);
+            doc.setFontSize(9);
 
             const x = 14;
             const yNote = doc.lastAutoTable ? doc.lastAutoTable.finalY + 20 : 255;
@@ -433,14 +435,14 @@ const RegistroLiquidaciones = () => {
             doc.setTextColor(0, 0, 0);
             doc.setFont("Helvetica", "normal");
             doc.setFontSize(8);
-            doc.text("1. Este Reporte no incluye los detalle de liquidacion.", 14, doc.lastAutoTable ? doc.lastAutoTable.finalY + 45 : 275);
+            doc.text("1. Este Reporte incluye los detalle de liquidacion.", 14, doc.lastAutoTable ? doc.lastAutoTable.finalY + 45 : 275);
             doc.setDrawColor(207, 207, 207);
             doc.setLineWidth(0.4);
             doc.line(15, doc.lastAutoTable ? doc.lastAutoTable.finalY + 50 : 280, 195, doc.lastAutoTable ? doc.lastAutoTable.finalY + 50 : 280);
             doc.setFont("Helvetica", "normal");
             doc.setTextColor(179, 179, 179);
             doc.setFontSize(8);
-            doc.text("Reporte de Liquidacion #203483", 14, doc.lastAutoTable ? doc.lastAutoTable.finalY + 60 : 285);
+            doc.text(`Liquidacion #${codigoLiquidacion}`, 14, doc.lastAutoTable ? doc.lastAutoTable.finalY + 60 : 285);
             doc.autoPrint();
             doc.output('dataurlnewwindow');
         };
