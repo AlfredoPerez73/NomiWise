@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../css/components.css";
+import { useRol } from "../context/rolContext";
 import { useUsuario } from "../context/usuarioContext";
 import { Toaster, toast } from "react-hot-toast";
 
@@ -11,9 +12,19 @@ const RegistroUsuarioForm = ({ onClose, usuarioToEdit, roles }) => {
         contraseña: "",
         idRol: "",
     });
+    const [newRol, setNewRol] = useState({
+        nRol: ""
+    });
     const [error, setError] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
+    const [isExiting, setIsExiting] = useState(false);
 
     const { createUsuario, updateUsuario, getUsuario } = useUsuario();
+    const {
+        createRol,
+        getRol,
+    } = useRol();
 
     useEffect(() => {
         if (usuarioToEdit) {
@@ -58,6 +69,39 @@ const RegistroUsuarioForm = ({ onClose, usuarioToEdit, roles }) => {
             setError(error.response.data.message);
             toast.error(`Error: ${error.response.data.message}`);
         }
+    };
+
+    const handleCreateRol = async (e) => {
+        e.preventDefault();
+        try {
+            await createRol(newRol);
+            toast.success(<b>El rol ha sido registrado correctamente.</b>);
+            setNewRol({
+                nRol: ""
+            });
+            setIsModalOpen(false);
+            await getRol();
+        } catch (error) {
+            setError(error.response?.data?.message || "Error desconocido");
+            toast.error(<b>Error: {error.response?.data?.message || "Error desconocido"}</b>);
+        }
+    };
+
+    const handleNewRolChange = (e) => {
+        const { name, value } = e.target;
+        setNewRol((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
+    };
+
+    const handleCloseModal = () => {
+        setIsExiting(true);
+        setTimeout(() => {
+            setIsVisible(false);
+            setIsExiting(false);
+            setIsModalOpen(false)
+        }, 500);
     };
 
     return (
@@ -122,21 +166,26 @@ const RegistroUsuarioForm = ({ onClose, usuarioToEdit, roles }) => {
                                 />
                                 <label htmlFor="contraseña">Contraseña</label>
                             </div>
-                            <select
-                                id="idRol"
-                                name="idRol"
-                                value={formData.idRol}
-                                onChange={handleChange}
-                                required
-                                placeholder=" "
-                            >
-                                <option value="">Seleccionar Rol</option>
-                                {roles.map((rol) => (
-                                    <option key={rol.idRol} value={rol.idRol}>
-                                        {rol.nRol}
-                                    </option>
-                                ))}
-                            </select>
+                            <div>
+                                <select
+                                    id="idRol"
+                                    name="idRol"
+                                    value={formData.idRol}
+                                    onChange={handleChange}
+                                    required
+                                    placeholder=" "
+                                >
+                                    <option value="">Seleccionar Rol</option>
+                                    {roles.map((rol) => (
+                                        <option key={rol.idRol} value={rol.idRol}>
+                                            {rol.nRol}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <button type="button_3" className="open-modal-button-3" onClick={() => setIsModalOpen(true)}>
+                                    <i className="fi fi-br-plus-small icon-style-modal-2"></i>
+                            </button>
                         </div>
                         <button type={usuarioToEdit ? "submit_2" : "submit_2"}>
                             {usuarioToEdit ? "Actualizar" : "Registrar"}
@@ -147,6 +196,34 @@ const RegistroUsuarioForm = ({ onClose, usuarioToEdit, roles }) => {
                     </form>
                 </div>
             </div>
+            {isModalOpen && (
+                <div className={`modal-overlay ${isExiting ? "hidden" : "visible"}`} onClick={handleCloseModal}>
+                    <div className={`modal-content-2 ${isExiting ? "hidden" : ""}`} onClick={(e) => e.stopPropagation()}>
+                        <h2>Agregar Nuevo Rol</h2>
+                        <div className="card-modal">
+                            <form onSubmit={handleCreateRol}>
+                                <div className="form-group">
+                                    <div className="input-container">
+                                        <input
+                                            type="text"
+                                            id="nRol"
+                                            name="nRol"
+                                            placeholder=" "
+                                            autoComplete="off"
+                                            value={newRol.nRol}
+                                            onChange={handleNewRolChange}
+                                            required
+                                        />
+                                        <label htmlFor="nRol">Nombre de rol</label>
+                                    </div>
+                                    <button type="submit">Guardar</button>
+                                    <button type="button" onClick={handleCloseModal}>Cancelar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

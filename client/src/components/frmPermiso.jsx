@@ -15,6 +15,8 @@ const RegistroPermisos = () => {
         nRol: ""
     });
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
+    const [isExiting, setIsExiting] = useState(false);
     const [id, setId] = useState("");
     const [editar, setEditar] = useState(false);
     const [filteredPermisos, setFilteredPermisos] = useState([]);
@@ -163,6 +165,15 @@ const RegistroPermisos = () => {
         }));
     };
 
+    const handleCloseModal = () => {
+        setIsExiting(true);
+        setTimeout(() => {
+            setIsVisible(false);
+            setIsExiting(false);
+            setIsModalOpen(false)
+        }, 500);
+    };
+
     const handleNewRolChange = (e) => {
         const { name, value } = e.target;
         setNewRol((prevState) => ({
@@ -249,7 +260,7 @@ const RegistroPermisos = () => {
                                         </option>
                                     ))}
                                 </select>
-                                <button type="submit_3" className="open-modal-button-2" onClick={() => setIsModalOpen(true)}>
+                                <button type="button_2" className="open-modal-button-2" onClick={() => setIsModalOpen(true)}>
                                     <i className="fi fi-br-plus-small icon-style-modal"></i>
                                 </button>
                             </div>
@@ -354,8 +365,8 @@ const RegistroPermisos = () => {
                 </div>
             </div>
             {isModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
+                <div className={`modal-overlay ${isExiting ? "hidden" : "visible"}`} onClick={handleCloseModal}>
+                    <div className={`modal-content-2 ${isExiting ? "hidden" : ""}`} onClick={(e) => e.stopPropagation()}>
                         <h2>Agregar Nuevo Rol</h2>
                         <div className="card-modal">
                             <form onSubmit={handleCreateRol}>
@@ -373,9 +384,9 @@ const RegistroPermisos = () => {
                                         />
                                         <label htmlFor="nRol">Nombre de rol</label>
                                     </div>
+                                    <button type="submit">Guardar</button>
+                                    <button type="button" onClick={handleCloseModal}>Cancelar</button>
                                 </div>
-                                <button type="submit">Guardar</button>
-                                <button type="button" onClick={() => setIsModalOpen(false)}>Cancelar</button>
                             </form>
                         </div>
                     </div>

@@ -248,7 +248,6 @@ h6 {
   position: relative;
   left: 30%;
   margin-right: 10px;
-  margin-top: 20px;
 }
 
 .card button[type="submit_2"]:hover {
@@ -332,6 +331,7 @@ h6 {
 .table-card {
   overflow: hidden;
   color: whitesmoke;
+  font-weight: normal;
 }
 
 .table-card table {
@@ -369,6 +369,7 @@ h6 {
 .table-card-empleados {
   overflow: hidden;
   color: whitesmoke;
+  font-weight: normal;
 }
 
 .table-card-empleados table {
@@ -522,8 +523,15 @@ h6 {
 }
 
 .icon-style-modal {
-  font-size: 20px;
+  font-size: 15px;
   align-items: center;
+  margin-left: -2px;
+}
+
+.icon-style-modal-2 {
+  font-size: 15px;
+  align-items: center;
+  margin-left: -8px;
 }
 
 .button-container {
@@ -548,7 +556,6 @@ h6 {
 
 .open-PDF-button:hover {
   background-color: #db6845;
-  padding: 8px 11px;
   box-shadow: 0 20px 40px rgba(121, 121, 121, 0.137);
   transition: all 0.3s ease-in-out;
 }
@@ -566,7 +573,6 @@ h6 {
 
 .open-PDF-button-2:hover {
   background-color: #db6845;
-  padding: 8px 11px;
   box-shadow: 0 20px 40px rgba(121, 121, 121, 0.137);
   transition: all 0.3s ease-in-out;
 }
@@ -592,6 +598,54 @@ h6 {
   transition: all 0.3s ease-in-out;
 }
 
+.open-modal-button-2[type="button_2"] {
+  width: 3%;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 1rem;
+  background-color: transparent;
+  color: white;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  position: relative;
+  left: 0%;
+  margin-top: -10px;
+  transition: all 0.3s ease-in-out;
+}
+
+.open-modal-button-2[type="button_2"]:hover {
+  background-color: rgb(45, 43, 104);
+  margin: 6px;
+  margin-bottom: 15px;
+  box-shadow: 0 20px 40px rgba(121, 121, 121, 0.137);
+  transition: all 0.3s ease-in-out;
+}
+
+.open-modal-button-3[type="button_3"] {
+  width: 3%;
+  padding: 0.75rem 1rem;
+  border: none;
+  background-color: transparent;
+  color: white;
+  font-size: 0.3rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  position: relative;
+  margin-top: 0%;
+  margin-bottom: 10px;
+  left: 0%;
+  transition: all 0.3s ease-in-out;
+}
+
+.open-modal-button-3[type="button_3"]:hover {
+  background-color: rgb(45, 43, 104);
+  margin-top: 0%;
+  margin-bottom: auto;
+  box-shadow: 0 20px 40px rgba(121, 121, 121, 0.137);
+  transition: all 0.3s ease-in-out;
+}
+
 .modal-content button {
   padding: 10px 20px;
   margin-right: 10px;
@@ -611,48 +665,58 @@ h6 {
   padding-right: 3rem;
 }
 
+.modal-overlay.visible {
+  opacity: 1;
+  visibility: visible;
+}
 
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
   opacity: 0;
-  animation: fadeIn 0.3s forwards;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
-.modal-content {
-  background: rgb(22, 22, 54);
+.modal-content-2 {
+  overflow: auto;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  background-color: rgba(31, 30, 68, 0.61);
+  backdrop-filter: blur(10px);
+  /* Efecto de desenfoque */
   padding: 20px;
-  border-radius: 40px;
-  position: relative;
-  max-width: 1000px;
-  max-height: 700px;
-  width: 90%;
-  height: 27%;
-  animation: slideIn 0.3s forwards;
-  text-align: center;
-  padding-left: 3rem;
-  padding-right: 3rem;
-
+  border-radius: 25px;
+  width: 80%;
+  height: 80%;
+  max-width: 900px;
+  max-height: 300px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  animation: enterAnimation 0.5s ease forwards;
+  font-family: "Poppins", sans-serif;
 }
 
-.modal-content h2 {
+.modal-content-2.exiting {
+  animation: exitAnimation 0.5s ease forwards;
+}
+
+.modal-content-2 h2 {
   color: whitesmoke;
   margin-bottom: 20px;
-
 }
 
-.modal-content .form-group {
-  margin-bottom: 20px;
+.modal-content-2 .form-group {
+  margin-bottom: 30px;
 }
 
-.modal-content .form-group label {
+.modal-content-2 .form-group label {
   color: whitesmoke;
   display: block;
   font-weight: bold;
@@ -660,7 +724,7 @@ h6 {
   font-size: 10.5px;
 }
 
-.modal-content .form-group input {
+.modal-content-2 input {
   width: 100%;
   padding: 10px;
   border: none;
@@ -671,36 +735,45 @@ h6 {
   margin-bottom: 15px;
 }
 
-.modal-content button[type="submit"] {
-  background-color: #5383E8;
-  color: whitesmoke;
+.modal-content-2 button[type="submit"] {
+  width: 20%;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 1rem;
+  background-color: var(--azul1);
+  color: white;
+  font-size: 10.5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  position: relative;
+  left: 30%;
+  margin-right: 10px;
+  margin-top: 20px;
 }
 
-.modal-content button[type="button"] {
-  background-color: #f44336;
-  color: whitesmoke;
+.modal-content-2 button[type="submit"]:hover {
+  background-color: var(--azul2);
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+.modal-content-2 button[type="button"] {
+  width: 20%;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 1rem;
+  background-color: var(--rojo1);
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: 10.5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  position: relative;
+  left: 30%;
+  margin-top: 20px;
 }
 
-@keyframes slideIn {
-  from {
-    transform: translateY(-20px);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+.modal-content-2 button[type="button"]:hover {
+  background-color: var(--rojo2);
 }
 
 .grid-container {
@@ -875,7 +948,7 @@ h6 {
   backdrop-filter: blur(10px);
   /* Efecto de desenfoque */
   padding: 20px;
-  border-radius: 20px;
+  border-radius: 40px;
   width: 80%;
   height: 80%;
   max-width: 450px;
@@ -885,30 +958,6 @@ h6 {
   opacity: 0;
   animation: enterAnimation 0.5s ease forwards;
   font-family: "Poppins", sans-serif;
-}
-
-@keyframes enterAnimation {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.8);
-  }
-
-  to {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes exitAnimation {
-  from {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-
-  to {
-    transform: translate(-50%, -50%) scale(0.8);
-    opacity: 0;
-  }
 }
 
 .detalle-empleado-card.exiting {
@@ -976,7 +1025,7 @@ h6 {
   backdrop-filter: blur(10px);
   /* Efecto de desenfoque */
   padding: 20px;
-  border-radius: 20px;
+  border-radius: 40px;
   width: 80%;
   height: 80%;
   max-width: 450px;
@@ -986,30 +1035,6 @@ h6 {
   opacity: 0;
   animation: enterAnimation 0.5s ease forwards;
   font-family: "Poppins", sans-serif;
-}
-
-@keyframes enterAnimation {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.8);
-  }
-
-  to {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes exitAnimation {
-  from {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-
-  to {
-    transform: translate(-50%, -50%) scale(0.8);
-    opacity: 0;
-  }
 }
 
 .detalle-nomina-card.exiting {
@@ -1054,7 +1079,7 @@ h6 {
   backdrop-filter: blur(10px);
   /* Efecto de desenfoque */
   padding: 20px;
-  border-radius: 20px;
+  border-radius: 40px;
   width: 80%;
   height: 82%;
   max-width: 450px;
@@ -1064,30 +1089,6 @@ h6 {
   opacity: 0;
   animation: enterAnimation 0.5s ease forwards;
   font-family: "Poppins", sans-serif;
-}
-
-@keyframes enterAnimation {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.8);
-  }
-
-  to {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes exitAnimation {
-  from {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-
-  to {
-    transform: translate(-50%, -50%) scale(0.8);
-    opacity: 0;
-  }
 }
 
 .detalle-liquidacion-card.exiting {
@@ -1192,4 +1193,29 @@ h6 {
   font-size: 10px;
   font-weight: bold;
   align-items: center;
+}
+
+
+@keyframes enterAnimation {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes exitAnimation {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  to {
+    transform: translate(-50%, -50%) scale(0.8);
+    opacity: 0;
+  }
 }
