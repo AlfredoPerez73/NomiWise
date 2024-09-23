@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Chart as ChartJS, BarElement, BarController, CategoryScale, LinearScale, Title, ArcElement, PointElement, LineElement, Tooltip, Legend, Filler } from 'chart.js';
 import { Bar, Pie, Line, Doughnut } from "react-chartjs-2";
 import { parseISO, format } from "date-fns";
+import 'chartjs-plugin-annotation';
+
 
 ChartJS.register(BarElement, BarController, CategoryScale, LinearScale, Title, ArcElement, PointElement, LineElement, Tooltip, Legend, Filler);
 
@@ -13,13 +15,28 @@ export function NominaFechaChart({ datos }) {
             return;
         }
 
-        const data = datos.map((nomina) => ({
-            date: format(parseISO(nomina.fechaRegistro), "yyyy-MM-dd"),
-            total: Number(nomina.total),
-        }));
+        // Crear un objeto para agrupar por mes
+        const monthlyTotals = {};
 
-        const dates = data.map((d) => d.date);
-        const totals = data.map((d) => d.total);
+        datos.forEach((nomina) => {
+            const month = format(parseISO(nomina.fechaRegistro), "yyyy-MM");
+            const total = Number(nomina.total);
+
+            if (monthlyTotals[month]) {
+                monthlyTotals[month] += total; // Sumar si ya existe
+            } else {
+                monthlyTotals[month] = total; // Inicializar si no existe
+            }
+        });
+
+        // Convertir el objeto a un arreglo y ordenar por fecha
+        const uniqueData = Object.entries(monthlyTotals)
+            .map(([date, total]) => ({ date, total }))
+            .sort((a, b) => new Date(b.date) - new Date(a.date))
+            .slice(0, 12); // Tomar solo los últimos 12 meses
+
+        const dates = uniqueData.map((d) => d.date);
+        const totals = uniqueData.map((d) => d.total);
 
         setChartData({
             labels: dates,
@@ -45,6 +62,8 @@ export function NominaFechaChart({ datos }) {
 
                         return gradient;
                     },
+                    borderRadius: 15,
+                    borderSkipped: false,
                     borderColor: "transparent",
                     borderWidth: 0,
                 },
@@ -68,7 +87,7 @@ export function NominaFechaChart({ datos }) {
                     },
                 },
                 border: {
-                    color: 'white',
+                    color: 'transparent',
                     width: 1,
                 },
             },
@@ -86,14 +105,14 @@ export function NominaFechaChart({ datos }) {
                     },
                 },
                 border: {
-                    color: 'white',
+                    color: 'transparent',
                     width: 1,
                 },
             },
         },
         plugins: {
             legend: {
-                display: true,
+                display: false,
                 position: "top",
                 labels: {
                     color: 'whitesmoke',
@@ -110,10 +129,12 @@ export function NominaFechaChart({ datos }) {
         },
         responsive: true,
         maintainAspectRatio: false,
+        barThickness: 12,
+        maxBarThickness: 40,
     };
 
     return (
-        <div style={{ width: "700px", height: "400px", marginTop: "10px" }}>
+        <div style={{ width: "1100px", height: "300px", marginTop: "10px" }}>
             {chartData.labels && chartData.labels.length > 0 ? (
                 <Bar data={chartData} options={options} />
             ) : (
@@ -196,7 +217,7 @@ export function EmpleadosMasLiquidadosChart({ detalles, empleados }) {
     const options = {
         plugins: {
             legend: {
-                display: true,
+                display: false,
                 position: 'right',
                 labels: {
                     color: "whitesmoke",
@@ -211,7 +232,7 @@ export function EmpleadosMasLiquidadosChart({ detalles, empleados }) {
     };
 
     return (
-        <div style={{ width: "500px", height: "500px", marginTop: "-170px", marginBottom: "-40px", marginLeft: "-150px" }}>
+        <div style={{ width: "340px", height: "320px", marginTop: "-200px", marginBottom: "-10px", marginLeft: "20px" }}>
             {chartData && chartData.labels && chartData.labels.length > 0 ? (
                 <Pie data={chartData} options={options} />
             ) : (
@@ -381,12 +402,12 @@ export function EmpleadosPorContratoChart({ empleados, contratos }) {
     }, [empleados, contratos]);
 
     return (
-        <div style={{ width: "750px", height: "550px", marginBottom: "-110px" }}>
+        <div style={{ width: "340px", height: "320px", marginBottom: "-10px", marginLeft: "20px" }}>
             {chartData && chartData.labels && chartData.labels.length > 0 ? (
                 <Doughnut data={chartData} options={{
                     plugins: {
                         legend: {
-                            display: true,
+                            display: false,
                             position: 'right',
                             labels: {
                                 font: {

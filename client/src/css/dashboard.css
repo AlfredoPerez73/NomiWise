@@ -336,40 +336,79 @@
 }
 
 .chart-info-2 p {
-  margin-bottom: 120px;
-  margin-left: 50px;
-  font-size: 30px;
+  margin-bottom: 220px;
+  margin-left: 65px;
+  font-size: 17px;
   font-weight: bold;
   color: whitesmoke
 }
 
 .chart-info-3 p {
-  margin-bottom: -60px;
-  margin-left: 50px;
-  font-size: 30px;
+  margin-bottom: 20px;
+  margin-left: 10px;
+  font-size: 17px;
   font-weight: bold;
   color: whitesmoke
 }
 
 .charts-container {
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
   width: 100%;
+  display: flex;
+  flex-wrap: nowrap; /* Asegura que las tarjetas no se envuelvan */
+  justify-content: flex-start; /* Alinea las tarjetas a la izquierda */
+  gap: 10px; /* Espacio entre las tarjetas */
+}
+
+.chart-container {
+  flex-grow: 1; /* Esta gráfica ocupará el resto del espacio */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 500px; /* Ajusta la altura mínima si es necesario */
+}
+
+/* Contenedor para las gráficas "Contratos con + empleados" y "Empleados + Liquidados" */
+/* Contenedor para las gráficas de la derecha (Empleados + Liquidados y Contratos) */
+.chart-group {
+  display: flex;
+  flex-direction: column; /* Para que estén una debajo de la otra */
+  gap: 15px; /* Espacio entre las dos gráficas pequeñas */
+  width: 400px; /* Ancho fijo para las gráficas pequeñas */
+  flex-shrink: 0; /* Evita que estas gráficas se reduzcan al ajustar el tamaño */
+}
+
+/* Contenedor principal que alineará las dos secciones (gráfica de Nómina y las otras dos) */
+.main-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 15px; /* Espacio entre las gráficas */
+  width: 100%; /* Ocupa todo el ancho disponible */
+  height: 100%; /* Ocupa todo el alto disponible */
+}
+
+/* Contenedor individual para cada gráfica */
+.chart-container {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px; /* Ajusta este valor según sea necesario */
 }
 
 .card-dashboard-chart-1 {
   border: 1px solid var(--color2);
   background-color: var(--color1);
-  border-radius: 70px;
+  border-radius: 80px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 49%;
-  height: 41rem;
-  margin-top: -10px;
+  width: 100%;
+  height: 35rem;
+  margin-top: -300px;
   padding: 20px;
   text-align: center;
 }
@@ -377,14 +416,14 @@
 .card-dashboard-chart-11 {
   border: 1px solid var(--color2);
   background-color: var(--color1);
-  border-radius: 70px;
+  border-radius: 80px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 49%;
-  height: 41rem;
+  width: 100%;
+  height: 29rem;
   margin-top: 20px;
   padding: 20px;
   text-align: left;
@@ -393,7 +432,7 @@
 .card-dashboard-chart-2 {
   border: 1px solid var(--color2);
   background-color: var(--color1);
-  border-radius: 70px;
+  border-radius: 80px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
@@ -409,14 +448,14 @@
 .card-dashboard-chart-22 {
   border: 1px solid var(--color2);
   background-color: var(--color1);
-  border-radius: 70px;
+  border-radius: 80px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 49%;
-  height: 41rem;
+  width: 100%;
+  height: 29rem;
   margin-top: 20px;
   padding: 20px;
   text-align: center;

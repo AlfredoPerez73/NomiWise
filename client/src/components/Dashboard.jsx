@@ -82,7 +82,7 @@ const DashboardCards = () => {
           const fechaNomina = new Date(nomina.fechaRegistro).toISOString().split('T')[0];
           return fechaNomina === fechaDetalle;
         })
-        .reduce((sum, detail) => sum + Number(detail.devengado) + 
+        .reduce((sum, detail) => sum + Number(detail.devengado) +
           Number(detail.salud) +
           Number(detail.pension) +
           Number(detail.auxTransporte) +
@@ -347,6 +347,34 @@ const DashboardCards = () => {
           </div>
         </div>
       </div>
+      <div class="main-container">
+        <div class="chart-container">
+          <div className="card-dashboard-chart-1">
+            <div className="chart-info">
+              <p>Nómina</p>
+              <NominaFechaChart datos={filteredNominas} />
+            </div>
+          </div>
+        </div>
+        <div class="chart-group">
+          <div class="chart-container">
+            <div className="card-dashboard-chart-11">
+              <div className="chart-info-2">
+                <p>Empleados + Liquidados</p>
+                <EmpleadosMasLiquidadosChart detalles={filteredDetalles} empleados={filteredEmpleados} />
+              </div>
+            </div>
+          </div>
+          <div class="chart-container">
+            <div className="card-dashboard-chart-22">
+              <div className="chart-info-3">
+                <p>Contratos con + empleados</p>
+                <EmpleadosPorContratoChart empleados={filteredEmpleados} contratos={contratos} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div className="table-card-dashboard">
         <p>Top 5 Empleados Mejores Pagados</p>
         <table>
@@ -512,28 +540,10 @@ const DashboardCards = () => {
         )}
       </div>
       <div className="charts-container">
-        <div className="card-dashboard-chart-1">
-          <div className="chart-info">
-            <p>Nómina</p>
-            <NominaFechaChart datos={filteredNominas} />
-          </div>
-        </div>
         <div className="card-dashboard-chart-2">
           <div className="chart-info-3">
             <p>Empleados + Horas Extras</p>
             <EmpleadosMasHorasChart detalles={filteredDetalles} empleados={filteredEmpleados} />
-          </div>
-        </div>
-        <div className="card-dashboard-chart-11">
-          <div className="chart-info-2">
-            <p>Empleados + Liquidados</p>
-            <EmpleadosMasLiquidadosChart detalles={filteredDetalles} empleados={filteredEmpleados} />
-          </div>
-        </div>
-        <div className="card-dashboard-chart-22">
-          <div className="chart-info-3">
-            <p>Contratos con + empleados</p>
-            <EmpleadosPorContratoChart empleados={filteredEmpleados} contratos={contratos} />
           </div>
         </div>
       </div>
