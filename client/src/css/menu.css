@@ -19,10 +19,20 @@
   border-right: 1px solid linear-gradient(180deg, #d6763e 50%, #be9343 100%);
 }
 
+.dashboard {
+  overflow: hidden; /* Evita desbordamiento */
+}
+
+.main {
+  overflow-y: auto; /* Solo permite el scroll en el eje Y */
+}
+
+* {
+  box-sizing: border-box;
+}
+
 
 .dashboard {
-  display: flex;
-  min-height: 100vh;
   background: linear-gradient(180deg, #22214a 50%, #1f1e44e1 100%);
   background-size: cover;
   background-repeat: no-repeat;
@@ -151,7 +161,7 @@
 
 .sidebar {
   width: 250px;
-  background-color: #f8f9fa;
+  background-color: #ffffff;
   transition: margin-left 0.3s;
 }
 
@@ -329,7 +339,7 @@
   margin-top: 45px;
   font-size: 0.75rem;
   overflow-y: auto;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 45px);
   margin-left: 240px;
   transition: margin-left 0.3s ease-in-out;
 }

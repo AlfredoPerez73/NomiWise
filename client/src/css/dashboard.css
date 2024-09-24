@@ -70,7 +70,7 @@
 
 .card-dashboard-1 {
   background: linear-gradient(to bottom right, #1E2736, #1D4E89);
-  border-radius: 30px;
+  border-radius: 40px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
@@ -84,7 +84,7 @@
 
 .card-dashboard-2 {
   background: linear-gradient(to bottom right, #2C2A4A, #4F518C);
-  border-radius: 30px;
+  border-radius: 40px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
@@ -98,7 +98,7 @@
 
 .card-dashboard-3 {
   background: linear-gradient(to bottom right, #0471A6, #061826);
-  border-radius: 30px;
+  border-radius: 40px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
@@ -113,7 +113,7 @@
 
 .card-dashboard-detalle {
   background: linear-gradient(to bottom, #911919, #881a1a);
-  border-radius: 30px;
+  border-radius: 40px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
@@ -129,7 +129,7 @@
 
 .card-dashboard-detalle-1 {
   background: linear-gradient(to bottom right, #1E2736, #2E294E);
-  border-radius: 30px;
+  border-radius: 40px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
@@ -146,7 +146,7 @@
 
 .card-dashboard-detalle-2 {
   background: linear-gradient(to bottom, #1A74CF, #5E8FD7);
-  border-radius: 30px;
+  border-radius: 40px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
@@ -186,12 +186,13 @@
   display: flex;
   flex-wrap: nowrap; /* Asegura que las tarjetas no se envuelvan */
   justify-content: space-between; /* Distribuye el espacio entre las tarjetas */
+  margin-top: -90px;
   gap: 10px; /* Espacio entre las tarjetas */
 }
 
 .card-dashboard-detalle-3 {
   background: linear-gradient(to bottom, #1d123a, #714cb1);
-  border-radius: 30px;
+  border-radius: 50px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
@@ -207,7 +208,7 @@
 
 .card-dashboard-detalle-4 {
   background: linear-gradient(to bottom, #7ba0d6, #1d3977);
-  border-radius: 30px;
+  border-radius: 50px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
@@ -224,7 +225,7 @@
 
 .card-dashboard-detalle-5 {
   background: linear-gradient(to bottom, #001D4A, #27476E);
-  border-radius: 30px;
+  border-radius: 50px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
@@ -240,7 +241,7 @@
 
 .card-dashboard-detalle-6 {
   background: linear-gradient(to bottom, #1E2749, #273469);
-  border-radius: 30px;
+  border-radius: 50px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
@@ -337,14 +338,22 @@
 
 .chart-info-2 p {
   margin-bottom: 220px;
-  margin-left: 65px;
+  margin-left: 80px;
   font-size: 17px;
   font-weight: bold;
   color: whitesmoke
 }
 
 .chart-info-3 p {
-  margin-bottom: 20px;
+  margin-bottom: 40px;
+  margin-left: 10px;
+  font-size: 30px;
+  font-weight: bold;
+  color: whitesmoke
+}
+
+.chart-info-4 p {
+  margin-bottom: 10px;
   margin-left: 10px;
   font-size: 17px;
   font-weight: bold;
@@ -355,7 +364,7 @@
   width: 100%;
   display: flex;
   flex-wrap: nowrap; /* Asegura que las tarjetas no se envuelvan */
-  justify-content: flex-start; /* Alinea las tarjetas a la izquierda */
+  justify-content: flex-end; /* Alinea las tarjetas a la derecha */
   gap: 10px; /* Espacio entre las tarjetas */
 }
 
@@ -399,7 +408,7 @@
 
 .card-dashboard-chart-1 {
   border: 1px solid var(--color2);
-  background-color: var(--color1);
+  background-color: #171738ad;
   border-radius: 80px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   display: flex;
@@ -415,7 +424,7 @@
 
 .card-dashboard-chart-11 {
   border: 1px solid var(--color2);
-  background-color: var(--color1);
+  background-color: #171738ad;
   border-radius: 80px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   display: flex;
@@ -431,23 +440,23 @@
 
 .card-dashboard-chart-2 {
   border: 1px solid var(--color2);
-  background-color: var(--color1);
+  background-color: #171738ad;
   border-radius: 80px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 49%;
-  height: 41rem;
-  margin-top: -10px;
+  width: 60%;
+  height: 35rem;
+  margin-top: 20px;
   padding: 20px;
   text-align: center;
 }
 
 .card-dashboard-chart-22 {
   border: 1px solid var(--color2);
-  background-color: var(--color1);
+  background-color: #171738ad;
   border-radius: 80px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   display: flex;
@@ -633,18 +642,18 @@
 }
 
 .table-card-dashboard {
-  width: 100%;
+  width: 74%;
   overflow: hidden;
   color: whitesmoke;
-  margin-top: auto;
-  margin-bottom: 30px;
+  margin-top: -320px;
+  margin-bottom: 100px;
   margin-left: 0px;
   margin-right: auto;
 }
 
 .table-card-dashboard p {
   margin: 0.8rem 70px;
-  margin-left: auto;
+  margin-left: 20px;
   font-weight: bold;
   font-size: 24px;
   color: whitesmoke;
@@ -654,7 +663,7 @@
   width: 100%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   border-collapse: collapse;
-  border-radius: 1.5rem;
+  border-radius: 3rem;
   cursor: pointer;
   overflow: hidden;
   border-collapse: separate;
@@ -665,7 +674,7 @@
 
 .table-card-dashboard table th,
 .table-card-dashboard table td {
-  padding: 2px;
+  padding: 8px;
   background-color: #171738ad;
   transition: background-color 0.3s;
 }

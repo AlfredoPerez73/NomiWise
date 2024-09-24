@@ -367,7 +367,7 @@ const DashboardCards = () => {
           </div>
           <div class="chart-container">
             <div className="card-dashboard-chart-22">
-              <div className="chart-info-3">
+              <div className="chart-info-4">
                 <p>Contratos con + empleados</p>
                 <EmpleadosPorContratoChart empleados={filteredEmpleados} contratos={contratos} />
               </div>

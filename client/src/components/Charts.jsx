@@ -217,8 +217,8 @@ export function EmpleadosMasLiquidadosChart({ detalles, empleados }) {
     const options = {
         plugins: {
             legend: {
-                display: false,
-                position: 'right',
+                display: true,
+                position: 'top',
                 labels: {
                     color: "whitesmoke",
                     font: {
@@ -266,8 +266,9 @@ export function EmpleadosMasHorasChart({ detalles, empleados }) {
 
         const values = Object.values(data);
 
-        values.sort((a, b) => b.horasExtras - a.horasExtras);
-        const topValues = values.slice(0, 5);
+        // Ordenar de mayor a menor por horasExtras
+        values.sort((a, b) => a.horasExtras - b.horasExtras);
+        const topValues = values.slice(0, 10);
 
         const labels = topValues.map(detalle => truncateLabel(detalle.nombre, 13));
         const dataSet = topValues.map(detalle => detalle.horasExtras);
@@ -275,7 +276,7 @@ export function EmpleadosMasHorasChart({ detalles, empleados }) {
         const createGradient = (ctx) => {
             const gradient = ctx.createLinearGradient(0, 0, 0, 300);
             gradient.addColorStop(0, 'rgba(0, 4, 40, 1)');
-            gradient.addColorStop(1, 'rgba(0, 78, 146, 0)');
+            gradient.addColorStop(1, 'rgba(23, 23, 56, 0)');
             return gradient;
         };
 
@@ -285,12 +286,14 @@ export function EmpleadosMasHorasChart({ detalles, empleados }) {
                 label: 'Horas Extras',
                 data: dataSet,
                 borderColor: '#004e92',
-                borderWidth: 2,
+                borderWidth: 3,
                 backgroundColor: (context) => {
                     const ctx = context.chart.ctx;
                     return createGradient(ctx);
                 },
                 fill: true,
+                tension: 0.5, // Suaviza las líneas
+                pointRadius: 0, // Elimina los puntos en la línea
             }]
         };
 
@@ -298,12 +301,12 @@ export function EmpleadosMasHorasChart({ detalles, empleados }) {
     }, [detalles, empleados]);
 
     return (
-        <div style={{ width: "700px", height: "500px", marginBottom: "-120px" }}>
+        <div style={{ width: "800px", height: "300px", marginBottom: "-10px" }}>
             {chartData && chartData.labels && chartData.labels.length > 0 ? (
                 <Line data={chartData} options={{
                     plugins: {
                         legend: {
-                            display: true,
+                            display: false,
                             position: 'right',
                             labels: {
                                 font: {
@@ -365,6 +368,7 @@ export function EmpleadosMasHorasChart({ detalles, empleados }) {
     );
 }
 
+
 export function EmpleadosPorContratoChart({ empleados, contratos }) {
     const [chartData, setChartData] = useState(null);
 
@@ -407,8 +411,8 @@ export function EmpleadosPorContratoChart({ empleados, contratos }) {
                 <Doughnut data={chartData} options={{
                     plugins: {
                         legend: {
-                            display: false,
-                            position: 'right',
+                            display: true,
+                            position: 'top',
                             labels: {
                                 font: {
                                     size: 11,
