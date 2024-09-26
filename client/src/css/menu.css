@@ -32,6 +32,7 @@
 }
 
 
+
 .dashboard {
   background: linear-gradient(180deg, #22214a 50%, #1f1e44e1 100%);
   background-size: cover;
@@ -86,6 +87,7 @@
   margin: 10px;
   padding: 20px;
   background-color: rgb(45, 43, 104);
+  box-shadow: 0 4px 6px rgba(250, 249, 249, 0.062); /* Sombra para resaltar el panel */
 }
 
 .nav-link.active {
@@ -94,6 +96,7 @@
   padding: 15px;
   background-color: rgb(45, 43, 104);
   color: #e68046;
+  box-shadow: 0 4px 6px rgba(250, 249, 249, 0.060); /* Sombra para resaltar el panel */
 }
 
 .submenu {
@@ -184,8 +187,8 @@
 }
 
 .header {
-  background-color: rgb(31, 30, 68);
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+  background-color: rgb(36, 34, 80);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
   padding: 0rem 1.4rem;
   position: fixed;
   width: 100%;
@@ -284,14 +287,16 @@
 }
 
 .sidebar {
-  background-color: rgb(31, 30, 68);
+  background: linear-gradient(135deg, rgb(36, 34, 80), rgb(23, 17, 46));
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   width: 240px;
-  box-shadow: 0 16px 20px rgba(0, 0, 0, 0.5);
+  height: 860px;
+  margin-top: 20px;
+  border-radius: 30px;
   font-size: 0.9rem;
   color: whitesmoke;
   text-decoration: none;
   overflow-y: auto;
-  height: calc(100vh - 60px);
   position: fixed;
   top: 60px;
 }

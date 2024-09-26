@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useAuth } from "../context/authContext";
 import { useUsuario } from "../context/usuarioContext";
 import { useEmpleado } from "../context/empleadoContext";
 import { useCargo } from "../context/cargoContext";
@@ -12,6 +13,7 @@ import "../css/dashboard.css";
 const DashboardCards = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
+  const { usuario } = useAuth();
   const [selectedEmpleado, setSelectedEmpleado] = useState(null);
   const [selectedDetalle, setSelectedDetalle] = useState(null);
   const [selectedNomina, setSelectedNomina] = useState(null);
@@ -268,6 +270,13 @@ const DashboardCards = () => {
   const formatCurrency = (value) => `$ ${Number(value).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
   const formatFecha = (fecha) => format(new Date(fecha), "dd/MM/yyyy");
 
+  const nombreCompleto = usuario.nombre;
+  const partesNombre = nombreCompleto.split(' ');
+
+  const primerNombre = partesNombre[0] || '';
+
+  const nombreFormateado = `${primerNombre}`;
+
   return (
     <div className="dashboard-cards">
       <div className="filtro-dashboard-1">
@@ -302,6 +311,10 @@ const DashboardCards = () => {
             </select>
           </div>
         </div>
+      </div>
+      <div className="poster-welcome">
+        <h1>Bienvenida de Vuelta, {nombreFormateado}!</h1>
+        <h2>Este es el Menu principal del sistema de Nomina, <strong>podras interactuar con algunas de las tarjetas :D</strong></h2>
       </div>
       <div className="card-container">
         <div className="card-dashboard-1">
