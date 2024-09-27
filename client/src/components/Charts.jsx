@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Chart as ChartJS, BarElement, BarController, CategoryScale, LinearScale, Title, ArcElement, PointElement, LineElement, Tooltip, Legend, Filler } from 'chart.js';
 import { Bar, Pie, Line, Doughnut } from "react-chartjs-2";
 import { parseISO, format } from "date-fns";
-import 'chartjs-plugin-annotation';
+import "../css/loading.css";
 
 
 ChartJS.register(BarElement, BarController, CategoryScale, LinearScale, Title, ArcElement, PointElement, LineElement, Tooltip, Legend, Filler);
@@ -134,11 +134,22 @@ export function NominaFechaChart({ datos }) {
     };
 
     return (
-        <div style={{ width: "1100px", height: "300px", marginTop: "10px" }}>
+        <div style={{ position: "relative", width: "1100px", height: "300px", marginTop: "10px" }}>
             {chartData.labels && chartData.labels.length > 0 ? (
                 <Bar data={chartData} options={options} />
             ) : (
-                <p>No data available</p>
+                <div className="spinner-container-2">
+                    <div className="dot-spinner">
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                    </div>
+                </div>
             )}
         </div>
     );
@@ -232,11 +243,22 @@ export function EmpleadosMasLiquidadosChart({ detalles, empleados }) {
     };
 
     return (
-        <div style={{ width: "340px", height: "320px", marginTop: "-200px", marginBottom: "-10px", marginLeft: "20px" }}>
+        <div style={{ position: "relative", width: "340px", height: "320px", marginTop: "-200px", marginBottom: "-10px", marginLeft: "20px" }}>
             {chartData && chartData.labels && chartData.labels.length > 0 ? (
                 <Pie data={chartData} options={options} />
             ) : (
-                <p>No data available</p>
+                <div className="spinner-container-2">
+                    <div className="dot-spinner">
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                    </div>
+                </div>
             )}
         </div>
     );
@@ -301,7 +323,7 @@ export function EmpleadosMasHorasChart({ detalles, empleados }) {
     }, [detalles, empleados]);
 
     return (
-        <div style={{ width: "800px", height: "300px", marginBottom: "-10px" }}>
+        <div style={{ position: "relative", width: "800px", height: "300px", marginBottom: "-10px" }}>
             {chartData && chartData.labels && chartData.labels.length > 0 ? (
                 <Line data={chartData} options={{
                     plugins: {
@@ -362,7 +384,18 @@ export function EmpleadosMasHorasChart({ detalles, empleados }) {
                     }
                 }} />
             ) : (
-                <p>No data available</p>
+                <div className="spinner-container-2">
+                    <div className="dot-spinner">
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                    </div>
+                </div>
             )}
         </div>
     );
@@ -406,7 +439,7 @@ export function EmpleadosPorContratoChart({ empleados, contratos }) {
     }, [empleados, contratos]);
 
     return (
-        <div style={{ width: "340px", height: "320px", marginBottom: "-10px", marginLeft: "20px" }}>
+        <div style={{ position: "relative", width: "340px", height: "320px", marginBottom: "-10px", marginLeft: "20px" }}>
             {chartData && chartData.labels && chartData.labels.length > 0 ? (
                 <Doughnut data={chartData} options={{
                     plugins: {
@@ -429,8 +462,109 @@ export function EmpleadosPorContratoChart({ empleados, contratos }) {
                     }
                 }} />
             ) : (
-                <p>No data available</p>
+                <div className="spinner-container-2">
+                    <div className="dot-spinner">
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                    </div>
+                </div>
             )}
+        </div>
+    );
+}
+
+const calcularPorcentajeAlcanzado = (totalAlcanzado, meta) => {
+    return totalAlcanzado > 0 ? (totalAlcanzado / meta) * 100 : 0;
+  };
+
+export function PorcentajeAlcanzadoChart({ metaNomina, nominas }) {
+    const [porcentajeAlcanzado, setPorcentajeAlcanzado] = useState(0);
+
+    const calcularNominaAlcanzada = () => {
+        // Implementar la lógica para obtener la nómina alcanzada del mes actual
+        const fechaActual = new Date();
+        const añoActual = fechaActual.getFullYear();
+        const mesActual = fechaActual.getMonth();
+
+        return nominas
+            .filter(nomina => {
+                const fechaNomina = new Date(nomina.fechaRegistro);
+                return fechaNomina.getFullYear() === añoActual && fechaNomina.getMonth() === mesActual;
+            })
+            .reduce((total, nomina) => total + Number(nomina.total), 0);
+    };
+
+    useEffect(() => {
+        if (nominas.length > 0) {
+            const nominaAlcanzada = calcularNominaAlcanzada();
+            const porcentaje = calcularPorcentajeAlcanzado(nominaAlcanzada, metaNomina);
+            setPorcentajeAlcanzado(porcentaje);
+        }
+    }, [nominas, metaNomina]);
+
+    const data = {
+        labels: ["Alcanzado"],
+        datasets: [
+            {
+                data: [porcentajeAlcanzado, 100 - porcentajeAlcanzado],
+                backgroundColor: ["#273469", "#1E2749"],
+                hoverBackgroundColor: ["#1E2749", "#273469"],
+                borderWidth: 0,
+            },
+        ],
+    };
+
+    const options = {
+        cutout: "60%",
+        plugins: {
+            legend: {
+                display: true,
+                position: 'bottom',
+                labels: {
+                    font: {
+                        size: 11,
+                        family: 'Poppins',
+                        weight: 'bold',
+                    },
+                    color: 'whitesmoke',
+                    boxWidth: 30,
+                    padding: 15,
+                    usePointStyle: true,
+                    pointStyle: 'circle'
+                }
+            },
+        },
+        responsive: true,
+        maintainAspectRatio: true,
+    };
+
+    return (
+        <div style={{ position: "relative", width: "340px", height: "320px", marginTop: "30px", marginLeft: "20px" }}>
+            {data.labels && data.labels.length > 0 ? (
+                <Doughnut data={data} options={options} />
+            ) : (
+                <div className="spinner-container-2">
+                    <div className="dot-spinner">
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                        <div className="dot-spinner__dot"></div>
+                    </div>
+                </div>
+            )}
+            <div style={{ position: "absolute", top: "44%", left: "48%", transform: "translate(-50%, -50%)", color: "whitesmoke", fontSize: "55px", fontWeight: "bold" }}>
+                {porcentajeAlcanzado.toFixed(0)}%
+            </div>
         </div>
     );
 }

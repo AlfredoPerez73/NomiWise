@@ -6,7 +6,7 @@ import { useCargo } from "../context/cargoContext";
 import { useNomina } from "../context/nominaContext";
 import { useDetalle } from "../context/detalleLiquidacionContext";
 import { useContrato } from "../context/contratoContext";
-import { NominaFechaChart, EmpleadosMasLiquidadosChart, EmpleadosMasHorasChart, EmpleadosPorContratoChart } from './Charts';
+import { NominaFechaChart, EmpleadosMasLiquidadosChart, EmpleadosMasHorasChart, EmpleadosPorContratoChart, PorcentajeAlcanzadoChart } from './Charts';
 import { format, isToday } from "date-fns";
 import "../css/dashboard.css";
 
@@ -18,7 +18,7 @@ const DashboardCards = () => {
   const [selectedDetalle, setSelectedDetalle] = useState(null);
   const [selectedNomina, setSelectedNomina] = useState(null);
   const [modalMessage, setModalMessage] = useState("");
-
+  const [metaNomina, setMetaNomina] = useState(50000000);
   const [filteredNominas, setFilteredNominas] = useState([]);
   const [filteredDetalles, setFilteredDetalles] = useState([]);
   const [filteredEmpleados, setFilteredEmpleados] = useState([]);
@@ -248,6 +248,10 @@ const DashboardCards = () => {
     }, 500);
   };
 
+  const handleMetaChange = (e) => {
+    setMetaNomina(Number(e.target.value));
+  };
+
   const getEmpleadoInfo = (idEmpleado, empleados) => {
     return empleados.find((empleado) => empleado.idEmpleado === idEmpleado) || {};
   };
@@ -360,8 +364,8 @@ const DashboardCards = () => {
           </div>
         </div>
       </div>
-      <div class="main-container">
-        <div class="chart-container">
+      <div className="main-container">
+        <div className="chart-container">
           <div className="card-dashboard-chart-1">
             <div className="chart-info">
               <p>Nómina</p>
@@ -369,8 +373,8 @@ const DashboardCards = () => {
             </div>
           </div>
         </div>
-        <div class="chart-group">
-          <div class="chart-container">
+        <div className="chart-group">
+          <div className="chart-container">
             <div className="card-dashboard-chart-11">
               <div className="chart-info-2">
                 <p>Empleados + Liquidados</p>
@@ -378,7 +382,7 @@ const DashboardCards = () => {
               </div>
             </div>
           </div>
-          <div class="chart-container">
+          <div className="chart-container">
             <div className="card-dashboard-chart-22">
               <div className="chart-info-4">
                 <p>Contratos con + empleados</p>
@@ -430,19 +434,19 @@ const DashboardCards = () => {
       </div>
       <div className="card-container-2">
         <div className="card-dashboard-detalle-3">
-          <i class="fi fi-sr-trash-can-clock card-icon-2"></i>
+          <i className="fi fi-sr-trash-can-clock card-icon-2"></i>
           <div className="card-info-2">
             <p>Empl con 0 Horas Extras</p>
             <h3>{stats.empleadosConCeroHorasExtras}</h3>
           </div>
-          <i class="fi fi-sr-time-quarter-past card-icon-3"></i>
+          <i className="fi fi-sr-time-quarter-past card-icon-3"></i>
           <div className="card-info-3">
             <p>Prom de horas extras</p>
             <h3>{stats.promedioHorasExtras}</h3>
           </div>
         </div>
         <div className="card-dashboard-detalle-4">
-          <i class="fi fi-br-calendar-exclamation card-icon-2"></i>
+          <i className="fi fi-br-calendar-exclamation card-icon-2"></i>
           <div className="card-info-2">
             <p>Trend de Días trabajados</p>
             {Object.entries(stats.top3Meses).map(([mes, dias]) => (
@@ -451,7 +455,7 @@ const DashboardCards = () => {
               </li>
             ))}
           </div>
-          <i class="fi fi-sr-challenge card-icon-3"></i>
+          <i className="fi fi-sr-challenge card-icon-3"></i>
           <div className="card-info-3">
             <p>Prom de Dias trabajados</p>
             <h3>{stats.promedioDiasTrabajados}</h3>
@@ -552,11 +556,30 @@ const DashboardCards = () => {
           </div>
         )}
       </div>
-      <div className="charts-container">
-        <div className="card-dashboard-chart-2">
-          <div className="chart-info-3">
-            <p>Empleados + Horas Extras</p>
-            <EmpleadosMasHorasChart detalles={filteredDetalles} empleados={filteredEmpleados} />
+      <div className="main-container-2">
+        <div className="chart-group-2">
+          <div className="chart-container-2">
+            <div className="card-dashboard-chart-33">
+              <div className="chart-info-5">
+                <p>Porcentaje de Meta de Nómina</p>
+                <input
+                  className="input"
+                  type="text"
+                  value={metaNomina}
+                  onChange={handleMetaChange}
+                  placeholder="Ingresa la meta de nómina"
+                />
+                <PorcentajeAlcanzadoChart nominas={nominas} metaNomina={metaNomina} />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="chart-container-2">
+          <div className="card-dashboard-chart-2">
+            <div className="chart-info-3">
+              <p>Empleados + Horas Extras</p>
+              <EmpleadosMasHorasChart detalles={filteredDetalles} empleados={filteredEmpleados} />
+            </div>
           </div>
         </div>
       </div>

@@ -10,7 +10,7 @@ const LoginPage = () => {
   const [formData, setFormData] = useState({ correo: "", contraseña: "" });
   const navigate = useNavigate();
   const { signinu } = useAuth();
-  
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,8 +29,8 @@ const LoginPage = () => {
         title: "¡Inicio de sesión exitoso!",
         text: "¡Bienvenido de vuelta!",
         customClass: {
-            popup: 'custom-alert',
-          },
+          popup: 'custom-alert',
+        },
       });
       navigate("/menu");
     } catch (error) {
@@ -43,8 +43,8 @@ const LoginPage = () => {
         text: "Correo o contraseña incorrectos",
         footer: error.message,
         customClass: {
-            popup: 'custom-alert',
-          },
+          popup: 'custom-alert',
+        },
       });
     }
   };
@@ -53,14 +53,14 @@ const LoginPage = () => {
     <div className="Bg-Img">
       <div className="container">
         <div className="login-form">
-        <div className="logo-container">
+          <div className="logo-container">
             <img src={logo2} alt="Logo" className="logo-img" />
             <h2>Iniciar Sesión</h2>
           </div>
           <div className="info">
-          <p>
-            Administra tu negocio a otro nivel, sistema de nomina :D Contactanos para utilizar nuestro producto
-          </p>
+            <p>
+              Administra tu negocio a otro nivel, sistema de nomina :D Contactanos para utilizar nuestro producto
+            </p>
           </div>
           <form onSubmit={handleSubmit}>
             <div className="input-container">
@@ -92,9 +92,9 @@ const LoginPage = () => {
                 id="toggleBtn"
               ></i>
             </div>
-            <div className="btns">
-              <button type="submit">Inicia Sesión</button>
-            </div>
+            <button type="submit">
+              <span class="button_top"> Iniciar Sesion </span>
+            </button>
           </form>
 
         </div>
