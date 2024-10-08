@@ -481,7 +481,7 @@ export function EmpleadosPorContratoChart({ empleados, contratos }) {
 
 const calcularPorcentajeAlcanzado = (totalAlcanzado, meta) => {
     return totalAlcanzado > 0 ? (totalAlcanzado / meta) * 100 : 0;
-  };
+};
 
 export function PorcentajeAlcanzadoChart({ metaNomina, nominas }) {
     const [porcentajeAlcanzado, setPorcentajeAlcanzado] = useState(0);
@@ -562,7 +562,10 @@ export function PorcentajeAlcanzadoChart({ metaNomina, nominas }) {
                     </div>
                 </div>
             )}
-            <div style={{ position: "absolute", top: "44%", left: "48%", transform: "translate(-50%, -50%)", color: "whitesmoke", fontSize: "55px", fontWeight: "bold" }}>
+            <div style={{ position: "absolute", top: "35%", left: "48%", transform: "translate(-50%, -50%)", color: "whitesmoke", fontSize: "13px", textAlign: "center", fontWeight: "bold" }}>
+                Nivel de porcentaje alcanzado
+            </div>
+            <div style={{ position: "absolute", top: "50%", left: "49%", transform: "translate(-50%, -50%)", color: "whitesmoke", fontSize: "40px", fontWeight: "bold" }}>
                 {porcentajeAlcanzado.toFixed(0)}%
             </div>
         </div>

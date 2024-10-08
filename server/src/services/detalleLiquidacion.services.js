@@ -4,71 +4,13 @@ import { Empleado } from "../models/empleado.js";
 import { Contrato } from "../models/contrato.js";
 import { DetalleLiquidacionDTO } from "../dtos/detalleLiquidacion.dto.js";
 import { sequelize } from '../database/database.js';
+import { spawn } from "child_process";
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { promises as fs } from 'fs';
 
-const calcularValoresAutomaticos = async (detalle, idEmpleado) => {
-    const empleado = await Empleado.findOne({ where: { idEmpleado: idEmpleado } });
-    if (!empleado) throw new Error("Empleado no encontrado");
-
-    const contrato = await Contrato.findByPk(empleado.idContrato);
-    if (!contrato) throw new Error("Contrato no encontrado para el empleado");
-
-    const salario = contrato.salario;
-    const diasTrabajados = detalle.diasTrabajados;
-    const horasExtras = detalle.horasExtras;
-    const mesLiquidacion = new Date(detalle.fechaRegistro).getMonth() + 1;
-
-    let salud = salario * 0.04;
-    let pension = salario * 0.04;
-    let auxTransporte = salario <= 2 * 1300000 ? 162000 : 0; // Ajustar comparación si es necesario
-    let auxAlimentacion = salario / diasTrabajados; // Verificar si el cálculo es correcto
-    let bonificacionServicio = 0;
-    let primaServicios = 0;
-    let primaNavidad = 0;
-    let vacaciones = 0;
-    let cesantias = 0;
-    let interesesCesantias = 0;
-    let valorHorasExtra = horasExtras > 0 ? (salario / 240) * 1.25 * horasExtras : 0; // Asumiendo jornada de 240 horas mensuales y recargo del 25%
-
-    if (["TERMINO FIJO", "TERMINO INDEFINIDO"].includes(contrato.tipoContrato)) {
-        bonificacionServicio = salario < 1400000 ? salario * 0.5 : 0;
-
-        if (mesLiquidacion === 6 || mesLiquidacion === 12) {
-            primaServicios = (salario * diasTrabajados) / 360; // Proporcional al tiempo trabajado en el semestre
-        }
-
-        if (mesLiquidacion === 12) {
-            primaNavidad = salario * (diasTrabajados / 360); // Proporcional al tiempo trabajado
-        }
-
-        vacaciones = (salario * diasTrabajados) / 720;
-        cesantias = (salario * diasTrabajados) / 360;
-        interesesCesantias = cesantias * 0.12;
-    } else if (contrato.tipoContrato === "PERSTACION DE SERVICIOS") {
-        salud = 0;
-        pension = 0;
-        auxTransporte = 0;
-        auxAlimentacion = 0;
-        valorHorasExtra = 0;
-    }
-
-    const devengado = salario - salud - pension + auxTransporte + bonificacionServicio +
-        auxAlimentacion + primaServicios + primaNavidad + valorHorasExtra +
-        cesantias + interesesCesantias + vacaciones;
-
-    return {
-        salud,
-        pension,
-        auxTransporte,
-        bonificacionServicio,
-        auxAlimentacion,
-        primaNavidad,
-        vacaciones,
-        cesantias,
-        interesesCesantias,
-        devengado,
-    };
-};
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const actualizarTotalesLiquidacion = async (año, mes, t) => {
     const detalles = await DetalleLiquidacion.findAll({ 
@@ -109,6 +51,94 @@ const actualizarTotalesLiquidacion = async (año, mes, t) => {
     await Liquidacion.update(totales, { where: { año, mes }, transaction: t });
 };
 
+async function verificarPython() {
+    return new Promise((resolve) => {
+        const pythonProcess = spawn('python', ['--version']);
+        
+        pythonProcess.on('error', () => {
+            resolve({ instalado: false, comando: 'python' });
+        });
+        
+        pythonProcess.on('close', (code) => {
+            if (code === 0) {
+                resolve({ instalado: true, comando: 'python' });
+            } else {
+                const python3Process = spawn('python3', ['--version']);
+                
+                python3Process.on('error', () => {
+                    resolve({ instalado: false, comando: null });
+                });
+                
+                python3Process.on('close', (code) => {
+                    resolve({ instalado: code === 0, comando: 'python3' });
+                });
+            }
+        });
+    });
+}
+
+async function calcularValoresAutomaticosPython(detalle) {
+    try {
+        // Validar que todos los campos necesarios estén presentes
+        const camposRequeridos = ['idEmpleado', 'salario', 'diasTrabajados', 'horasExtras', 'tipoContrato', 'fechaRegistro'];
+        const camposFaltantes = camposRequeridos.filter(campo => !(campo in detalle));
+        
+        if (camposFaltantes.length > 0) {
+            throw new Error(`Faltan los siguientes campos requeridos: ${camposFaltantes.join(', ')}`);
+        }
+
+        // Asegurarse de que los valores numéricos sean números y no strings
+        const detalleNormalizado = {
+            ...detalle,
+            salario: Number(detalle.salario),
+            diasTrabajados: Number(detalle.diasTrabajados),
+            horasExtras: Number(detalle.horasExtras)
+        };
+
+        // Resto del código para ejecutar Python...
+        const pythonStatus = await verificarPython();
+        if (!pythonStatus.instalado) {
+            throw new Error('Python no está instalado o no está disponible en el PATH del sistema');
+        }
+
+        const scriptPath = path.join(__dirname, 'calculosLiquidacion.services.py');
+
+        return new Promise((resolve, reject) => {
+            const pythonProcess = spawn(pythonStatus.comando, [
+                scriptPath, 
+                JSON.stringify(detalleNormalizado)
+            ]);
+
+            let stdoutData = '';
+            let stderrData = '';
+
+            pythonProcess.stdout.on('data', (chunk) => {
+                stdoutData += chunk.toString();
+            });
+
+            pythonProcess.stderr.on('data', (chunk) => {
+                stderrData += chunk.toString();
+            });
+
+            pythonProcess.on('close', (code) => {
+                if (code !== 0) {
+                    reject(new Error(`El proceso Python terminó con código ${code}. Error: ${stderrData}`));
+                    return;
+                }
+
+                try {
+                    const resultado = JSON.parse(stdoutData);
+                    resolve(resultado);
+                } catch (parseError) {
+                    reject(new Error(`Error al analizar la salida del script Python: ${parseError.message}. Salida: ${stdoutData}`));
+                }
+            });
+        });
+    } catch (error) {
+        throw new Error(`Error en calcularValoresAutomaticosPython: ${error.message}`);
+    }
+}
+
 export async function createDetalleLiquidacion(detalle, idUsuario) {
     const t = await sequelize.transaction();
 
@@ -117,16 +147,34 @@ export async function createDetalleLiquidacion(detalle, idUsuario) {
     const año = now.getFullYear();
 
     try {
+        const empleado = await Empleado.findByPk(detalle.idEmpleado);
+        if (!empleado) {
+            throw new Error(`No se encontró el empleado con ID ${detalle.idEmpleado}`);
+        }
+        const contrato = await Contrato.findByPk(empleado.idEmpleado);
+        if (!contrato) {
+            throw new Error(`No se encontró el empleado con ID ${detalle.idEmpleado}`);
+        }
+
+        const detalleCompleto = {
+            ...detalle,
+            salario: contrato.salario, // Obtiene el salario del contrato
+            tipoContrato: contrato.tipoContrato, // Obtiene el tipo de contrato del empleado
+            fechaRegistro: now.toISOString().split('T')[0], // Usa la fecha actual
+            diasTrabajados: detalle.diasTrabajados, // Valor por defecto si no se proporciona
+            horasExtras: detalle.horasExtras// Valor por defecto si no se proporciona
+        };
+
         const detalleExistente = await DetalleLiquidacion.findOne({
             where: {
-                idEmpleado: detalle.idEmpleado,
+                idEmpleado: detalleCompleto.idEmpleado,
                 mes: mes,
                 año: año
             }
         });
 
         if (detalleExistente) {
-            throw new Error(`El empleado con el codigo ${detalle.idEmpleado} ya ha sido liquidado en el mes ${mes} del año ${año}`);
+            throw new Error(`El empleado con el codigo ${detalleCompleto.idEmpleado} ya ha sido liquidado en el mes ${mes} del año ${año}`);
         }
 
         let liquidacionExistente = await Liquidacion.findOne({
@@ -162,14 +210,13 @@ export async function createDetalleLiquidacion(detalle, idUsuario) {
             idLiquidacion = liquidacionGuardada.idLiquidacion;
         }
 
-        const valoresCalculados = await calcularValoresAutomaticos(detalle, detalle.idEmpleado);
+        const valoresCalculados = await calcularValoresAutomaticosPython(detalleCompleto);
 
         const newDetalleLiquidacion = new DetalleLiquidacion({
             año: año,
             mes: mes,
-            ...detalle,
+            ...detalleCompleto,
             ...valoresCalculados,
-            idEmpleado: detalle.idEmpleado,
             idLiquidacion: idLiquidacion,
             idUsuario: idUsuario
         });
