@@ -255,7 +255,7 @@ const Dashboard = () => {
           <li className="nav-item">
             {isAuthenticated ? (
               <Link
-                to="/login"
+                to="/"
                 className="nav-link collapsed"
                 onClick={() => {
                   logout();
