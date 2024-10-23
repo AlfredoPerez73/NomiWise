@@ -1,0 +1,44 @@
+Date : 2024-10-14 20:36:14
+Directory : c:\Users\Alfredo\Downloads\NomiWise
+Total : 15 files,  699 codes, 0 comments, 78 blanks, all 777 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| Markdown |         12 |        696 |          0 |         78 |        774 |
+| JSON     |          3 |          3 |          0 |          0 |          3 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                   | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                      |         15 |        699 |          0 |         78 |        777 |
+| .VSCodeCounter                                                                         |         15 |        699 |          0 |         78 |        777 |
+| .VSCodeCounter\2024-10-14_20-31-57                                                     |          5 |        233 |          0 |         26 |        259 |
+| .VSCodeCounter\2024-10-14_20-32-41                                                     |          5 |        233 |          0 |         26 |        259 |
+| .VSCodeCounter\2024-10-14_20-33-10                                                     |          5 |        233 |          0 |         26 |        259 |
++----------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                               | language | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| c:\Users\Alfredo\Downloads\NomiWise\.VSCodeCounter\2024-10-14_20-31-57\details.md      | Markdown |        118 |          0 |          6 |        124 |
+| c:\Users\Alfredo\Downloads\NomiWise\.VSCodeCounter\2024-10-14_20-31-57\diff-details.md | Markdown |         26 |          0 |          6 |         32 |
+| c:\Users\Alfredo\Downloads\NomiWise\.VSCodeCounter\2024-10-14_20-31-57\diff.md         | Markdown |         31 |          0 |          7 |         38 |
+| c:\Users\Alfredo\Downloads\NomiWise\.VSCodeCounter\2024-10-14_20-31-57\results.json    | JSON     |          1 |          0 |          0 |          1 |
+| c:\Users\Alfredo\Downloads\NomiWise\.VSCodeCounter\2024-10-14_20-31-57\results.md      | Markdown |         57 |          0 |          7 |         64 |
+| c:\Users\Alfredo\Downloads\NomiWise\.VSCodeCounter\2024-10-14_20-32-41\details.md      | Markdown |        118 |          0 |          6 |        124 |
+| c:\Users\Alfredo\Downloads\NomiWise\.VSCodeCounter\2024-10-14_20-32-41\diff-details.md | Markdown |         26 |          0 |          6 |         32 |
+| c:\Users\Alfredo\Downloads\NomiWise\.VSCodeCounter\2024-10-14_20-32-41\diff.md         | Markdown |         31 |          0 |          7 |         38 |
+| c:\Users\Alfredo\Downloads\NomiWise\.VSCodeCounter\2024-10-14_20-32-41\results.json    | JSON     |          1 |          0 |          0 |          1 |
+| c:\Users\Alfredo\Downloads\NomiWise\.VSCodeCounter\2024-10-14_20-32-41\results.md      | Markdown |         57 |          0 |          7 |         64 |
+| c:\Users\Alfredo\Downloads\NomiWise\.VSCodeCounter\2024-10-14_20-33-10\details.md      | Markdown |        118 |          0 |          6 |        124 |
+| c:\Users\Alfredo\Downloads\NomiWise\.VSCodeCounter\2024-10-14_20-33-10\diff-details.md | Markdown |         26 |          0 |          6 |         32 |
+| c:\Users\Alfredo\Downloads\NomiWise\.VSCodeCounter\2024-10-14_20-33-10\diff.md         | Markdown |         31 |          0 |          7 |         38 |
+| c:\Users\Alfredo\Downloads\NomiWise\.VSCodeCounter\2024-10-14_20-33-10\results.json    | JSON     |          1 |          0 |          0 |          1 |
+| c:\Users\Alfredo\Downloads\NomiWise\.VSCodeCounter\2024-10-14_20-33-10\results.md      | Markdown |         57 |          0 |          7 |         64 |
+| Total                                                                                  |          |        699 |          0 |         78 |        777 |
++----------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
