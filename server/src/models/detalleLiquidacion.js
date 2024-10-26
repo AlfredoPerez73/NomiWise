@@ -21,15 +21,6 @@ export const DetalleLiquidacion = sequelize.define(
         horasExtras: {
             type: DataTypes.INTEGER,
         },
-        salud: {
-            type: DataTypes.DECIMAL,
-        },
-        pension: {
-            type: DataTypes.DECIMAL,
-        },
-        auxTransporte: {
-            type: DataTypes.DECIMAL,
-        },
         bonificacionServicio: {
             type: DataTypes.DECIMAL,
         },
@@ -56,6 +47,9 @@ export const DetalleLiquidacion = sequelize.define(
             defaultValue: DataTypes.NOW,
         },
         idEmpleado: {
+            type: DataTypes.INTEGER,
+        },
+        idParametro: {
             type: DataTypes.INTEGER,
         },
         idLiquidacion: {

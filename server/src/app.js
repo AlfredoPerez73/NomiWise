@@ -10,6 +10,7 @@ import usuarioRoutes from "./routes/usuario.routes.js";
 import empleadoRoutes from "./routes/empleado.routes.js";
 import contratoRoutes from "./routes/contrato.routes.js";
 import detallesRoutes from "./routes/detalleLiquidacion.routes.js";
+import parametrosRoutes from "./routes/parametros.routes.js";
 import nominaRoutes from "./routes/liquidacion.routes.js";
 
 const app = express();
@@ -33,6 +34,7 @@ app.use("/api", cargoRoutes);
 app.use("/api", empleadoRoutes);
 app.use("/api", contratoRoutes);
 app.use("/api", detallesRoutes);
+app.use("/api", parametrosRoutes);
 app.use("/api", nominaRoutes);
 
 export default app;

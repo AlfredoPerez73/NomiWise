@@ -2,6 +2,7 @@ import { DetalleLiquidacion } from "../models/detalleLiquidacion.js";
 import { Liquidacion } from "../models/liquidacion.js";
 import { Empleado } from "../models/empleado.js";
 import { Contrato } from "../models/contrato.js";
+import { Parametros } from "../models/parametros.js";
 import { DetalleLiquidacionDTO } from "../dtos/detalleLiquidacion.dto.js";
 import { sequelize } from '../database/database.js';
 import { spawn } from "child_process";
@@ -23,9 +24,9 @@ const actualizarTotalesLiquidacion = async (año, mes, t) => {
 
     const totales = detalles.reduce((totales, detalle) => {
         totales.salarioTotal += parseFloat(detalle.devengado);
-        totales.saludTotal += parseFloat(detalle.salud);
-        totales.pensionTotal += parseFloat(detalle.pension);
-        totales.auxTransporteTotal += parseFloat(detalle.auxTransporte);
+        totales.saludTotal += parseFloat(detalle.idParametro);
+        totales.pensionTotal += parseFloat(detalle.idParametro);
+        totales.auxTransporteTotal += parseFloat(detalle.idParametro);
         totales.bonificacionServicioTotal += parseFloat(detalle.bonificacionServicio);
         totales.auxAlimentacionTotal += parseFloat(detalle.auxAlimentacion);
         totales.primaNavidadTotal += parseFloat(detalle.primaNavidad);
@@ -77,7 +78,7 @@ async function verificarPython() {
     });
 }
 
-async function calcularValoresAutomaticosPython(detalle) {
+async function calcularValoresAutomaticosPython(detalle, parametro) {
     try {
         // Validar que todos los campos necesarios estén presentes
         const camposRequeridos = ['idEmpleado', 'salario', 'diasTrabajados', 'horasExtras', 'tipoContrato', 'fechaRegistro'];
@@ -94,6 +95,14 @@ async function calcularValoresAutomaticosPython(detalle) {
             diasTrabajados: Number(detalle.diasTrabajados),
             horasExtras: Number(detalle.horasExtras)
         };
+        // Asegurarse de que los valores numéricos sean números y no strings
+        const parametrosNormalizado = {
+            ...parametro,
+            salarioMinimo: Number(parametro.salarioMinimo),
+            salud: Number(parametro.salud),
+            pension: Number(parametro.pension),
+            auxTransporte: Number(parametro.auxTransporte)
+        };
 
         // Resto del código para ejecutar Python...
         const pythonStatus = await verificarPython();
@@ -106,7 +115,8 @@ async function calcularValoresAutomaticosPython(detalle) {
         return new Promise((resolve, reject) => {
             const pythonProcess = spawn(pythonStatus.comando, [
                 scriptPath, 
-                JSON.stringify(detalleNormalizado)
+                JSON.stringify(detalleNormalizado),
+                JSON.stringify(parametrosNormalizado)
             ]);
 
             let stdoutData = '';
@@ -151,37 +161,51 @@ export async function createDetalleLiquidacion(detalle, idUsuario) {
         if (!empleado) {
             throw new Error(`No se encontró el empleado con ID ${detalle.idEmpleado}`);
         }
-        const contrato = await Contrato.findByPk(empleado.idEmpleado);
+        console.log("Buscando parámetro con ID:", detalle.idParametro);
+        const contrato = await Contrato.findByPk(empleado.idContrato);
         if (!contrato) {
-            throw new Error(`No se encontró el empleado con ID ${detalle.idEmpleado}`);
+            throw new Error(`No se encontró el contrato del empleado con la ID ${detalle.idEmpleado}`);
+        }
+
+        // Obtiene los parámetros necesarios de la tabla Parametro
+        const parametro = await Parametros.findByPk(3);
+        if (!parametro) {
+            throw new Error(`No se encontró el parámetro con ID ${detalle.idParametro}`);
         }
 
         const detalleCompleto = {
             ...detalle,
-            salario: contrato.salario, // Obtiene el salario del contrato
-            tipoContrato: contrato.tipoContrato, // Obtiene el tipo de contrato del empleado
-            fechaRegistro: now.toISOString().split('T')[0], // Usa la fecha actual
-            diasTrabajados: detalle.diasTrabajados, // Valor por defecto si no se proporciona
-            horasExtras: detalle.horasExtras// Valor por defecto si no se proporciona
+            salario: contrato.salario,
+            tipoContrato: contrato.tipoContrato,
+            fechaRegistro: now.toISOString().split('T')[0],
+            diasTrabajados: detalle.diasTrabajados,
+            horasExtras: detalle.horasExtras,
+        };
+
+        const parametros = {
+            salarioMinimo: parametro.salarioMinimo,
+            salud: parametro.salud,
+            pension: parametro.pension,
+            auxTransporte: parametro.auxTransporte,
         };
 
         const detalleExistente = await DetalleLiquidacion.findOne({
             where: {
                 idEmpleado: detalleCompleto.idEmpleado,
                 mes: mes,
-                año: año
-            }
+                año: año,
+            },
         });
 
         if (detalleExistente) {
-            throw new Error(`El empleado con el codigo ${detalleCompleto.idEmpleado} ya ha sido liquidado en el mes ${mes} del año ${año}`);
+            throw new Error(`El empleado con el código ${detalleCompleto.idEmpleado} ya ha sido liquidado en el mes ${mes} del año ${año}`);
         }
 
         let liquidacionExistente = await Liquidacion.findOne({
             where: {
                 mes: mes,
-                año: año
-            }
+                año: año,
+            },
         });
 
         let idLiquidacion;
@@ -203,22 +227,24 @@ export async function createDetalleLiquidacion(detalle, idUsuario) {
                 cesantiasTotal: 0,
                 interesesCesantiasTotal: 0,
                 total: 0,
-                idUsuario: idUsuario
+                idUsuario: idUsuario,
             });
 
             const liquidacionGuardada = await newLiquidacion.save({ transaction: t });
             idLiquidacion = liquidacionGuardada.idLiquidacion;
         }
 
-        const valoresCalculados = await calcularValoresAutomaticosPython(detalleCompleto);
+        // Ahora pasa `detalleCompleto` y `parametros` al cálculo de valores automáticos
+        const valoresCalculados = await calcularValoresAutomaticosPython(detalleCompleto, parametros);
 
         const newDetalleLiquidacion = new DetalleLiquidacion({
             año: año,
             mes: mes,
             ...detalleCompleto,
             ...valoresCalculados,
+            idParametro: detalle.idParametro, // Asigna el idParametro
             idLiquidacion: idLiquidacion,
-            idUsuario: idUsuario
+            idUsuario: idUsuario,
         });
 
         await newDetalleLiquidacion.save({ transaction: t });
@@ -251,6 +277,7 @@ export async function createDetalleLiquidacion(detalle, idUsuario) {
         throw new Error(`Error creando DetalleLiquidacion: ${error.message}`);
     }
 };
+
 
 export async function obtenerDetalles() {
     try {

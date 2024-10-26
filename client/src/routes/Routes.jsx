@@ -13,6 +13,7 @@ import { UsuarioProvider } from "../context/usuarioContext";
 import { EmpleadoProvider } from "../context/empleadoContext";
 import { ContratoProvider } from "../context/contratoContext";
 import { NominaProvider } from "../context/nominaContext";
+import { ParametrosProvider } from "../context/parametroContext";
 import { DetalleProvider } from "../context/detalleLiquidacionContext";
 
 import FrmRol from "../components/frmRol";
@@ -36,42 +37,44 @@ const AppRoutes = () => {
                 <EmpleadoProvider>
                   <ContratoProvider>
                     <DetalleProvider>
-                      <NominaProvider>
-                        <BrowserRouter>
-                          <Routes>
-                            <Route path="/" element={<Login />} />
+                      <ParametrosProvider>
+                        <NominaProvider>
+                          <BrowserRouter>
+                            <Routes>
+                              <Route path="/" element={<Login />} />
 
-                            <Route element={<ProtectedRoutes />}>
-                              <Route path="/menu" element={<Menu />}>
-                              <Route path="/menu" element={<ProtectedRouteWithPermission requiredPermission="Inicio" />}>
-                                <Route index element={<DashboardCards />} />
+                              <Route element={<ProtectedRoutes />}>
+                                <Route path="/menu" element={<Menu />}>
+                                  <Route path="/menu" element={<ProtectedRouteWithPermission requiredPermission="Inicio" />}>
+                                    <Route index element={<DashboardCards />} />
+                                  </Route>
+                                  <Route element={<ProtectedRouteWithPermission requiredPermission="Empleados" />}>
+                                    <Route path="empleados" element={<FrmEmpleado />} />
+                                  </Route>
+                                  <Route element={<ProtectedRouteWithPermission requiredPermission="Cargos" />}>
+                                    <Route path="cargos" element={<FrmCargo />} />
+                                  </Route>
+                                  <Route element={<ProtectedRouteWithPermission requiredPermission="Liquidaciones" />}>
+                                    <Route path="liquidaciones" element={<FrmLiquidaciones />} />
+                                  </Route>
+                                  <Route element={<ProtectedRouteWithPermission requiredPermission="Nomina" />}>
+                                    <Route path="nomina" element={<FrmNomnina />} />
+                                  </Route>
+                                  <Route element={<ProtectedRouteWithPermission requiredPermission="Usuarios" />}>
+                                    <Route path="usuarios" element={<FrmUsuario />} />
+                                  </Route>
+                                  <Route element={<ProtectedRouteWithPermission requiredPermission="Roles" />}>
+                                    <Route path="roles" element={<FrmRol />} />
+                                  </Route>
+                                  <Route element={<ProtectedRouteWithPermission requiredPermission="Permisos" />}>
+                                    <Route path="permisos" element={<FrmPermiso />} />
+                                  </Route>
+                                </Route>
                               </Route>
-                                <Route element={<ProtectedRouteWithPermission requiredPermission="Empleados" />}>
-                                  <Route path="empleados" element={<FrmEmpleado />} />
-                                </Route>
-                                <Route element={<ProtectedRouteWithPermission requiredPermission="Cargos" />}>
-                                  <Route path="cargos" element={<FrmCargo />} />
-                                </Route>
-                                <Route element={<ProtectedRouteWithPermission requiredPermission="Liquidaciones" />}>
-                                  <Route path="liquidaciones" element={<FrmLiquidaciones />} />
-                                </Route>
-                                <Route element={<ProtectedRouteWithPermission requiredPermission="Nomina" />}>
-                                  <Route path="nomina" element={<FrmNomnina />} />
-                                </Route>
-                                <Route element={<ProtectedRouteWithPermission requiredPermission="Usuarios" />}>
-                                  <Route path="usuarios" element={<FrmUsuario />} />
-                                </Route>
-                                <Route element={<ProtectedRouteWithPermission requiredPermission="Roles" />}>
-                                  <Route path="roles" element={<FrmRol />} />
-                                </Route>
-                                <Route element={<ProtectedRouteWithPermission requiredPermission="Permisos" />}>
-                                  <Route path="permisos" element={<FrmPermiso />} />
-                                </Route>
-                              </Route>
-                            </Route>
-                          </Routes>
-                        </BrowserRouter>
-                      </NominaProvider>
+                            </Routes>
+                          </BrowserRouter>
+                        </NominaProvider>
+                      </ParametrosProvider>
                     </DetalleProvider>
                   </ContratoProvider>
                 </EmpleadoProvider>

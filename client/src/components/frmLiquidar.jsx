@@ -4,6 +4,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { useEmpleado } from "../context/empleadoContext";
 import { useCargo } from "../context/cargoContext";
 import { useContrato } from "../context/contratoContext";
+import { useParametro } from "../context/parametroContext";
 import { format } from "date-fns";
 import RegistroEmpleadoForm from "./frmREmpleado";
 import LiquidarEmpleadoForm from "./frmRLiquidacion";
@@ -28,6 +29,7 @@ const GuardarLiquidaciones = ({ onClose }) => {
     const { getEmpleado, empleados, deleteEmpleado } = useEmpleado();
     const { getCargo, cargos } = useCargo();
     const { getContrato, contratos } = useContrato();
+    const { getParametro, parametros, createParametro } = useParametro();
     const sEstado = [
         "ACTIVO",
         "INACTIVO"
@@ -87,6 +89,7 @@ const GuardarLiquidaciones = ({ onClose }) => {
     };
 
     useEffect(() => {
+        getParametro();
         getEmpleado();
         getCargo();
         getContrato();
@@ -195,7 +198,7 @@ const GuardarLiquidaciones = ({ onClose }) => {
             <Toaster />
             {isFormOpen ? (
                 isLiquidarFormOpen ? (
-                    <LiquidarEmpleadoForm onClose={handleFormClose} empleadoToEdit={empleadoToEdit} cargos={cargos} />
+                    <LiquidarEmpleadoForm onClose={handleFormClose} empleadoToEdit={empleadoToEdit} cargos={cargos} parametros={parametros} />
                 ) : (
                     <RegistroEmpleadoForm onClose={handleFormClose} empleadoToEdit={empleadoToEdit} cargos={cargos} isReadOnly={false} />
                 )
@@ -368,6 +371,45 @@ const GuardarLiquidaciones = ({ onClose }) => {
                     </div>
                 </div>
             )}
+            <div className="table-card-empleados">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Salario Minimo Actual</th>
+                            <th>Valor de Salud Acutal %</th>
+                            <th>Valor de Pension Acutal %</th>
+                            <th>Valor de Transporte Acutal %</th>
+                            <th>Fecha de registro</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {parametros.map((val, key) => (
+                            <tr key={val.idParametro}>
+                                <td>{"$ " + Number(val.salarioMinimo).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</td>
+                                <td>{val.salud + " %"}</td>
+                                <td>{val.pension + " %"}</td>
+                                <td>{"$ " + Number(val.auxTransporte).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</td>
+                                <td>{formatFecha(val.fechaRegistro)}</td>
+                                <td>
+                                    <button
+                                        className="edit-button"
+                                        onClick={(e) => { e.stopPropagation(); setEmpleado(val, false); }}
+                                    >
+                                        <i className="fi fi-br-customize-edit icon-style-components"></i>
+                                    </button>
+                                    <button
+                                        className="delete-button"
+                                        onClick={(e) => { e.stopPropagation(); handleDeleteEmpleado(val); }}
+                                    >
+                                        <i className="fi fi-br-clear-alt icon-style-components"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };

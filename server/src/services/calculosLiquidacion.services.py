@@ -2,7 +2,7 @@ import sys
 import json
 from datetime import datetime
 
-def calcular_valores_automaticos(detalle):
+def calcular_valores_automaticos(detalle, parametro):
     try:
         # Validar que todos los campos requeridos estén presentes
         campos_requeridos = ['idEmpleado', 'salario', 'diasTrabajados', 'horasExtras', 'tipoContrato', 'fechaRegistro']
@@ -20,9 +20,10 @@ def calcular_valores_automaticos(detalle):
         mes_liquidacion = datetime.strptime(fecha_registro, "%Y-%m-%d").month
 
         # Resto de tus cálculos...
-        salud = salario * 0.04
-        pension = salario * 0.04
-        aux_transporte = 162000 if salario <= 2 * 1300000 else 0
+        salario_minimo = float(parametro["salarioMinimo"])
+        salud = salario * float(parametro["salud"])
+        pension = salario * float(parametro["pension"])
+        aux_transporte = float(parametro["auxTransporte"]) if salario <= 2 * salario_minimo else 0
         aux_alimentacion = salario / dias_trabajados
         bonificacion_servicio = 0
         prima_servicios = 0
@@ -75,12 +76,13 @@ def calcular_valores_automaticos(detalle):
 
 if __name__ == "__main__":
     try:
-        if len(sys.argv) < 2:
+        if len(sys.argv) < 3:
             print("Error: No se proporcionaron datos de entrada", file=sys.stderr)
             sys.exit(1)
         
         detalle = json.loads(sys.argv[1])
-        result = calcular_valores_automaticos(detalle)
+        parametro = json.loads(sys.argv[2])
+        result = calcular_valores_automaticos(detalle, parametro)
         print(json.dumps(result))
         
     except json.JSONDecodeError as e:

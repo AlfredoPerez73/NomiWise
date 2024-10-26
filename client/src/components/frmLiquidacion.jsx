@@ -63,22 +63,28 @@ const RegistroLiquidaciones = () => {
     const userName = usuario ? usuario.nombre : "Desconocido";
 
     useEffect(() => {
-        if (detalles) {
-            setFilteredDetalle(detalles);
-        }
-    }, [detalles]);
+        const esEmpleado = usuario.idRol === 3;
+        const documentoEmpleado = usuario ? usuario.documento : "Desconocido";
 
-    useEffect(() => {
-        setFilteredDetalle(
-            detalles.filter((detalle) => {
-                const fecha = new Date(detalle.fechaRegistro);
-                const isWithinDateRange =
-                    (!fechaInicio || fecha >= startOfDay(new Date(fechaInicio))) &&
-                    (!fechaFin || fecha <= endOfDay(new Date(fechaFin)));
-                return isWithinDateRange;
-            })
-        );
-    }, [detalles, filterValue, fechaInicio, fechaFin]);
+        let baseDetalles = detalles;
+
+        if (esEmpleado && documentoEmpleado) {
+            baseDetalles = detalles.filter(detalle => {
+                const empleadoInfo = getEmpleadoInfo(detalle.idEmpleado, empleados);  // Obtén información del empleado
+                return empleadoInfo.documento?.trim().toLowerCase() === documentoEmpleado.trim().toLowerCase();
+            });
+        }
+
+        const filtered = baseDetalles.filter((detalle) => {
+            const fecha = new Date(detalle.fechaRegistro);
+            const isWithinDateRange =
+                (!fechaInicio || fecha >= startOfDay(new Date(fechaInicio))) &&
+                (!fechaFin || fecha <= endOfDay(new Date(fechaFin)));
+            return isWithinDateRange;
+        });
+
+        setFilteredDetalle(filtered);
+    }, [detalles, filterValue, fechaInicio, fechaFin, usuario]);
 
 
     const getEmpleadoInfo = (idEmpleado, empleados) => {
@@ -95,22 +101,44 @@ const RegistroLiquidaciones = () => {
         };
     };
 
-    useEffect(() => {
-        applyFilters();
-    }, [detalles, filterValueEstado, filterValueAño, filterValueMes]);
+    const applyAllFilters = () => {
+        const esEmpleado = usuario.idRol === 3;
+        const documentoEmpleado = usuario ? usuario.documento : "Desconocido";
 
-    const applyFilters = () => {
-        if (detalles) {
-            const filtered = detalles.filter((n) => {
-                const empleadoInfo = getEmpleadoInfo(n.idEmpleado, empleados);
-                const matchesEstado = filterValueEstado ? empleadoInfo.estado.toLowerCase() === filterValueEstado.toLowerCase() : true;
-                const matchesAño = filterValueAño ? String(n.año).includes(filterValueAño) : true;
-                const matchesMes = filterValueMes ? String(n.mes).includes(filterValueMes) : true;
-                return matchesEstado && matchesAño && matchesMes;
+        let baseDetalles = detalles;
+
+        if (esEmpleado && documentoEmpleado) {
+            baseDetalles = detalles.filter(detalle => {
+                const empleadoInfo = getEmpleadoInfo(detalle.idEmpleado, empleados);  // Obtén información del empleado
+                return empleadoInfo.documento?.trim().toLowerCase() === documentoEmpleado.trim().toLowerCase();
             });
-            setFilteredDetalle(filtered);
         }
+
+        // Filtrar por rango de fechas
+        baseDetalles = baseDetalles.filter(detalle => {
+            const fecha = new Date(detalle.fechaRegistro);
+            return (
+                (!fechaInicio || fecha >= new Date(fechaInicio)) &&
+                (!fechaFin || fecha <= new Date(fechaFin))
+            );
+        });
+
+        // Filtrar por estado, año, y mes
+        baseDetalles = baseDetalles.filter(detalle => {
+            const empleadoInfo = getEmpleadoInfo(detalle.idEmpleado, empleados);
+            const matchesEstado = filterValueEstado ? empleadoInfo.estado.toLowerCase() === filterValueEstado.toLowerCase() : true;
+            const matchesAño = filterValueAño ? String(detalle.año).includes(filterValueAño) : true;
+            const matchesMes = filterValueMes ? String(detalle.mes).includes(filterValueMes) : true;
+            return matchesEstado && matchesAño && matchesMes;
+        });
+
+        setFilteredDetalle(baseDetalles);
     };
+
+    useEffect(() => {
+        applyAllFilters();
+    }, [detalles, usuario, fechaInicio, fechaFin, filterValueEstado, filterValueAño, filterValueMes]);
+
 
     const handleFilterChangeCargo = (e) => {
         const query = e.target.value.toLowerCase();
@@ -248,10 +276,12 @@ const RegistroLiquidaciones = () => {
             doc.text("En este PDF se tratara de presentar un reporte de todas las liquidaciones de un Empleado,", 14, 98);
             doc.text("Teniendo en cuenta como datos importantes su salario final y contratos.", 14, 103);
 
+            // Cambia detalles por filteredDetalle
             const tableColumn = ["Documento", "Empleado", "Devengado", "Cargo", "Contrato", "Fecha de Fin"];
             const tableRows = [];
 
-            const items = detalles.map((detalle) => {
+            // Usar los datos filtrados (filteredDetalle) que se muestran en la tabla
+            const items = filteredDetalle.map((detalle) => {
                 const empleadoInfo = getEmpleadoInfo(detalle.idEmpleado, empleados);
 
                 const nombreCompleto = empleadoInfo.nombre;
@@ -448,13 +478,10 @@ const RegistroLiquidaciones = () => {
         };
     };
 
-    const handlePageClick = ({ selected }) => {
-        setCurrentPage(selected);
-    };
-
+    const handlePageClick = ({ selected }) => setCurrentPage(selected);
     const offset = currentPage * perPage;
-    const currentDetalles = filteredDetalle ? filteredDetalle.slice(offset, offset + perPage) : [];
-    const pageCount = filteredDetalle ? Math.max(Math.ceil(filteredDetalle.length / perPage), 1) : 1;
+    const currentDetalles = filteredDetalle.slice(offset, offset + perPage);
+    const pageCount = Math.ceil(filteredDetalle.length / perPage);
 
     return (
         <div className="w-full h-full">
@@ -519,7 +546,12 @@ const RegistroLiquidaciones = () => {
                         </div>
                     </div>
                     <div className="button-container">
-                        <button type="button" className="open-modal-button" onClick={() => setIsFormOpen(true)}>Liquidacion</button>
+                        {/* Mostrar el botón de liquidación solo si el usuario no es empleado */}
+                        {usuario.idRol !== 3 && (
+                            <button type="button" className="open-modal-button" onClick={() => setIsFormOpen(true)}>
+                                Liquidacion
+                            </button>
+                        )}
                     </div>
                     <div className="table-card-empleados">
                         <h1 className="sub-titles-copm">Liquidaciones Registradas</h1>

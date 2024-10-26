@@ -5,13 +5,16 @@ import { useContrato } from "../context/contratoContext";
 import { useDetalle } from "../context/detalleLiquidacionContext";
 import { Toaster, toast } from "react-hot-toast";
 import { format } from "date-fns";
+import { getYear } from "date-fns";
 
-const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos }) => {
+const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos, parametros }) => {
     const [formData, setFormData] = useState({
         idEmpleado: "",
         diasTrabajados: "",
-        horasExtras: ""
+        horasExtras: "",
+        idParametro: ""
     });
+    const [selectedParametro, setSelectedParametro] = useState(null);
     const tcontratos = [
         "TERMINO INDEFINIDO",
         "TERMINO FIJO",
@@ -28,10 +31,27 @@ const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos }) => {
             setFormData({
                 idEmpleado: empleadoToEdit.idEmpleado,
                 diasTrabajados: "",
-                horasExtras: ""
+                horasExtras: "",
+                idParametro: 3 // Se actualizará automáticamente
             });
         }
-    }, [empleadoToEdit]);
+
+        // Obtiene el parámetro correspondiente al año actual
+        const year = getYear(new Date());
+        const parametroDelAño = parametros.find(param => getYear(new Date(param.fechaRegistro)) === year);
+        
+        if (parametroDelAño) {
+            setFormData(prevState => ({
+                ...prevState,
+                idParametro: parametroDelAño.idParametro // Asigna el id del parámetro encontrado
+            }));
+            setSelectedParametro(parametroDelAño); // Guarda el parámetro encontrado en el estado
+        } else {
+            setError("No se encontró un parámetro para el año actual");
+            toast.error("No se encontró un parámetro para el año actual");
+        }
+
+    }, [empleadoToEdit, parametros]);
 
     useEffect(() => {
         getEmpleado();
@@ -235,6 +255,59 @@ const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos }) => {
                                 />
                                 <label htmlFor="horasExtras">Horas Extras</label>
                             </div>
+                            {/* Mostrar detalles del parámetro seleccionado automáticamente */}
+                            {selectedParametro && (
+                                <>
+                                    <div className="input-container">
+                                        <input
+                                            type="number"
+                                            id="salarioMinimo"
+                                            name="salarioMinimo"
+                                            value={selectedParametro.salarioMinimo}
+                                            readOnly
+                                            placeholder=" "
+                                        />
+                                        <label htmlFor="salarioMinimo">Salario Mínimo</label>
+                                    </div>
+
+                                    <div className="input-container">
+                                        <input
+                                            type="number"
+                                            id="salud"
+                                            name="salud"
+                                            value={selectedParametro.salud}
+                                            readOnly
+                                            placeholder=" "
+                                        />
+                                        <label htmlFor="salud">Salud (%)</label>
+                                    </div>
+
+                                    <div className="input-container">
+                                        <input
+                                            type="number"
+                                            id="pension"
+                                            name="pension"
+                                            value={selectedParametro.pension}
+                                            readOnly
+                                            placeholder=" "
+                                        />
+                                        <label htmlFor="pension">Pensión (%)</label>
+                                    </div>
+
+                                    <div className="input-container">
+                                        <input
+                                            type="number"
+                                            id="auxTransporte"
+                                            name="auxTransporte"
+                                            value={selectedParametro.auxTransporte}
+                                            readOnly
+                                            placeholder=" "
+                                        />
+                                        <label htmlFor="auxTransporte">Aux. Transporte</label>
+                                    </div>
+                                </>
+                            )}
+
                         </div>
                         <button type={empleadoToEdit ? "submit_2" : "submit_2"}>
                             {empleadoToEdit ? "Liquidar" : "Registrar"}
