@@ -24,9 +24,9 @@ const actualizarTotalesLiquidacion = async (año, mes, t) => {
 
     const totales = detalles.reduce((totales, detalle) => {
         totales.salarioTotal += parseFloat(detalle.devengado);
-        totales.saludTotal += parseFloat(detalle.idParametro);
-        totales.pensionTotal += parseFloat(detalle.idParametro);
-        totales.auxTransporteTotal += parseFloat(detalle.idParametro);
+        totales.saludTotal += parseFloat(detalle.salud);
+        totales.pensionTotal += parseFloat(detalle.pension);
+        totales.auxTransporteTotal += parseFloat(detalle.auxTransporte);
         totales.bonificacionServicioTotal += parseFloat(detalle.bonificacionServicio);
         totales.auxAlimentacionTotal += parseFloat(detalle.auxAlimentacion);
         totales.primaNavidadTotal += parseFloat(detalle.primaNavidad);
@@ -149,7 +149,7 @@ async function calcularValoresAutomaticosPython(detalle, parametro) {
     }
 }
 
-export async function createDetalleLiquidacion(detalle, idUsuario) {
+export async function createDetalleLiquidacion(detalle, idParametro, idUsuario) {
     const t = await sequelize.transaction();
 
     const now = new Date();
@@ -161,16 +161,14 @@ export async function createDetalleLiquidacion(detalle, idUsuario) {
         if (!empleado) {
             throw new Error(`No se encontró el empleado con ID ${detalle.idEmpleado}`);
         }
-        console.log("Buscando parámetro con ID:", detalle.idParametro);
         const contrato = await Contrato.findByPk(empleado.idContrato);
         if (!contrato) {
             throw new Error(`No se encontró el contrato del empleado con la ID ${detalle.idEmpleado}`);
         }
-
         // Obtiene los parámetros necesarios de la tabla Parametro
-        const parametro = await Parametros.findByPk(3);
+        const parametro = await Parametros.findByPk(idParametro);
         if (!parametro) {
-            throw new Error(`No se encontró el parámetro con ID ${detalle.idParametro}`);
+            throw new Error(`No se encontró el parámetro con ID ${idParametro}`);
         }
 
         const detalleCompleto = {

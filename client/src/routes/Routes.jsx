@@ -41,7 +41,7 @@ const AppRoutes = () => {
                         <NominaProvider>
                           <BrowserRouter>
                             <Routes>
-                              <Route path="/" element={<Login />} />
+                              <Route path="/login" element={<Login />} />
 
                               <Route element={<ProtectedRoutes />}>
                                 <Route path="/menu" element={<Menu />}>

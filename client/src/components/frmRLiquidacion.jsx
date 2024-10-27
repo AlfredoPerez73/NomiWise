@@ -32,7 +32,7 @@ const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos, parametros }
                 idEmpleado: empleadoToEdit.idEmpleado,
                 diasTrabajados: "",
                 horasExtras: "",
-                idParametro: 3 // Se actualizará automáticamente
+                idParametro: "" // Se actualizará automáticamente
             });
         }
 

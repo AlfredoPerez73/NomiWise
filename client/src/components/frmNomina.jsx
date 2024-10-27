@@ -159,7 +159,7 @@ const Nomina = () => {
             const tableColumn = ["Año", "Mes", "Nomina", "Fecha de Registro"];
             const tableRows = [];
 
-            const items = nominas.map((nomina) => {
+            const items = filteredNomina.map((nomina) => {
                 return [
                     nomina.año,
                     nomina.mes,

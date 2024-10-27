@@ -2,6 +2,8 @@ import { createContext, useContext, useState } from "react";
 import {
     createParametroRequest,
     getParametroRequest,
+    deleteParametrosRequest,
+    updateParametrosRequest,
 } from '../api/parametro/parametroAuth';
 
 const ParametroContext  = createContext();
@@ -32,11 +34,33 @@ export function ParametrosProvider({ children }) {
         console.log(res);
     }
 
+    const deleteParametro = async (idParametro) => {
+        try {
+          const res = await deleteParametrosRequest(idParametro);
+          if (res.status == 204) {
+            setParametros(parametros.filter((parametros) => parametros.idParametro != idParametro));
+          }
+        } catch (error) {
+          throw error;
+        }
+      };
+      
+
+    const updateParametro = async (idParametro, parametros) => {
+        try {
+            await updateParametrosRequest(idParametro, parametros);
+        } catch (error) {
+            throw error;
+        }
+    }
+
     return(
         <ParametroContext.Provider value={{
             parametros,
             createParametro,
             getParametro,
+            updateParametro,
+            deleteParametro
         }}>
             {children}
         </ParametroContext.Provider>

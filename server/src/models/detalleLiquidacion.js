@@ -21,6 +21,15 @@ export const DetalleLiquidacion = sequelize.define(
         horasExtras: {
             type: DataTypes.INTEGER,
         },
+        salud: {
+            type: DataTypes.DECIMAL,
+        },
+        pension: {
+            type: DataTypes.DECIMAL,
+        },
+        auxTransporte: {
+            type: DataTypes.DECIMAL,
+        },
         bonificacionServicio: {
             type: DataTypes.DECIMAL,
         },

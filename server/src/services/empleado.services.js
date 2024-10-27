@@ -1,6 +1,7 @@
 import { Empleado } from "../models/empleado.js";
 import { Contrato } from "../models/contrato.js";
 import { Usuario } from "../models/usuario.js";
+import { Rol } from "../models/rol.js";
 import { EmpleadoDTO } from "../dtos/empleado.dto.js";
 import { sequelize } from '../database/database.js';
 import bcrypt from "bcryptjs";
@@ -27,6 +28,20 @@ export async function registrarEmpleado(documento, nombre, estado, idCargo, deta
       throw new Error("Faltan detalles del contrato");
     }
 
+    // Crear o recuperar el rol predeterminado "EMPLEADO USUARIO"
+    let rolPredeterminado;
+    const rolEmpleadoUsuario = await Rol.findOne({ where: { nRol: "EMPLEADO USUARIO" } });
+
+    if (rolEmpleadoUsuario) {
+      rolPredeterminado = rolEmpleadoUsuario.idRol;
+    } else {
+      const nuevoRol = await Rol.create(
+        { nRol: "EMPLEADO USUARIO" },
+        { transaction: t }
+      );
+      rolPredeterminado = nuevoRol.idRol;
+    }
+
     // Crear el contrato
     const newContrato = new Contrato({
       fechaInicio: detallesContrato.fechaInicio,
@@ -41,7 +56,6 @@ export async function registrarEmpleado(documento, nombre, estado, idCargo, deta
     const contraseñaPredeterminada = "Contraseña123";
     const contraseñaHash = await bcrypt.hash(contraseñaPredeterminada, 10);
     const correoPredeterminado = `${documento}@nomiwise.com`;
-    const rolPredeterminado = 4; // Ajusta el ID de rol predeterminado según tus necesidades
 
     const nuevoUsuario = new Usuario({
       documento: documento,

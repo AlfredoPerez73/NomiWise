@@ -6,6 +6,7 @@ import { useEmpleado } from "../context/empleadoContext";
 import { useCargo } from "../context/cargoContext";
 import { useContrato } from "../context/contratoContext";
 import { useDetalle } from "../context/detalleLiquidacionContext"
+import { useParametro } from "../context/parametroContext"
 import { format, startOfDay, endOfDay } from "date-fns";
 import GuardarLiquidaciones from "./frmLiquidar";
 import ReactPaginate from 'react-paginate';
@@ -37,6 +38,7 @@ const RegistroLiquidaciones = () => {
     const { getCargo, cargos } = useCargo();
     const { getContrato, contratos } = useContrato();
     const { getDetalles, detalles } = useDetalle();
+    const { getParametro, parametros } = useParametro();
     const sEstado = ["ACTIVO", "INACTIVO"];
 
     const uniqueYears = [...new Set(detalles.map(detalle => detalle.año))].sort();
@@ -55,6 +57,7 @@ const RegistroLiquidaciones = () => {
 
     useEffect(() => {
         getDetalles();
+        getParametro();
         getEmpleado();
         getCargo();
         getContrato();
