@@ -19,7 +19,7 @@ const Dashboard = () => {
     getPermiso,
     permisos
   } = usePermiso();
-  
+
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
@@ -183,6 +183,17 @@ const Dashboard = () => {
                   >
                     <i className="fi fi-br-user-cowboy icon-style"></i>
                     <span>Liquidaciones</span>
+                  </Link>
+                </li>
+              )}
+              {hasPermission('Novedades') && (
+                <li className="nav-item">
+                  <Link to="/menu/novedades"
+                    className={activeContent === "novedades" ? "nav-link active" : "nav-link collapsed"}
+                    onClick={() => setActiveContent("novedades")}
+                  >
+                    <i className="fi fi-br-calendar-payment-loan icon-style"></i>
+                    <span>Novedades</span>
                   </Link>
                 </li>
               )}

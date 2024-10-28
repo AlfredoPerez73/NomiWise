@@ -6,6 +6,7 @@ import { useEmpleado } from "../context/empleadoContext";
 import { useCargo } from "../context/cargoContext";
 import { useContrato } from "../context/contratoContext";
 import { useDetalle } from "../context/detalleLiquidacionContext"
+import { useRol } from "../context/rolContext";
 import { useParametro } from "../context/parametroContext"
 import { format, startOfDay, endOfDay } from "date-fns";
 import GuardarLiquidaciones from "./frmLiquidar";
@@ -39,6 +40,7 @@ const RegistroLiquidaciones = () => {
     const { getContrato, contratos } = useContrato();
     const { getDetalles, detalles } = useDetalle();
     const { getParametro, parametros } = useParametro();
+    const { roles } = useRol();
     const sEstado = ["ACTIVO", "INACTIVO"];
 
     const uniqueYears = [...new Set(detalles.map(detalle => detalle.año))].sort();
@@ -66,7 +68,7 @@ const RegistroLiquidaciones = () => {
     const userName = usuario ? usuario.nombre : "Desconocido";
 
     useEffect(() => {
-        const esEmpleado = usuario.idRol === 3;
+        const esEmpleado = getRolName(usuario.idRol) === "EMPLEADO USUARIO";
         const documentoEmpleado = usuario ? usuario.documento : "Desconocido";
 
         let baseDetalles = detalles;
@@ -94,6 +96,11 @@ const RegistroLiquidaciones = () => {
         return empleados.find((empleado) => empleado.idEmpleado === idEmpleado) || {};
     };
 
+    const getRolName = (idRol) => {
+        const rol = roles.find((r) => r.idRol === idRol);
+        return rol ? rol.nRol : "Desconocido";
+    };
+
     const getContratoInfo = (idContrato) => {
         const contrato = contratos.find((c) => c.idContrato === idContrato) || {};
         return {
@@ -105,7 +112,7 @@ const RegistroLiquidaciones = () => {
     };
 
     const applyAllFilters = () => {
-        const esEmpleado = usuario.idRol === 3;
+        const esEmpleado = getRolName(usuario.idRol) === "EMPLEADO USUARIO";
         const documentoEmpleado = usuario ? usuario.documento : "Desconocido";
 
         let baseDetalles = detalles;
@@ -550,7 +557,7 @@ const RegistroLiquidaciones = () => {
                     </div>
                     <div className="button-container">
                         {/* Mostrar el botón de liquidación solo si el usuario no es empleado */}
-                        {usuario.idRol !== 3 && (
+                        {getRolName(usuario.idRol) !== "EMPLEADO USUARIO"  && (
                             <button type="button" className="open-modal-button" onClick={() => setIsFormOpen(true)}>
                                 Liquidacion
                             </button>

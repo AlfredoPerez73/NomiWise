@@ -74,7 +74,7 @@ export async function registrarEmpleado(documento, nombre, estado, idCargo, deta
       estado,
       idCargo,
       idContrato: contratoGuardado.idContrato,
-      idUsuario: usuarioGuardado.idUsuario, // Relación con el usuario creado
+      idUsuario: idUsuario, // Relación con el usuario creado
     });
     const empleadoGuardado = await newEmpleado.save({ transaction: t });
 

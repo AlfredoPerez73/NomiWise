@@ -2,7 +2,7 @@ import sys
 import json
 from datetime import datetime
 
-def calcular_valores_automaticos(detalle, parametro):
+def calcular_valores_automaticos(detalle, parametro, novedad):
     try:
         # Validar que todos los campos requeridos estén presentes
         campos_requeridos = ['idEmpleado', 'salario', 'diasTrabajados', 'horasExtras', 'tipoContrato', 'fechaRegistro']
@@ -31,6 +31,10 @@ def calcular_valores_automaticos(detalle, parametro):
         vacaciones = 0
         cesantias = 0
         intereses_cesantias = 0
+        calcularPagoPrestamo = float(novedad["prestamo"]) * 0.05
+        calcularPagoDescuento = float(novedad["descuento"]) * 0.05
+        prestamo = calcularPagoPrestamo
+        descuento = calcularPagoDescuento
         valor_horas_extra = (salario / 240) * 1.25 * horas_extras if horas_extras > 0 else 0
 
         if tipo_contrato in ["TERMINO FIJO", "TERMINO INDEFINIDO"]:
@@ -46,7 +50,7 @@ def calcular_valores_automaticos(detalle, parametro):
             cesantias = (salario * dias_trabajados) / 360
             intereses_cesantias = cesantias * 0.12
 
-        devengado = (salario - salud - pension + aux_transporte + bonificacion_servicio +
+        devengado = (salario - salud - pension  - prestamo - descuento + aux_transporte + bonificacion_servicio +
                     aux_alimentacion + prima_servicios + prima_navidad + valor_horas_extra +
                     cesantias + intereses_cesantias + vacaciones)
 
@@ -61,6 +65,8 @@ def calcular_valores_automaticos(detalle, parametro):
             "vacaciones": vacaciones,
             "cesantias": cesantias,
             "interesesCesantias": intereses_cesantias,
+            "prestamo": prestamo,
+            "descuento": descuento,
             "devengado": devengado,
         }
 
@@ -76,13 +82,14 @@ def calcular_valores_automaticos(detalle, parametro):
 
 if __name__ == "__main__":
     try:
-        if len(sys.argv) < 3:
+        if len(sys.argv) < 4:
             print("Error: No se proporcionaron datos de entrada", file=sys.stderr)
             sys.exit(1)
         
         detalle = json.loads(sys.argv[1])
         parametro = json.loads(sys.argv[2])
-        result = calcular_valores_automaticos(detalle, parametro)
+        novedad = json.loads(sys.argv[3])
+        result = calcular_valores_automaticos(detalle, parametro, novedad)
         print(json.dumps(result))
         
     except json.JSONDecodeError as e:

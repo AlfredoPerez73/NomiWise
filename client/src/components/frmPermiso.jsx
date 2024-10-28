@@ -42,6 +42,7 @@ const RegistroPermisos = () => {
         "Inicio",
         "Empleados",
         "Liquidaciones",
+        "Novedades",
         "Nomina",
         "Cargos",
         "Usuarios",

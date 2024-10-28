@@ -3,6 +3,7 @@ import { Liquidacion } from "../models/liquidacion.js";
 import { Empleado } from "../models/empleado.js";
 import { Contrato } from "../models/contrato.js";
 import { Parametros } from "../models/parametros.js";
+import { Novedad } from "../models/novedades.js";
 import { DetalleLiquidacionDTO } from "../dtos/detalleLiquidacion.dto.js";
 import { sequelize } from '../database/database.js';
 import { spawn } from "child_process";
@@ -78,9 +79,8 @@ async function verificarPython() {
     });
 }
 
-async function calcularValoresAutomaticosPython(detalle, parametro) {
+export async function calcularValoresAutomaticosPython(detalle, parametro, novedades) {
     try {
-        // Validar que todos los campos necesarios estén presentes
         const camposRequeridos = ['idEmpleado', 'salario', 'diasTrabajados', 'horasExtras', 'tipoContrato', 'fechaRegistro'];
         const camposFaltantes = camposRequeridos.filter(campo => !(campo in detalle));
         
@@ -88,14 +88,13 @@ async function calcularValoresAutomaticosPython(detalle, parametro) {
             throw new Error(`Faltan los siguientes campos requeridos: ${camposFaltantes.join(', ')}`);
         }
 
-        // Asegurarse de que los valores numéricos sean números y no strings
         const detalleNormalizado = {
             ...detalle,
             salario: Number(detalle.salario),
             diasTrabajados: Number(detalle.diasTrabajados),
             horasExtras: Number(detalle.horasExtras)
         };
-        // Asegurarse de que los valores numéricos sean números y no strings
+
         const parametrosNormalizado = {
             ...parametro,
             salarioMinimo: Number(parametro.salarioMinimo),
@@ -104,7 +103,14 @@ async function calcularValoresAutomaticosPython(detalle, parametro) {
             auxTransporte: Number(parametro.auxTransporte)
         };
 
-        // Resto del código para ejecutar Python...
+        // Verifica que `novedades` sea un arreglo y acumula los valores
+        const novedadesArray = Array.isArray(novedades) ? novedades : [novedades];
+        const novedadesAcumuladas = novedadesArray.reduce((acc, nov) => {
+            acc.prestamo += Number(nov.prestamo || 0);
+            acc.descuento += Number(nov.descuento || 0);
+            return acc;
+        }, { prestamo: 0, descuento: 0 });
+
         const pythonStatus = await verificarPython();
         if (!pythonStatus.instalado) {
             throw new Error('Python no está instalado o no está disponible en el PATH del sistema');
@@ -114,9 +120,10 @@ async function calcularValoresAutomaticosPython(detalle, parametro) {
 
         return new Promise((resolve, reject) => {
             const pythonProcess = spawn(pythonStatus.comando, [
-                scriptPath, 
+                scriptPath,
                 JSON.stringify(detalleNormalizado),
-                JSON.stringify(parametrosNormalizado)
+                JSON.stringify(parametrosNormalizado),
+                JSON.stringify(novedadesAcumuladas)
             ]);
 
             let stdoutData = '';
@@ -149,7 +156,9 @@ async function calcularValoresAutomaticosPython(detalle, parametro) {
     }
 }
 
-export async function createDetalleLiquidacion(detalle, idParametro, idUsuario) {
+
+
+export async function createDetalleLiquidacion(detalle, idParametro, idNovedades, idUsuario) {
     const t = await sequelize.transaction();
 
     const now = new Date();
@@ -165,17 +174,32 @@ export async function createDetalleLiquidacion(detalle, idParametro, idUsuario) 
         if (!contrato) {
             throw new Error(`No se encontró el contrato del empleado con la ID ${detalle.idEmpleado}`);
         }
-        // Obtiene los parámetros necesarios de la tabla Parametro
+
         const parametro = await Parametros.findByPk(idParametro);
         if (!parametro) {
             throw new Error(`No se encontró el parámetro con ID ${idParametro}`);
         }
 
+        // Busca todas las novedades asociadas al empleado según los IDs proporcionados
+        const novedades = await Novedad.findAll({
+            where: {
+                idNovedad: idNovedades,
+            },
+        });
+
+        if (!novedades || novedades.length === 0) {
+            throw new Error(`No se encontraron novedades para los IDs ${idNovedades.join(", ")}`);
+        }
+
+        // Calcula los totales de préstamos y descuentos
+        const totalPrestamos = novedades.reduce((acc, nov) => acc + parseFloat(nov.prestamo || 0), 0);
+        const totalDescuentos = novedades.reduce((acc, nov) => acc + parseFloat(nov.descuento || 0), 0);
+
         const detalleCompleto = {
             ...detalle,
             salario: contrato.salario,
             tipoContrato: contrato.tipoContrato,
-            fechaRegistro: now.toISOString().split('T')[0],
+            fechaRegistro: now.toISOString().split("T")[0],
             diasTrabajados: detalle.diasTrabajados,
             horasExtras: detalle.horasExtras,
         };
@@ -185,6 +209,11 @@ export async function createDetalleLiquidacion(detalle, idParametro, idUsuario) 
             salud: parametro.salud,
             pension: parametro.pension,
             auxTransporte: parametro.auxTransporte,
+        };
+
+        const novedadesTotales = {
+            prestamo: totalPrestamos,
+            descuento: totalDescuentos,
         };
 
         const detalleExistente = await DetalleLiquidacion.findOne({
@@ -232,20 +261,33 @@ export async function createDetalleLiquidacion(detalle, idParametro, idUsuario) 
             idLiquidacion = liquidacionGuardada.idLiquidacion;
         }
 
-        // Ahora pasa `detalleCompleto` y `parametros` al cálculo de valores automáticos
-        const valoresCalculados = await calcularValoresAutomaticosPython(detalleCompleto, parametros);
+        // Cálculo de valores
+        const valoresCalculados = await calcularValoresAutomaticosPython(detalleCompleto, parametros, novedadesTotales);
 
         const newDetalleLiquidacion = new DetalleLiquidacion({
             año: año,
             mes: mes,
             ...detalleCompleto,
             ...valoresCalculados,
-            idParametro: detalle.idParametro, // Asigna el idParametro
+            idParametro: detalle.idParametro,
+            idNovedades: JSON.stringify(idNovedades), // Guarda el array de IDs de novedades
             idLiquidacion: idLiquidacion,
             idUsuario: idUsuario,
         });
 
         await newDetalleLiquidacion.save({ transaction: t });
+
+        // Actualizar los valores de novedad después de liquidar
+        for (const novedad of novedades) {
+            // Resta el valor pagado de préstamo y descuento de cada novedad
+            const nuevoPrestamo = Math.max(0, novedad.prestamo - (valoresCalculados.prestamo / novedades.length));
+            const nuevoDescuento = Math.max(0, novedad.descuento - (valoresCalculados.descuento / novedades.length));
+
+            await novedad.update(
+                { prestamo: nuevoPrestamo, descuento: nuevoDescuento },
+                { transaction: t }
+            );
+        }
 
         await actualizarTotalesLiquidacion(año, mes, t);
 
@@ -268,14 +310,15 @@ export async function createDetalleLiquidacion(detalle, idParametro, idUsuario) 
             newDetalleLiquidacion.vacaciones,
             newDetalleLiquidacion.cesantias,
             newDetalleLiquidacion.interesesCesantias,
+            newDetalleLiquidacion.prestamo,
+            newDetalleLiquidacion.descuento,
             newDetalleLiquidacion.devengado,
         );
     } catch (error) {
         await t.rollback();
         throw new Error(`Error creando DetalleLiquidacion: ${error.message}`);
     }
-};
-
+}
 
 export async function obtenerDetalles() {
     try {

@@ -3,6 +3,7 @@ import "../css/components.css";
 import { useEmpleado } from "../context/empleadoContext";
 import { useContrato } from "../context/contratoContext";
 import { useDetalle } from "../context/detalleLiquidacionContext";
+import { useNovedades } from "../context/novedadContext";
 import { Toaster, toast } from "react-hot-toast";
 import { format } from "date-fns";
 import { getYear } from "date-fns";
@@ -12,7 +13,10 @@ const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos, parametros }
         idEmpleado: "",
         diasTrabajados: "",
         horasExtras: "",
-        idParametro: ""
+        idParametro: "",
+        idNovedades: [],
+        prestamos: 0,  // Campo para almacenar el monto del préstamo
+        descuentos: 0  // Campo para almacenar el monto del descuento
     });
     const [selectedParametro, setSelectedParametro] = useState(null);
     const tcontratos = [
@@ -25,6 +29,7 @@ const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos, parametros }
     const { getEmpleado } = useEmpleado();
     const { getContrato } = useContrato();
     const { getDetalles } = useDetalle();
+    const { novedades } = useNovedades();
 
     useEffect(() => {
         if (empleadoToEdit) {
@@ -32,14 +37,18 @@ const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos, parametros }
                 idEmpleado: empleadoToEdit.idEmpleado,
                 diasTrabajados: "",
                 horasExtras: "",
-                idParametro: "" // Se actualizará automáticamente
+                idParametro: "", // Se actualizará automáticamente
+                idNovedades: [],
+                prestamos: 0,
+                descuentos: 0
             });
+            fetchNovedadesEmpleado(empleadoToEdit.idEmpleado);
         }
 
         // Obtiene el parámetro correspondiente al año actual
         const year = getYear(new Date());
         const parametroDelAño = parametros.find(param => getYear(new Date(param.fechaRegistro)) === year);
-        
+
         if (parametroDelAño) {
             setFormData(prevState => ({
                 ...prevState,
@@ -53,11 +62,25 @@ const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos, parametros }
 
     }, [empleadoToEdit, parametros]);
 
+    const fetchNovedadesEmpleado = (idEmpleado) => {
+        const novedadesEmpleado = novedades.filter(nov => nov.idEmpleado === idEmpleado);
+        const totalPrestamos = novedadesEmpleado.reduce((acc, nov) => acc + parseFloat(nov.prestamos || 0), 0);
+        const totalDescuentos = novedadesEmpleado.reduce((acc, nov) => acc + parseFloat(nov.descuentos || 0), 0);
+        const idNovedades = novedadesEmpleado.map(nov => nov.idNovedad); // Extrae los IDs de las novedades
+
+        setFormData(prevState => ({
+            ...prevState,
+            prestamos: totalPrestamos,
+            descuentos: totalDescuentos,
+            idNovedades // Almacena los IDs de las novedades en el formData
+        }));
+    };
+    
     useEffect(() => {
         getEmpleado();
         getContrato();
     }, []);
-    
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevState) => ({
@@ -69,7 +92,7 @@ const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos, parametros }
     const validateForm = () => {
         const { diasTrabajados, horasExtras } = formData;
         if (diasTrabajados <= 0 || diasTrabajados > 30) {
-             return <b>Los días trabajados deben ser mayores a 0 y menores o iguales a 30.</b>;
+            return <b>Los días trabajados deben ser mayores a 0 y menores o iguales a 30.</b>;
         }
         if (horasExtras < 0) {
             return <b>Las horas extras no pueden ser negativas.</b>
@@ -254,6 +277,29 @@ const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos, parametros }
                                     autoComplete="off"
                                 />
                                 <label htmlFor="horasExtras">Horas Extras</label>
+                            </div>
+                            <div className="input-container">
+                                <input
+                                    type="text"
+                                    id="prestamos"
+                                    name="prestamos"
+                                    value={`$ ${formData.prestamos.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`}
+                                    readOnly
+                                    placeholder=" "
+                                />
+                                <label htmlFor="prestamos">Préstamos</label>
+                            </div>
+
+                            <div className="input-container">
+                                <input
+                                    type="text"
+                                    id="descuentos"
+                                    name="descuentos"
+                                    value={`$ ${formData.descuentos.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`}
+                                    readOnly
+                                    placeholder=" "
+                                />
+                                <label htmlFor="descuentos">Descuentos</label>
                             </div>
                             {/* Mostrar detalles del parámetro seleccionado automáticamente */}
                             {selectedParametro && (

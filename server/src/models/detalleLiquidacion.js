@@ -48,6 +48,12 @@ export const DetalleLiquidacion = sequelize.define(
         interesesCesantias: {
             type: DataTypes.DECIMAL,
         },
+        prestamos: {
+            type: DataTypes.DECIMAL,
+        },
+        descuentos: {
+            type: DataTypes.DECIMAL,
+        },
         devengado: {
             type: DataTypes.DECIMAL,
         },
@@ -59,6 +65,9 @@ export const DetalleLiquidacion = sequelize.define(
             type: DataTypes.INTEGER,
         },
         idParametro: {
+            type: DataTypes.INTEGER,
+        },
+        idNovedad: {
             type: DataTypes.INTEGER,
         },
         idLiquidacion: {
