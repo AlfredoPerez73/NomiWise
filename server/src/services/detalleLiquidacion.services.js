@@ -79,8 +79,9 @@ async function verificarPython() {
     });
 }
 
-export async function calcularValoresAutomaticosPython(detalle, parametro, novedades) {
+async function calcularValoresAutomaticosPython(detalle, parametro, novedad) {
     try {
+        // Validar que todos los campos necesarios estén presentes
         const camposRequeridos = ['idEmpleado', 'salario', 'diasTrabajados', 'horasExtras', 'tipoContrato', 'fechaRegistro'];
         const camposFaltantes = camposRequeridos.filter(campo => !(campo in detalle));
         
@@ -88,13 +89,14 @@ export async function calcularValoresAutomaticosPython(detalle, parametro, noved
             throw new Error(`Faltan los siguientes campos requeridos: ${camposFaltantes.join(', ')}`);
         }
 
+        // Asegurarse de que los valores numéricos sean números y no strings
         const detalleNormalizado = {
             ...detalle,
             salario: Number(detalle.salario),
             diasTrabajados: Number(detalle.diasTrabajados),
             horasExtras: Number(detalle.horasExtras)
         };
-
+        // Asegurarse de que los valores numéricos sean números y no strings
         const parametrosNormalizado = {
             ...parametro,
             salarioMinimo: Number(parametro.salarioMinimo),
@@ -103,14 +105,14 @@ export async function calcularValoresAutomaticosPython(detalle, parametro, noved
             auxTransporte: Number(parametro.auxTransporte)
         };
 
-        // Verifica que `novedades` sea un arreglo y acumula los valores
-        const novedadesArray = Array.isArray(novedades) ? novedades : [novedades];
-        const novedadesAcumuladas = novedadesArray.reduce((acc, nov) => {
-            acc.prestamo += Number(nov.prestamo || 0);
-            acc.descuento += Number(nov.descuento || 0);
-            return acc;
-        }, { prestamo: 0, descuento: 0 });
+        const novedadesNormalizada = {
+            ...novedad,
+            prestamos: novedad.prestamos,
+            descuentos: novedad.descuentos,
+        };
+        
 
+        // Resto del código para ejecutar Python...
         const pythonStatus = await verificarPython();
         if (!pythonStatus.instalado) {
             throw new Error('Python no está instalado o no está disponible en el PATH del sistema');
@@ -120,10 +122,10 @@ export async function calcularValoresAutomaticosPython(detalle, parametro, noved
 
         return new Promise((resolve, reject) => {
             const pythonProcess = spawn(pythonStatus.comando, [
-                scriptPath,
+                scriptPath, 
                 JSON.stringify(detalleNormalizado),
                 JSON.stringify(parametrosNormalizado),
-                JSON.stringify(novedadesAcumuladas)
+                JSON.stringify(novedadesNormalizada)
             ]);
 
             let stdoutData = '';
@@ -156,9 +158,7 @@ export async function calcularValoresAutomaticosPython(detalle, parametro, noved
     }
 }
 
-
-
-export async function createDetalleLiquidacion(detalle, idParametro, idNovedades, idUsuario) {
+export async function createDetalleLiquidacion(detalle, idParametro, idNovedad, idUsuario) {
     const t = await sequelize.transaction();
 
     const now = new Date();
@@ -174,32 +174,20 @@ export async function createDetalleLiquidacion(detalle, idParametro, idNovedades
         if (!contrato) {
             throw new Error(`No se encontró el contrato del empleado con la ID ${detalle.idEmpleado}`);
         }
-
         const parametro = await Parametros.findByPk(idParametro);
         if (!parametro) {
             throw new Error(`No se encontró el parámetro con ID ${idParametro}`);
         }
-
-        // Busca todas las novedades asociadas al empleado según los IDs proporcionados
-        const novedades = await Novedad.findAll({
-            where: {
-                idNovedad: idNovedades,
-            },
-        });
-
-        if (!novedades || novedades.length === 0) {
-            throw new Error(`No se encontraron novedades para los IDs ${idNovedades.join(", ")}`);
+        const novedad = await Novedad.findByPk(idNovedad);
+        if (!novedad) {
+            throw new Error(`No se encontró la novedad con ID ${idNovedad}`);
         }
-
-        // Calcula los totales de préstamos y descuentos
-        const totalPrestamos = novedades.reduce((acc, nov) => acc + parseFloat(nov.prestamo || 0), 0);
-        const totalDescuentos = novedades.reduce((acc, nov) => acc + parseFloat(nov.descuento || 0), 0);
 
         const detalleCompleto = {
             ...detalle,
             salario: contrato.salario,
             tipoContrato: contrato.tipoContrato,
-            fechaRegistro: now.toISOString().split("T")[0],
+            fechaRegistro: now.toISOString().split('T')[0],
             diasTrabajados: detalle.diasTrabajados,
             horasExtras: detalle.horasExtras,
         };
@@ -211,9 +199,9 @@ export async function createDetalleLiquidacion(detalle, idParametro, idNovedades
             auxTransporte: parametro.auxTransporte,
         };
 
-        const novedadesTotales = {
-            prestamo: totalPrestamos,
-            descuento: totalDescuentos,
+        const novedades = {
+            prestamos: novedad.prestamos,
+            descuentos: novedad.descuentos
         };
 
         const detalleExistente = await DetalleLiquidacion.findOne({
@@ -261,8 +249,8 @@ export async function createDetalleLiquidacion(detalle, idParametro, idNovedades
             idLiquidacion = liquidacionGuardada.idLiquidacion;
         }
 
-        // Cálculo de valores
-        const valoresCalculados = await calcularValoresAutomaticosPython(detalleCompleto, parametros, novedadesTotales);
+        // Realiza los cálculos de valores automáticos
+        const valoresCalculados = await calcularValoresAutomaticosPython(detalleCompleto, parametros, novedades);
 
         const newDetalleLiquidacion = new DetalleLiquidacion({
             año: año,
@@ -270,24 +258,23 @@ export async function createDetalleLiquidacion(detalle, idParametro, idNovedades
             ...detalleCompleto,
             ...valoresCalculados,
             idParametro: detalle.idParametro,
-            idNovedades: JSON.stringify(idNovedades), // Guarda el array de IDs de novedades
+            idNovedad: detalle.idNovedad,
             idLiquidacion: idLiquidacion,
             idUsuario: idUsuario,
         });
 
         await newDetalleLiquidacion.save({ transaction: t });
 
-        // Actualizar los valores de novedad después de liquidar
-        for (const novedad of novedades) {
-            // Resta el valor pagado de préstamo y descuento de cada novedad
-            const nuevoPrestamo = Math.max(0, novedad.prestamo - (valoresCalculados.prestamo / novedades.length));
-            const nuevoDescuento = Math.max(0, novedad.descuento - (valoresCalculados.descuento / novedades.length));
+        // Resta los valores calculados de préstamos y descuentos en la tabla de novedades
+        novedad.prestamos -= valoresCalculados.prestamos;
+        novedad.descuentos -= valoresCalculados.descuentos;
 
-            await novedad.update(
-                { prestamo: nuevoPrestamo, descuento: nuevoDescuento },
-                { transaction: t }
-            );
-        }
+        // Asegúrate de que los valores no sean negativos después de la resta
+        novedad.prestamos = Math.max(novedad.prestamos, 0);
+        novedad.descuentos = Math.max(novedad.descuentos, 0);
+
+        // Guarda los cambios en la novedad
+        await novedad.save({ transaction: t });
 
         await actualizarTotalesLiquidacion(año, mes, t);
 
@@ -310,15 +297,16 @@ export async function createDetalleLiquidacion(detalle, idParametro, idNovedades
             newDetalleLiquidacion.vacaciones,
             newDetalleLiquidacion.cesantias,
             newDetalleLiquidacion.interesesCesantias,
-            newDetalleLiquidacion.prestamo,
-            newDetalleLiquidacion.descuento,
+            newDetalleLiquidacion.prestamos,
+            newDetalleLiquidacion.descuentos,
             newDetalleLiquidacion.devengado,
+            newDetalleLiquidacion.fechaRegistro,
         );
     } catch (error) {
         await t.rollback();
         throw new Error(`Error creando DetalleLiquidacion: ${error.message}`);
     }
-}
+};
 
 export async function obtenerDetalles() {
     try {
@@ -343,6 +331,8 @@ export async function obtenerDetalles() {
                     detalle.vacaciones,
                     detalle.cesantias,
                     detalle.interesesCesantias,
+                    detalle.prestamos,
+                    detalle.descuentos,
                     detalle.devengado,
                     detalle.fechaRegistro,
                 )

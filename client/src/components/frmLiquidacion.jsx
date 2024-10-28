@@ -203,7 +203,7 @@ const RegistroLiquidaciones = () => {
     };
 
     const formatFecha = (fecha) => {
-        return format(new Date(fecha), "dd/MM/yyyy");
+        return fecha ? format(new Date(fecha), "dd/MM/yyyy") : "Fecha no disponible";
     };
 
     const formatFecha2 = (date) => {
@@ -707,6 +707,8 @@ const RegistroLiquidaciones = () => {
                                         <p><strong>Vacaciones:</strong> {"$ " + Number(selectedDetalle.vacaciones).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
                                         <p><strong>Cesantias:</strong> {"$ " + Number(selectedDetalle.cesantias).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
                                         <p><strong>Int. Cesantias:</strong> {"$ " + Number(selectedDetalle.interesesCesantias).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                        <p><strong>Int. Prestamos:</strong> {"$ " + Number(selectedDetalle.prestamos).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
+                                        <p><strong>Int. Descuentos:</strong> {"$ " + Number(selectedDetalle.descuentos).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
                                         <p><strong>Devengado:</strong> {"$ " + Number(selectedDetalle.devengado).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</p>
                                         <p><strong>Fecha de registro:</strong> {formatFecha(selectedDetalle.fechaRegistro)}</p>
                                     </div>

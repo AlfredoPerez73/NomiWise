@@ -14,7 +14,7 @@ const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos, parametros }
         diasTrabajados: "",
         horasExtras: "",
         idParametro: "",
-        idNovedades: [],
+        idNovedad: "",
         prestamos: 0,  // Campo para almacenar el monto del préstamo
         descuentos: 0  // Campo para almacenar el monto del descuento
     });
@@ -38,7 +38,7 @@ const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos, parametros }
                 diasTrabajados: "",
                 horasExtras: "",
                 idParametro: "", // Se actualizará automáticamente
-                idNovedades: [],
+                idNovedad: "",
                 prestamos: 0,
                 descuentos: 0
             });
@@ -66,13 +66,15 @@ const RegistroLiquidacionForm = ({ onClose, empleadoToEdit, cargos, parametros }
         const novedadesEmpleado = novedades.filter(nov => nov.idEmpleado === idEmpleado);
         const totalPrestamos = novedadesEmpleado.reduce((acc, nov) => acc + parseFloat(nov.prestamos || 0), 0);
         const totalDescuentos = novedadesEmpleado.reduce((acc, nov) => acc + parseFloat(nov.descuentos || 0), 0);
-        const idNovedades = novedadesEmpleado.map(nov => nov.idNovedad); // Extrae los IDs de las novedades
-
+        
+        // Extrae la ID de la primera novedad asociada, si existe
+        const idNovedad = novedadesEmpleado.length > 0 ? novedadesEmpleado[0].idNovedad : null;
+    
         setFormData(prevState => ({
             ...prevState,
             prestamos: totalPrestamos,
             descuentos: totalDescuentos,
-            idNovedades // Almacena los IDs de las novedades en el formData
+            idNovedad // Almacena solo una única ID de novedad en el formData
         }));
     };
     

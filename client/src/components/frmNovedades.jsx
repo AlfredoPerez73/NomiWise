@@ -134,9 +134,9 @@ const RegistroNovedad = () => {
     const applyNovedadFilters = () => {
         const esEmpleadoUsuario = getRolName(usuario.idRol) === "EMPLEADO USUARIO";
         const documentoEmpleado = usuario ? usuario.documento : "Desconocido";
-    
+
         let baseNovedades = novedades;
-    
+
         // Si es "EMPLEADO USUARIO", filtrar solo las novedades del empleado logueado
         if (esEmpleadoUsuario && documentoEmpleado) {
             baseNovedades = novedades.filter(novedad => {
@@ -144,7 +144,7 @@ const RegistroNovedad = () => {
                 return empleadoInfo.documento?.trim().toLowerCase() === documentoEmpleado.trim().toLowerCase();
             });
         }
-    
+
         // Filtrar por rango de fechas
         baseNovedades = baseNovedades.filter(novedad => {
             const fechaRegistro = new Date(novedad.fechaRegistro);
@@ -153,30 +153,30 @@ const RegistroNovedad = () => {
                 (!novedadFechaFin || fechaRegistro <= new Date(novedadFechaFin))
             );
         });
-    
+
         // Filtrar por cargo, contrato, tipo de acción y nombre
         baseNovedades = baseNovedades.filter(novedad => {
             const empleadoInfo = getEmpleadoInfo(novedad.idEmpleado, empleados);
             const cargoInfo = getCargoName(novedad.idCargo);
             const contratoInfo = getContratoInfo(novedad.idContrato);
-    
-            const matchesNombre = filterNovedadValue ? 
+
+            const matchesNombre = filterNovedadValue ?
                 empleadoInfo.nombre.toLowerCase().includes(filterNovedadValue.toLowerCase()) : true;
-    
-            const matchesTipoAccion = filterTipoAccion ? 
+
+            const matchesTipoAccion = filterTipoAccion ?
                 (filterTipoAccion === "Préstamo" ? novedad.prestamos > 0 : novedad.descuentos > 0) : true;
-    
-            const matchesCargo = filterNovedadCargo ? 
+
+            const matchesCargo = filterNovedadCargo ?
                 cargoInfo.toLowerCase().includes(filterNovedadCargo.toLowerCase()) : true;
-    
-            const matchesContrato = filterNovedadContrato ? 
+
+            const matchesContrato = filterNovedadContrato ?
                 contratoInfo.tipoContrato.toLowerCase().includes(filterNovedadContrato.toLowerCase()) : true;
-    
+
             return matchesNombre && matchesTipoAccion && matchesCargo && matchesContrato;
         });
-    
+
         setFilteredNovedad(baseNovedades);
-    };   
+    };
 
     // Efectos para los filtros
     useEffect(() => {
@@ -626,28 +626,33 @@ const RegistroNovedad = () => {
                                         <td>{"$ " + Number(novedad.prestamos).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</td>
                                         <td>{"$ " + Number(novedad.descuentos).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</td>
                                         <td>
-                                            <span className={
-                                                calcularEstado(novedad.prestamos, novedad.descuentos) === "Sin novedades" ? "estado-inactivo" :
-                                                    calcularEstado(novedad.prestamos, novedad.descuentos) === "Préstamo activo" ? "estado-prestamo" :
-                                                        calcularEstado(novedad.prestamos, novedad.descuentos) === "Descuento activo" ? "estado-descuento" :
-                                                            "estado-ambos"
-                                            }>
+                                            <div className={`estado-container ${calcularEstado(novedad.prestamos, novedad.descuentos)}`}>
                                                 {calcularEstado(novedad.prestamos, novedad.descuentos) === "Sin novedades" && (
-                                                    <i className="fi fi-br-empty-set icon-style-components"></i> // Icono de "Sin novedades"
+                                                    <div className="icon-container sin-novedades-icon">
+                                                        <i className="fi fi-br-empty-set icon-style-components"></i>
+                                                    </div>
                                                 )}
                                                 {calcularEstado(novedad.prestamos, novedad.descuentos) === "Préstamo activo" && (
-                                                    <i className="fi fi-br-calendar-payment-loan icon-style-components"></i> // Icono de "Préstamo activo"
+                                                    <div className="icon-container prestamo-icon">
+                                                        <i className="fi fi-br-calendar-payment-loan icon-style-components"></i>
+                                                    </div>
                                                 )}
                                                 {calcularEstado(novedad.prestamos, novedad.descuentos) === "Descuento activo" && (
-                                                    <i className="fi fi-br-pizza-slice icon-style-components"></i> // Icono de "Descuento activo"
+                                                    <div className="icon-container descuento-icon">
+                                                        <i className="fi fi-br-pizza-slice icon-style-components"></i>
+                                                    </div>
                                                 )}
                                                 {calcularEstado(novedad.prestamos, novedad.descuentos) === "Ambos activos" && (
                                                     <>
-                                                        <i className="fi fi-br-calendar-payment-loan icon-style-components"></i>  {/* Icono de "Préstamo activo" */}
-                                                        <i className="fi fi-br-pizza-slice icon-style-components"></i>  {/* Icono de "Descuento activo" */}
+                                                        <div className="icon-container prestamo-icon">
+                                                            <i className="fi fi-br-calendar-payment-loan icon-style-components"></i>
+                                                        </div>
+                                                        <div className="icon-container descuento-icon">
+                                                            <i className="fi fi-br-pizza-slice icon-style-components"></i>
+                                                        </div>
                                                     </>
                                                 )}
-                                            </span>
+                                            </div>
                                         </td>
                                         <td>0.05 % - 0.03 %</td>
                                         <td>{formatFecha(novedad.fechaRegistro)}</td>

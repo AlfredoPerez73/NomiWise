@@ -3,15 +3,9 @@ import * as detalleLiquidacionService from "../services/detalleLiquidacion.servi
 export async function postDetalle(req, res) {
     try {
         const idUsuario = req.usuario.idUsuario;
-        const { idEmpleado, horasExtras, diasTrabajados, idParametro, idNovedades } = req.body;
-
-        // Verifica que `idNovedades` sea un array
-        if (!Array.isArray(idNovedades) || idNovedades.length === 0) {
-            return res.status(400).json({ message: "Debe proporcionar al menos una novedad en `idNovedades`." });
-        }
-
-        const detalle = { idEmpleado, diasTrabajados, horasExtras, idParametro, idNovedades }; 
-        const nuevoDetalle = await detalleLiquidacionService.createDetalleLiquidacion(detalle, idParametro, idNovedades, idUsuario);
+        const { idEmpleado, horasExtras, diasTrabajados, idParametro, idNovedad } = req.body;
+        const detalle = { idEmpleado, diasTrabajados, horasExtras, idParametro, idNovedad }; 
+        const nuevoDetalle = await detalleLiquidacionService.createDetalleLiquidacion(detalle, idParametro, idNovedad, idUsuario);
         
         res.json(nuevoDetalle);
     } catch (error) {

@@ -1,7 +1,7 @@
 export class DetalleLiquidacionDTO {
     constructor(idDetalleLiquidacion, idLiquidacion, idEmpleado, idUsuario,
         año, mes, diasTrabajados, horasExtras, salud, pension, auxTransporte, bonificacionServicio, auxAlimentacion,
-        primaNavidad, vacaciones, cesantias, interesesCesantias, prestamo, descuento, devengado, fechaRegistro) {
+        primaNavidad, vacaciones, cesantias, interesesCesantias, prestamos, descuentos, devengado, fechaRegistro) {
       this.idDetalleLiquidacion = idDetalleLiquidacion;
       this.idLiquidacion = idLiquidacion;
       this.idEmpleado = idEmpleado;
@@ -19,8 +19,8 @@ export class DetalleLiquidacionDTO {
       this.vacaciones = vacaciones;
       this.cesantias = cesantias;
       this.interesesCesantias = interesesCesantias;
-      this.prestamo = prestamo;
-      this.descuento = descuento;
+      this.prestamos = prestamos;
+      this.descuentos = descuentos;
       this.devengado = devengado;
       this.fechaRegistro = fechaRegistro;
     }

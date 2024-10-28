@@ -31,10 +31,10 @@ def calcular_valores_automaticos(detalle, parametro, novedad):
         vacaciones = 0
         cesantias = 0
         intereses_cesantias = 0
-        calcularPagoPrestamo = float(novedad["prestamo"]) * 0.05
-        calcularPagoDescuento = float(novedad["descuento"]) * 0.05
-        prestamo = calcularPagoPrestamo
-        descuento = calcularPagoDescuento
+        calcularPagoPrestamo = float(novedad["prestamos"]) * 0.05
+        calcularPagoDescuento = float(novedad["descuentos"]) * 0.03
+        prestamos = calcularPagoPrestamo
+        descuentos = calcularPagoDescuento
         valor_horas_extra = (salario / 240) * 1.25 * horas_extras if horas_extras > 0 else 0
 
         if tipo_contrato in ["TERMINO FIJO", "TERMINO INDEFINIDO"]:
@@ -50,7 +50,7 @@ def calcular_valores_automaticos(detalle, parametro, novedad):
             cesantias = (salario * dias_trabajados) / 360
             intereses_cesantias = cesantias * 0.12
 
-        devengado = (salario - salud - pension  - prestamo - descuento + aux_transporte + bonificacion_servicio +
+        devengado = (salario - salud - pension  - prestamos - descuentos + aux_transporte + bonificacion_servicio +
                     aux_alimentacion + prima_servicios + prima_navidad + valor_horas_extra +
                     cesantias + intereses_cesantias + vacaciones)
 
@@ -65,8 +65,8 @@ def calcular_valores_automaticos(detalle, parametro, novedad):
             "vacaciones": vacaciones,
             "cesantias": cesantias,
             "interesesCesantias": intereses_cesantias,
-            "prestamo": prestamo,
-            "descuento": descuento,
+            "prestamos": prestamos,
+            "descuentos": descuentos,
             "devengado": devengado,
         }
 

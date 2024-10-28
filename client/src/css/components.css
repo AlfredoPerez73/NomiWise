@@ -454,6 +454,43 @@ h6 {
   background-color: #4A4E69;
 }
 
+.estado-container {
+  display: flex;
+  justify-content: center; /* Centrar horizontalmente */
+  gap: 6px; /* Espacio entre íconos */
+  padding: 5px 10px;
+  border-radius: 11px;
+  font-weight: bold;
+  font-size: 9px;
+}
+
+.sin-novedades-icon {
+  color: gray; /* Color para "Sin novedades" */
+}
+
+.prestamo-icon {
+  color: whitesmoke;
+  background-color: #7199d4c2;
+  /* Verde claro */
+  padding: 5px 10px;
+  border-radius: 11px;
+  font-weight: bold;
+  font-size: 9px;
+  display: inline-block;
+}
+
+.descuento-icon {
+  color: whitesmoke;
+  background-color: #d47171c2;
+  /* Verde claro */
+  padding: 5px 10px;
+  border-radius: 11px;
+  font-weight: bold;
+  font-size: 9px;
+  display: inline-block;
+}
+
+
 .estado-prestamo {
   color: whitesmoke;
   background-color: #d47171c2;
