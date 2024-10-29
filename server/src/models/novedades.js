@@ -16,6 +16,12 @@ export const Novedad = sequelize.define(
     descuentos: {
         type: DataTypes.DECIMAL,
     },
+    meses: {
+      type: DataTypes.INTEGER,
+    },
+    intereses: {
+      type: DataTypes.DECIMAL,
+    },
     fechaRegistro: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,

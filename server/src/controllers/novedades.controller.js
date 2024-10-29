@@ -3,7 +3,7 @@ import * as novedadesServices from "../services/novedades.services.js";
 export async function postNovedades(req, res) {
     const idUsuario = req.usuario.idUsuario;
     const {             
-        idEmpleado, idCargo, idContrato, prestamos, descuentos
+        idEmpleado, idCargo, idContrato, prestamos, descuentos, meses, intereses
     } = req.body;
     try {
         const newNovedad = await novedadesServices.crearNovedad(
@@ -13,6 +13,8 @@ export async function postNovedades(req, res) {
             idUsuario,
             prestamos,
             descuentos,
+            meses,
+            intereses,
         );
         res.json(newNovedad);
     } catch (error) {

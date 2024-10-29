@@ -17,6 +17,9 @@ const RegistroNovedad = () => {
     // Estados comunes
     const [monto, setMonto] = useState({});
     const [tipoAccion, setTipoAccion] = useState({});
+    const [meses, setMeses] = useState("");
+    const [intereses, setIntereses] = useState("");
+    const [accionPorEmpleado, setAccionPorEmpleado] = useState({});
 
     // Estados para la primera tabla (Empleados)
     const [filteredEmpleados, setFilteredEmpleados] = useState([]);
@@ -53,6 +56,20 @@ const RegistroNovedad = () => {
     // Datos estáticos
     const sEstado = ["ACTIVO", "INACTIVO"];
     const tcontratos = ["TERMINO INDEFINIDO", "TERMINO FIJO", "PERSTACION DE SERVICIOS"];
+    const mesesOptions = [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+    ];
     const uniqueYears = [...new Set(empleados.map(emp => new Date(emp.fechaRegistro).getFullYear()))];
     const uniqueMonths = Array.from({ length: 12 }, (_, i) => i + 1);
 
@@ -187,8 +204,11 @@ const RegistroNovedad = () => {
         applyNovedadFilters();
     }, [novedades, empleados, usuario, novedadFechaInicio, novedadFechaFin, filterNovedadValue, filterTipoAccion, filterNovedadCargo, filterNovedadContrato]);
 
-    const handleTipoChange = (tipo) => {
-        setTipoAccion(tipo);
+    const handleTipoChange = (idEmpleado, tipo) => {
+        setAccionPorEmpleado(prev => ({
+            ...prev,
+            [idEmpleado]: { ...prev[idEmpleado], tipoAccion: tipo, meses: "", intereses: "" }
+        }));
     };
 
     const handleMontoChange = (idEmpleado, value) => {
@@ -198,10 +218,29 @@ const RegistroNovedad = () => {
         }));
     };
 
-    const handleAgregar = async (empleado) => {
-        const montoValue = parseFloat(monto[empleado.idEmpleado]) || 0;
+    const handleMesesChange = (idEmpleado, meses) => {
+        setAccionPorEmpleado(prev => ({
+            ...prev,
+            [idEmpleado]: { ...prev[idEmpleado], meses }
+        }));
+    };
 
-        if (!tipoAccion) {
+    const handleInteresesChange = (idEmpleado, intereses) => {
+        if (parseFloat(intereses) > 1 || !intereses.includes(".")) {
+            setAccionPorEmpleado(prev => ({
+                ...prev,
+                [idEmpleado]: { ...prev[idEmpleado], intereses }
+            }));
+        } else {
+            toast.error("No se permiten decimales para valores menores o iguales a 1.");
+        }
+    };
+
+    const handleAgregar = async (empleado) => {
+        const empleadoAccion = accionPorEmpleado[empleado.idEmpleado] || {};
+        const montoValue = parseFloat(monto[empleado.idEmpleado]) || 0;
+    
+        if (!empleadoAccion.tipoAccion) {
             toast.error("Por favor selecciona el tipo de acción (Préstamo o Descuento).");
             return;
         }
@@ -209,22 +248,31 @@ const RegistroNovedad = () => {
             toast.error("Por favor ingresa un monto válido.");
             return;
         }
-
+        if (empleadoAccion.tipoAccion === "Préstamo" && (!empleadoAccion.meses || !empleadoAccion.intereses)) {
+            toast.error("Por favor ingresa el número de meses y el interés.");
+            return;
+        }
+    
         const formDataToSave = {
             idEmpleado: empleado.idEmpleado,
             idCargo: empleado.idCargo,
             idContrato: empleado.idContrato,
             idUsuario: empleado.idUsuario,
-            prestamos: tipoAccion === "Préstamo" ? montoValue : 0,
-            descuentos: tipoAccion === "Descuento" ? montoValue : 0
+            prestamos: empleadoAccion.tipoAccion === "Préstamo" ? montoValue : 0,
+            descuentos: empleadoAccion.tipoAccion === "Descuento" ? montoValue : 0,
+            meses: empleadoAccion.tipoAccion === "Préstamo" ? empleadoAccion.meses : 0,
+            intereses: empleadoAccion.tipoAccion === "Préstamo" ? empleadoAccion.intereses : 0,
         };
-
+    
         try {
             await createNovedad(formDataToSave);
             getNovedades();
-            toast.success(`Se ha añadido un ${tipoAccion.toLowerCase()} de $${montoValue.toFixed(2)} para ${empleado.nombre}.`);
+            toast.success(`Se ha añadido un ${empleadoAccion.tipoAccion.toLowerCase()} de $${montoValue.toFixed(2)} para ${empleado.nombre}.`);
             setMonto((prevMonto) => ({ ...prevMonto, [empleado.idEmpleado]: "" }));
-            setTipoAccion("");
+            setAccionPorEmpleado((prev) => ({
+                ...prev,
+                [empleado.idEmpleado]: { tipoAccion: "", meses: "", intereses: "" }
+            }));
             setFilteredEmpleados(empleados);
         } catch (error) {
             toast.error("Hubo un error al registrar la novedad.");
@@ -507,18 +555,49 @@ const RegistroNovedad = () => {
                                                 <td>{getCargoName(empleado?.idCargo)}</td>
                                                 <td>{getContratoInfo(empleado?.idContrato).tipoContrato}</td>
                                                 <td>
-                                                    <input className="monto-input"
+                                                    <input
+                                                        className="monto-input"
                                                         type="number"
                                                         name="monto"
+                                                        required
                                                         placeholder="Monto"
                                                         value={monto[empleado.idEmpleado] || ""}
                                                         onChange={(e) => handleMontoChange(empleado.idEmpleado, e.target.value)}
                                                     />
-                                                    <select className="tipo-select" value={tipoAccion} onChange={(e) => handleTipoChange(e.target.value)}>
+                                                    <select
+                                                        className="tipo-select"
+                                                        value={accionPorEmpleado[empleado.idEmpleado]?.tipoAccion || ""}
+                                                        required
+                                                        onChange={(e) => handleTipoChange(empleado.idEmpleado, e.target.value)}
+                                                    >
                                                         <option value="">Seleccionar Tipo</option>
                                                         <option value="Préstamo">Préstamo</option>
                                                         <option value="Descuento">Descuento</option>
                                                     </select>
+                                                    {accionPorEmpleado[empleado.idEmpleado]?.tipoAccion === "Préstamo" && (
+                                                        <>
+                                                            <select
+                                                                className="tipo-select"
+                                                                value={accionPorEmpleado[empleado.idEmpleado]?.meses || ""}
+                                                                onChange={(e) => handleMesesChange(empleado.idEmpleado, e.target.value)}
+                                                                required
+                                                            >
+                                                                <option value="">A cuantos Meses</option>
+                                                                {mesesOptions.map((mes, index) => (
+                                                                    <option key={index} value={mes}>{mes}</option>
+                                                                ))}
+                                                            </select>
+                                                            <input
+                                                                className="monto-input"
+                                                                type="number"
+                                                                name="intereses"
+                                                                value={accionPorEmpleado[empleado.idEmpleado]?.intereses || ""}
+                                                                onChange={(e) => handleInteresesChange(empleado.idEmpleado, e.target.value)}
+                                                                placeholder="Intereses"
+                                                                required
+                                                            />
+                                                        </>
+                                                    )}
                                                     <button className="novedad-button" onClick={() => handleAgregar(empleado)}><i className="fi fi-rr-apps-add icon-style-components"></i></button>
                                                 </td>
                                                 <td>{formatFecha(empleado.fechaRegistro)}</td>
@@ -608,8 +687,9 @@ const RegistroNovedad = () => {
                                 <th>Contrato</th>
                                 <th>Prestamo</th>
                                 <th>Descuento</th>
-                                <th>Estado</th>
+                                <th>Meses</th>
                                 <th>Interés %</th>
+                                <th>Estado</th>
                                 <th>Fecha de registro</th>
                             </tr>
                         </thead>
@@ -625,6 +705,8 @@ const RegistroNovedad = () => {
                                         <td>{getContratoInfo(novedad.idContrato).tipoContrato}</td>
                                         <td>{"$ " + Number(novedad.prestamos).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</td>
                                         <td>{"$ " + Number(novedad.descuentos).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</td>
+                                        <td>{novedad.meses + " Meses"}</td>
+                                        <td>{novedad.intereses + " %"}</td>
                                         <td>
                                             <div className={`estado-container ${calcularEstado(novedad.prestamos, novedad.descuentos)}`}>
                                                 {calcularEstado(novedad.prestamos, novedad.descuentos) === "Sin novedades" && (
@@ -654,7 +736,6 @@ const RegistroNovedad = () => {
                                                 )}
                                             </div>
                                         </td>
-                                        <td>0.05 % - 0.03 %</td>
                                         <td>{formatFecha(novedad.fechaRegistro)}</td>
                                     </tr>
                                 );

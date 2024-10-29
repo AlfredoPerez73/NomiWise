@@ -31,9 +31,28 @@ def calcular_valores_automaticos(detalle, parametro, novedad):
         vacaciones = 0
         cesantias = 0
         intereses_cesantias = 0
-        calcularPagoPrestamo = float(novedad["prestamos"]) * 0.05
-        calcularPagoDescuento = float(novedad["descuentos"]) * 0.03
-        prestamos = calcularPagoPrestamo
+
+        interesesFijos = float(novedad["intereses"]) 
+        meses = int(novedad["meses"])
+        prestamo = float(novedad["prestamos"])
+
+        # Cálculo del primer pago del primer mes (incluye pago1 y pago2)
+        pago1 = prestamo * (interesesFijos / meses)
+        invertirInteresesFijo = interesesFijos / 100
+        pago2 = prestamo * invertirInteresesFijo
+        primer_mes_pago = pago1 + pago2  # Primer mes incluye pago1 y pago2
+
+        # Lista de pagos por mes
+        pagos_por_mes = [primer_mes_pago]  # Agrega el primer mes
+
+        # Para los meses siguientes, solo se considera pago2
+        for mes in range(1, meses):
+            pagos_por_mes.append(pago2)
+
+        # Solo para el primer mes se toma el primer pago completo
+        prestamos = primer_mes_pago  # O usa sum(pagos_por_mes) si quieres el total
+
+        calcularPagoDescuento = float(novedad["descuentos"]) * 0.5
         descuentos = calcularPagoDescuento
         valor_horas_extra = (salario / 240) * 1.25 * horas_extras if horas_extras > 0 else 0
 

@@ -107,8 +107,10 @@ async function calcularValoresAutomaticosPython(detalle, parametro, novedad) {
 
         const novedadesNormalizada = {
             ...novedad,
-            prestamos: novedad.prestamos,
-            descuentos: novedad.descuentos,
+            prestamos: Number(novedad.prestamos),
+            descuentos: Number(novedad.descuentos),
+            meses: Number(novedad.meses),
+            intereses: Number(novedad.intereses),
         };
         
 
@@ -201,7 +203,9 @@ export async function createDetalleLiquidacion(detalle, idParametro, idNovedad, 
 
         const novedades = {
             prestamos: novedad.prestamos,
-            descuentos: novedad.descuentos
+            descuentos: novedad.descuentos,
+            meses: novedad.meses,
+            intereses: novedad.intereses
         };
 
         const detalleExistente = await DetalleLiquidacion.findOne({

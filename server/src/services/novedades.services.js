@@ -1,7 +1,7 @@
 import { Novedad } from "../models/novedades.js"; // Importa el modelo Novedad
 import { NovedadesDTO } from "../dtos/novedades.dto.js"; // Importa el DTO de novedades
 
-export async function crearNovedad(idEmpleado, idCargo, idContrato, idUsuario, nuevosPrestamos = 0, nuevosDescuentos = 0) {
+export async function crearNovedad(idEmpleado, idCargo, idContrato, idUsuario, nuevosPrestamos = 0, nuevosDescuentos = 0, meses, intereses) {
     try {
         // Verificar si ya existe una novedad para el empleado
         const novedadExistente = await Novedad.findOne({ where: { idEmpleado } });
@@ -33,6 +33,8 @@ export async function crearNovedad(idEmpleado, idCargo, idContrato, idUsuario, n
                 idUsuario,
                 prestamos: prestamosNuevos,
                 descuentos: descuentosNuevos,
+                meses,
+                intereses
             });
         }
 
@@ -45,6 +47,8 @@ export async function crearNovedad(idEmpleado, idCargo, idContrato, idUsuario, n
             novedadActualizada.idUsuario,
             novedadActualizada.prestamos,
             novedadActualizada.descuentos,
+            novedadActualizada.meses,
+            novedadActualizada.intereses,
             novedadActualizada.fechaRegistro
         );
     } catch (error) {
@@ -65,6 +69,8 @@ export async function obtenerNovedadesEmpleado() {
                     novedad.idUsuario,
                     novedad.prestamos,
                     novedad.descuentos,
+                    novedad.meses,
+                    novedad.intereses,
                     novedad.fechaRegistro
                 )
         );
