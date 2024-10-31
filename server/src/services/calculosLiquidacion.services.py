@@ -36,22 +36,23 @@ def calcular_valores_automaticos(detalle, parametro, novedad):
         meses = int(novedad["meses"])
         prestamo = float(novedad["prestamos"])
 
-        # Cálculo del primer pago del primer mes (incluye pago1 y pago2)
-        pago1 = prestamo * (interesesFijos / meses)
-        invertirInteresesFijo = interesesFijos / 100
-        pago2 = prestamo * invertirInteresesFijo
-        primer_mes_pago = pago1 + pago2  # Primer mes incluye pago1 y pago2
+        # Verificar que meses no sea cero para evitar división por cero
+        if meses > 0:
+            pago1 = prestamo * (interesesFijos / meses)
+            invertirInteresesFijo = interesesFijos / 100
+            pago2 = prestamo * invertirInteresesFijo
+        else:
+            # Si meses es cero, asigna valores por defecto o muestra un mensaje de error
+            pago1 = 0
+            pago2 = 0
 
-        # Lista de pagos por mes
-        pagos_por_mes = [primer_mes_pago]  # Agrega el primer mes
+        primer_mes_pago = pago1 + pago2
+        pagos_por_mes = [primer_mes_pago]
 
-        # Para los meses siguientes, solo se considera pago2
         for mes in range(1, meses):
             pagos_por_mes.append(pago2)
 
-        # Solo para el primer mes se toma el primer pago completo
-        prestamos = primer_mes_pago  # O usa sum(pagos_por_mes) si quieres el total
-
+        prestamos = primer_mes_pago
         calcularPagoDescuento = float(novedad["descuentos"]) * 0.5
         descuentos = calcularPagoDescuento
         valor_horas_extra = (salario / 240) * 1.25 * horas_extras if horas_extras > 0 else 0
@@ -69,7 +70,7 @@ def calcular_valores_automaticos(detalle, parametro, novedad):
             cesantias = (salario * dias_trabajados) / 360
             intereses_cesantias = cesantias * 0.12
 
-        devengado = (salario - salud - pension  - prestamos - descuentos + aux_transporte + bonificacion_servicio +
+        devengado = (salario - salud - pension - prestamos - descuentos + aux_transporte + bonificacion_servicio +
                     aux_alimentacion + prima_servicios + prima_navidad + valor_horas_extra +
                     cesantias + intereses_cesantias + vacaciones)
 
@@ -89,6 +90,10 @@ def calcular_valores_automaticos(detalle, parametro, novedad):
             "devengado": devengado,
         }
 
+    except KeyError as e:
+        raise KeyError(f"Error en los cálculos: {e}")
+    except ZeroDivisionError:
+        raise ValueError("No se puede dividir por cero. Asegúrate de que 'meses' sea mayor a cero.")
     except KeyError as e:
         print(f"Error: {str(e)}", file=sys.stderr)
         sys.exit(1)

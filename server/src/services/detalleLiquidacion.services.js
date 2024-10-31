@@ -180,9 +180,20 @@ export async function createDetalleLiquidacion(detalle, idParametro, idNovedad, 
         if (!parametro) {
             throw new Error(`No se encontró el parámetro con ID ${idParametro}`);
         }
-        const novedad = await Novedad.findByPk(idNovedad);
+        
+        // Verificar si existe la novedad o crearla con valores en 0
+        let novedad = await Novedad.findByPk(idNovedad);
         if (!novedad) {
-            throw new Error(`No se encontró la novedad con ID ${idNovedad}`);
+            novedad = await Novedad.create({
+                idEmpleado: detalle.idEmpleado,
+                idCargo: empleado.idCargo,
+                idContrato: empleado.idContrato,
+                idUsuario: idUsuario,
+                prestamos: 0,
+                descuentos: 0,
+                meses: 0,
+                intereses: 0
+            }, { transaction: t });
         }
 
         const detalleCompleto = {
@@ -253,7 +264,6 @@ export async function createDetalleLiquidacion(detalle, idParametro, idNovedad, 
             idLiquidacion = liquidacionGuardada.idLiquidacion;
         }
 
-        // Realiza los cálculos de valores automáticos
         const valoresCalculados = await calcularValoresAutomaticosPython(detalleCompleto, parametros, novedades);
 
         const newDetalleLiquidacion = new DetalleLiquidacion({
@@ -262,24 +272,20 @@ export async function createDetalleLiquidacion(detalle, idParametro, idNovedad, 
             ...detalleCompleto,
             ...valoresCalculados,
             idParametro: detalle.idParametro,
-            idNovedad: detalle.idNovedad,
+            idNovedad: novedad.idNovedad, // Usar la ID de novedad existente o recién creada
             idLiquidacion: idLiquidacion,
             idUsuario: idUsuario,
         });
 
         await newDetalleLiquidacion.save({ transaction: t });
 
-        // Resta los valores calculados de préstamos y descuentos en la tabla de novedades
         novedad.prestamos -= valoresCalculados.prestamos;
         novedad.descuentos -= valoresCalculados.descuentos;
-
-        // Asegúrate de que los valores no sean negativos después de la resta
+        
         novedad.prestamos = Math.max(novedad.prestamos, 0);
         novedad.descuentos = Math.max(novedad.descuentos, 0);
 
-        // Guarda los cambios en la novedad
         await novedad.save({ transaction: t });
-
         await actualizarTotalesLiquidacion(año, mes, t);
 
         await t.commit();
