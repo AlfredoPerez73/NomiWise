@@ -19,8 +19,82 @@ body {
     background-position: center;
 }
 
+.Bg-Img::before {
+    content: "";
+    position: absolute;
+    top: 0px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.3" d="M0,160L60,176C120,192,240,224,360,240C480,256,600,256,720,224C840,192,960,128,1080,112C1200,96,1320,128,1380,144L1440,160L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path></svg>');
+    background-repeat: no-repeat;
+    background-size: cover;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.Bg-Img::after {
+    content: "";
+    position: absolute;
+    top: 190px; /* Ajusta la posición vertical de la segunda ola */
+    left: 0;
+    width: 100%;
+    height: 80.4%;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.3" d="M0,160L60,176C120,192,240,224,360,240C480,256,600,256,720,224C840,192,960,128,1080,112C1200,96,1320,128,1380,144L1440,160L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path></svg>');
+    background-repeat: no-repeat;
+    background-size: cover;
+    z-index: 2;
+    opacity: 0.5;
+}
+
+.image-container {
+    position: relative;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url('../assets/image.png'); /* Asegúrate de que sea de alta resolución */
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    margin-left: 150px;
+    clip-path: polygon(20% 0, 100% 0, 100% 100%, 20% 100%, 0 50%); /* Forma de polígono */
+    border-radius: 20px;
+    z-index: 2; /* Coloca la imagen encima de la ola gris */
+}
+
+.wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.side-image {
+    width: 100%;
+    height: 100vh;
+    object-fit: cover;
+    clip-path: polygon(20% 0, 100% 0, 100% 100%, 20% 100%, 0 50%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.main-title {
+    text-align: center;
+    color: whitesmoke;
+    font-size: 2em; /* Ajusta el tamaño según sea necesario */
+    margin-bottom: 800px; /* Espacio entre el título y el formulario */
+    margin-right: -570px;
+    margin-left: 210px;
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+}
+
 .container {
-    width: 70%;
+    width: 100%;
     margin: 0 auto;
     display: flex;
     align-items: center;
@@ -29,20 +103,51 @@ body {
 }
 
 .login-form {
-    width: 370px; /* Ajustar ancho del formulario */
+    width: 390px; /* Ajustar ancho del formulario */
     height: 650px; /* Ajustar altura automáticamente */
     margin-bottom: 0px;
+    margin-left: 200px;
+    font-weight: bold;
+    margin-right: -100px;
     padding: 30px;
     border-radius: 60px;
     background: #1f1e44;
     box-shadow:  34px 34px 69px #1a1a3a,
                  -34px -34px 69px #24234e;
     border: 1px solid rgba(31, 30, 68, 0.9);
+    z-index: 3;
+    overflow: hidden;
 }
+
+
 
 .logo-container {
     text-align: center;
     margin-bottom: 20px;
+}
+
+.icon {
+    position: absolute;
+    top: 65%;
+    left: 45px;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: rgb(31, 30, 68);
+    transition: 0.3s;
+    font-weight: bold;
+    pointer-events: none; /* Para que el ícono no interfiera con el input */
+}
+
+.icon_2 {
+    position: absolute;
+    top: 65%;
+    left: -5px;
+    margin-left: 0px;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: rgb(31, 30, 68);
+    transition: 0.3s;
+    font-weight: bold;
 }
 
 .login-form h2 {
@@ -62,11 +167,13 @@ body {
 }
 
 .login-form input {
-    width: 100%;
+    width: 80%;
     margin-top: 15px;
-    padding: 10px; /* Ajustar el padding */
+    margin-left: 30px;
+    padding: 10px 10px 10px 35px;
     font-size: 10px; /* Ajustar el tamaño de la fuente */
     border: 1px solid #ccc;
+    font-weight: bold;
     border-radius: 20px;
     background-color: #fff;
     color: rgb(31, 30, 68);
@@ -77,7 +184,7 @@ body {
 .login-form label {
     position: absolute;
     top: 66%;
-    left: 15px;
+    left: 65px;
     transform: translateY(-50%);
     background-color: transparent;
     color: rgb(31, 30, 68);
@@ -97,7 +204,15 @@ body {
 .login-form input:focus+label,
 .login-form input:not(:placeholder-shown)+label {
     top: 8px;
-    left: 4px;
+    left: 30px;
+    font-size: 10px;
+    color: whitesmoke;
+}
+
+.login-form input:focus ~ .icon,
+.login-form input:not(:placeholder-shown) ~ .icon {
+    top: 8px;
+    left: 10px; /* Posición del ícono cuando el label sube */
     font-size: 10px;
     color: whitesmoke;
 }
@@ -113,8 +228,6 @@ body {
     transform: translateY(-50%);
     cursor: pointer;
 }
-
-
 
 .links {
     display: flex;
@@ -152,6 +265,7 @@ button {
   
   .button_top {
     display: block;
+    text-indent: 10px;
     box-sizing: border-box;
     box-shadow: inset 0 0.0625em 0 0 #000000, 0 0.0625em 0 0 #000000,
     0 0.125em 0 0 #000000, 0 0.25em 0 0 #000000, 0 0.3125em 0 0 #000000,
