@@ -101,13 +101,6 @@ h6 {
   align-items: center;
 }
 
-.icon-style-components-2 {
-  margin: 0px;
-  padding: 0px 0px;
-  font-size: 17px;
-  align-items: center;
-}
-
 .header-comp {
   border-radius: 25px;
   background: linear-gradient(145deg, #212049, #1c1b3d);
@@ -243,6 +236,146 @@ h6 {
 
 .card button:hover {
   background-color: var(--azul2);
+}
+
+/* Estilos generales del formulario */
+.evaluation-form {
+  border-radius: 50px;
+  background: #1f1e44;
+  box-shadow: inset 33px 33px 65px #1b1a3c,
+              inset -33px -33px 65px #23224c;
+  padding: 30px;
+  width: 100%;
+  margin-left: 600px;
+  margin-top: 50px;
+  max-width: 400px;
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+}
+
+.evaluation-form h2 {
+  font-size: 24px;
+  color: #e2dede;
+  margin-bottom: 10px;
+}
+
+.form-description {
+  font-size: 14px;
+  color: #afadad;
+  margin-bottom: 20px;
+}
+
+/* Estilos de las tarjetas para cada métrica */
+.metric-card {
+  border-radius: 30px;
+  background: #1f1e44;
+  box-shadow: inset 33px 33px 65px #2d2b68,
+              inset -33px -33px 65px #23224c;
+  padding: 20px;
+  margin-bottom: 15px;
+  text-align: left;
+  position: relative;
+}
+
+.metric-card label {
+  display: block;
+  font-weight: bold;
+  font-size: 16px;
+  color: #dad5d5;
+  margin-bottom: 10px;
+}
+
+/* Control deslizante (range) */
+.metric-card input[type="range"] {
+  width: 100%;
+  height: 8px;
+  background: #ddd;
+  border-radius: 5px;
+  outline: none;
+  opacity: 0.8;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.metric-card input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background-color: #e68046;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out, transform 0.15s ease-in-out;
+}
+
+.metric-card input[type="range"]::-webkit-slider-thumb:hover {
+  background-color: #e68046;
+  transform: scale(1.2);
+}
+
+.metric-card input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background-color: #e68046;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out, transform 0.15s ease-in-out;
+}
+
+.metric-card input[type="range"]::-moz-range-thumb:hover {
+  background-color: #e68046;
+  transform: scale(1.2);
+}
+
+/* Valor de la métrica */
+.metric-value {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #e68046;
+}
+
+/* Botón de envío */
+.submit-button {
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 1rem;
+  background-color: var(--azul1);
+  color: white;
+  font-size: 10.5px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  position: relative;
+  transition: background 0.3s, transform 0.2s;
+  margin-top: 20px;
+  margin-left: 10px;
+}
+
+.submit-button:hover {
+  background: var(--azul2);
+  transform: translateY(-3px);
+}
+
+/* Botón de cierre */
+.close-button {
+  display: inline-block;
+  background: #ccc;
+  color: #333;
+  padding: 10px 20px;
+  font-size: 10.5px;
+  font-weight: bold;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  margin-top: 10px;
+  margin-left: 10px;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.close-button:hover {
+  background: #bbb;
+  transform: translateY(-2px);
 }
 
 .card button[type="submit_2"] {
@@ -461,6 +594,25 @@ h6 {
 .novedad-button:hover {
   background-color: #4A4E69;
 }
+
+.evaluate-button {
+  background-color: #3a636d;
+  align-items: center;
+  color: #fff;
+  padding: 0.2rem 0.6rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-right: 0.3rem;
+  margin-left: 3rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.evaluate-button:hover {
+  background-color: #4a6966;
+}
+
 
 .estado-container {
   display: flex;

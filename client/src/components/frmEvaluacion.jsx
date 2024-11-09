@@ -5,82 +5,59 @@ import { useEmpleado } from "../context/empleadoContext";
 import { useCargo } from "../context/cargoContext";
 import { useContrato } from "../context/contratoContext";
 import { format } from "date-fns";
-import RegistroEmpleadoForm from "./frmREmpleado";
 import ReactPaginate from 'react-paginate';
 
-const RegistroEmpleados = () => {
-    const [editar, setEditar] = useState(false);
+const EvaluacionEmpleados = () => {
     const [filteredEmpleados, setFilteredEmpleados] = useState([]);
     const [filterValueCargo, setFilterValueCargo] = useState("");
     const [filterValueContrato, setFilterValueContrato] = useState("");
     const [filterValueEstado, setFilterValueEstado] = useState("");
     const [filterValue, setFilterValue] = useState("");
-    const [isFormOpen, setIsFormOpen] = useState(false);
-    const [empleadoToEdit, setEmpleadoToEdit] = useState(null);
     const [selectedEmpleado, setSelectedEmpleado] = useState(null);
+    const [empleadoToEvaluate, setEmpleadoToEvaluate] = useState(null);
     const [isVisible, setIsVisible] = useState(false);
+    const [isFormOpen, setIsFormOpen] = useState(false);
     const [isExiting, setIsExiting] = useState(false);
     const [currentPage, setCurrentPage] = useState(0);
     const [perPage] = useState(10); // Cambia esto al número de elementos por página que desees
 
-    const { getEmpleado, empleados, deleteEmpleado } = useEmpleado();
     const { getCargo, cargos } = useCargo();
     const { getContrato, contratos } = useContrato();
-    const sEstado = [
-        "ACTIVO",
-        "INACTIVO"
-    ];
-    const tcontratos = [
-        "TERMINO INDEFINIDO",
-        "TERMINO FIJO",
-        "PERSTACION DE SERVICIOS"
-    ];
+    const { getEmpleado, empleados } = useEmpleado();
+    const sEstado = ["ACTIVO", "INACTIVO"];
+    const tcontratos = ["TERMINO INDEFINIDO", "TERMINO FIJO", "PERSTACION DE SERVICIOS"];
 
-    const handleDeleteEmpleado = (val) => {
-        toast(
-            (t) => (
-                <div style={{ textAlign: "center", fontWeight: "bold" }}>
-                    <p>¿Realmente desea eliminar a <strong>{val.nombre}</strong>?</p>
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '10px' }}>
-                        <button className="toast-button-confirmed" onClick={() => {
-                            deleteEmpleado(val.idEmpleado)
-                                .then(() => {
-                                    toast.dismiss(t.id);
-                                    toast.success(<b>El empleado {val.nombre} fue eliminado exitosamente!</b>);
-                                    getEmpleado();
-                                })
-                                .catch((error) => {
-                                    toast.error(<b>Error: {error.response.data.message}</b>);
-                                });
-                        }}>
-                            Confirmar
-                        </button>
-                        <button className="toast-button-delete" onClick={() => toast.dismiss(t.id)}>
-                            Cancelar
-                        </button>
-                    </div>
-                </div>
-            ),
-            {
-                duration: 8000,
-            }
-        );
+    const handleCloseModal = () => {
+        setIsExiting(true);
+        setTimeout(() => {
+            setIsVisible(false);
+            setIsExiting(false);
+            setSelectedEmpleado(null);
+        }, 500);
     };
 
-    const setEmpleado = (val) => {
-        const contrato = contratos.find(c => c.idContrato === val.idContrato) || {};
-        setEditar(true);
-        setEmpleadoToEdit({
-            ...val,
-            contrato
-        }
-        );
+    const handleEvaluacionClose = () => {
+        setIsFormOpen(false);
+        setSelectedEmpleado(null);
+        setEmpleadoToEvaluate(null);
+    };
+
+    const handleEvaluateEmpleado = (empleado) => {
+        setEmpleadoToEvaluate({
+            ...empleado,
+            productividad: 10,
+            puntualidad: 10,
+            trabajoEnEquipo: 10,
+            adaptabilidad: 10,
+            conocimientosTecnicos: 10
+        });
         setIsFormOpen(true);
     };
 
-    const handleFormClose = () => {
-        setIsFormOpen(false);
-        setEmpleadoToEdit(null);
+    const handleFormSubmit = (e) => {
+        e.preventDefault();
+        toast.success(`Evaluación de ${empleadoToEvaluate.nombre} registrada correctamente.`);
+        handleEvaluacionClose();
     };
 
     useEffect(() => {
@@ -110,10 +87,7 @@ const RegistroEmpleados = () => {
     const applyFilters = () => {
         const filtered = empleados.filter((n) => {
             const matchesEstado = filterValueEstado ? n.estado.toLowerCase() === filterValueEstado.toLowerCase() : true;
-
-            return (
-                matchesEstado
-            );
+            return matchesEstado;
         });
         setFilteredEmpleados(filtered);
     };
@@ -165,20 +139,6 @@ const RegistroEmpleados = () => {
         return cargo ? cargo.nCargo : "Desconocido";
     };
 
-    const handleRowClick = (empleado) => {
-        setSelectedEmpleado(empleado);
-        setIsVisible(true);
-    };
-
-    const handleCloseModal = () => {
-        setIsExiting(true);
-        setTimeout(() => {
-            setIsVisible(false);
-            setIsExiting(false);
-            setSelectedEmpleado(null);
-        }, 500);
-    };
-
     const handlePageClick = ({ selected }) => {
         setCurrentPage(selected);
     };
@@ -191,14 +151,33 @@ const RegistroEmpleados = () => {
         <div className="w-full h-full">
             <Toaster />
             {isFormOpen ? (
-                <RegistroEmpleadoForm onClose={handleFormClose} empleadoToEdit={empleadoToEdit} cargos={cargos} isReadOnly={false} />
+                <form className="evaluation-form" onSubmit={handleFormSubmit}>
+                    <h2>Evaluación de {empleadoToEvaluate.nombre}</h2>
+                    <p className="form-description">Evalúa cada aspecto de desempeño deslizando el control a la puntuación deseada.</p>
+
+                    {["Productividad", "Puntualidad", "trabajo en Equipo", "Adaptabilidad", "Conocimientos Tecnicos"].map((metric) => (
+                        <div key={metric} className="metric-card">
+                            <label>{metric.charAt(0).toUpperCase() + metric.slice(1)}</label>
+                            <input
+                                type="range"
+                                min="10"
+                                max="100"
+                                step="1"
+                                value={empleadoToEvaluate[metric]}
+                                onChange={(e) => setEmpleadoToEvaluate({ ...empleadoToEvaluate, [metric]: e.target.value })}
+                            />
+                            <span className="metric-value">{empleadoToEvaluate[metric]}</span>
+                        </div>
+                    ))}
+
+                    <button type="submit" className="submit-button">Evaluar</button>
+                    <button type="button" className="close-button" onClick={handleEvaluacionClose}>Cerrar</button>
+
+                </form>
             ) : (
                 <div className="form-comp">
                     <div className="header-comp">
-                        <h1 className="title-comp">Registro de Empleados</h1>
-                    </div>
-                    <div className="button-container">
-                        <button type="button" className="open-modal-button" onClick={() => setIsFormOpen(true)}>Registrar</button>
+                        <h1 className="title-comp">Evaluación de Empleados</h1>
                     </div>
                     <div className="table-card-empleados">
                         <h1 className="sub-titles-copm">Empleados Registrados</h1>
@@ -218,9 +197,7 @@ const RegistroEmpleados = () => {
                                 value={filterValueCargo}
                                 onChange={handleFilterChangeCargo}
                             >
-                                <option value="">
-                                    Seleccionar Cargo
-                                </option>
+                                <option value="">Seleccionar Cargo</option>
                                 {cargos.map((cargo) => (
                                     <option key={cargo.idCargo} value={cargo.idCargo}>
                                         {cargo.nCargo}
@@ -233,9 +210,7 @@ const RegistroEmpleados = () => {
                                 value={filterValueContrato}
                                 onChange={handleFilterChangeContrato}
                             >
-                                <option value="">
-                                    Seleccionar Contrato
-                                </option>
+                                <option value="">Seleccionar Contrato</option>
                                 {tcontratos.map((modulo, index) => (
                                     <option key={index} value={modulo}>
                                         {modulo}
@@ -248,9 +223,7 @@ const RegistroEmpleados = () => {
                                 value={filterValueEstado}
                                 onChange={handleFilterChangeEstado}
                             >
-                                <option value="">
-                                    Seleccionar Estado
-                                </option>
+                                <option value="">Seleccionar Estado</option>
                                 {sEstado.map((modulo, index) => (
                                     <option key={index} value={modulo}>
                                         {modulo}
@@ -270,7 +243,7 @@ const RegistroEmpleados = () => {
                             </thead>
                             <tbody>
                                 {currentEmpleados.map((val, key) => (
-                                    <tr key={val.idEmpleado} onClick={() => handleRowClick(val)}>
+                                    <tr key={val.idEmpleado} onClick={() => setSelectedEmpleado(val)}>
                                         <td>{val.documento}</td>
                                         <td>{val.nombre}</td>
                                         <td>
@@ -285,34 +258,19 @@ const RegistroEmpleados = () => {
                                         <td>{formatFecha(val.fechaRegistro)}</td>
                                         <td>
                                             <button
-                                                className="edit-button"
-                                                onClick={(e) => { e.stopPropagation(); setEmpleado(val); }}
+                                                className="evaluate-button"
+                                                onClick={() => handleEvaluateEmpleado(val)}
                                             >
-                                                <i className="fi fi-br-customize-edit icon-style-components"></i>
-                                            </button>
-                                            <button
-                                                className="delete-button"
-                                                onClick={(e) => { e.stopPropagation(); handleDeleteEmpleado(val); }}
-                                            >
-                                                <i className="fi fi-br-clear-alt icon-style-components"></i>
+                                                <i className="fi fi-br-assessment icon-style-components"></i>
                                             </button>
                                         </td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
-                        <div className="button-container">
-                            <button type="button" className="open-PDF-button">
-                                <i class="fi fi-rr-file-medical-alt icon-style-pdf"></i>
-                            </button>
-                        </div>
                         <ReactPaginate
-                            previousLabel={
-                                <i className="fi fi-br-angle-double-small-left icon-style-pagination" ></i>
-                            }
-                            nextLabel={
-                                <i className="fi fi-br-angle-double-small-right icon-style-pagination"></i>
-                            }
+                            previousLabel={<i className="fi fi-br-angle-double-small-left icon-style-pagination"></i>}
+                            nextLabel={<i className="fi fi-br-angle-double-small-right icon-style-pagination"></i>}
                             breakLabel={"..."}
                             breakClassName={"break-me"}
                             pageCount={pageCount}
@@ -356,4 +314,4 @@ const RegistroEmpleados = () => {
     );
 };
 
-export default RegistroEmpleados;
+export default EvaluacionEmpleados;

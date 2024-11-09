@@ -13,9 +13,6 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 
 const RegistroEmpleados = () => {
-    const [formData, setFormData] = useState({
-        estado: "ACTIVO"
-    });
     const [filteredEmpleados, setFilteredEmpleados] = useState([]);
     const [filterValueCargo, setFilterValueCargo] = useState("");
     const [filterValueContrato, setFilterValueContrato] = useState("");
