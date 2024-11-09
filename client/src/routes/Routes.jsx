@@ -22,6 +22,8 @@ import FrmCargo from "../components/frmCargo";
 import FrmPermiso from "../components/frmPermiso";
 import FrmUsuario from "../components/frmUsuario";
 import FrmEmpleado from "../components/frmEmpleado";
+import FrmDespidos from "../components/frmDespidos";
+import FrmEvaluacion from "../components/frmEvaluacion";
 import FrmLiquidaciones from "../components/frmLiquidacion";
 import FrmNovedades from "../components/frmNovedades";
 import FrmNomnina from "../components/frmNomina";
@@ -53,6 +55,12 @@ const AppRoutes = () => {
                                     </Route>
                                     <Route element={<ProtectedRouteWithPermission requiredPermission="Empleados" />}>
                                       <Route path="empleados" element={<FrmEmpleado />} />
+                                    </Route>
+                                    <Route element={<ProtectedRouteWithPermission requiredPermission="Despidos" />}>
+                                      <Route path="despidos" element={<FrmDespidos />} />
+                                    </Route>
+                                    <Route element={<ProtectedRouteWithPermission requiredPermission="Evaluaciones" />}>
+                                      <Route path="evaluaciones" element={<FrmEvaluacion />} />
                                     </Route>
                                     <Route element={<ProtectedRouteWithPermission requiredPermission="Cargos" />}>
                                       <Route path="cargos" element={<FrmCargo />} />

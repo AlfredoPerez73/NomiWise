@@ -145,6 +145,28 @@ const Dashboard = () => {
                   </Link>
                 </li>
               )}
+              {hasPermission('Despidos') && (
+                <li className="nav-item">
+                  <Link to="/menu/despidos"
+                    className={activeContent === "despidos" ? "nav-link active" : "nav-link collapsed"}
+                    onClick={() => setActiveContent("despidos")}
+                  >
+                    <i className="fi fi-br-eraser icon-style"></i>
+                    <span>Despidos</span>
+                  </Link>
+                </li>
+              )}
+              {hasPermission('Evaluaciones') && (
+                <li className="nav-item">
+                  <Link to="/menu/evaluaciones"
+                    className={activeContent === "evaluaciones" ? "nav-link active" : "nav-link collapsed"}
+                    onClick={() => setActiveContent("evaluaciones")}
+                  >
+                    <i className="fi fi-br-assessment-alt icon-style"></i>
+                    <span>Evaluaciones</span>
+                  </Link>
+                </li>
+              )}
               {hasPermission('Cargos') && (
                 <li className="nav-item">
                   <Link to="/menu/cargos"

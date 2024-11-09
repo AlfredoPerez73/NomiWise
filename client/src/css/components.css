@@ -101,6 +101,13 @@ h6 {
   align-items: center;
 }
 
+.icon-style-components-2 {
+  margin: 0px;
+  padding: 0px 0px;
+  font-size: 17px;
+  align-items: center;
+}
+
 .header-comp {
   border-radius: 25px;
   background: linear-gradient(145deg, #212049, #1c1b3d);

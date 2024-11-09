@@ -41,6 +41,8 @@ const RegistroPermisos = () => {
     const modulosOptions = [
         "Inicio",
         "Empleados",
+        "Despidos",
+        "Evaluaciones",
         "Liquidaciones",
         "Novedades",
         "Nomina",

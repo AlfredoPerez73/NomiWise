@@ -301,6 +301,11 @@ const RegistroEmpleados = () => {
                                 ))}
                             </tbody>
                         </table>
+                        <div className="button-container">
+                            <button type="button" className="open-PDF-button">
+                                <i class="fi fi-rr-file-medical-alt icon-style-pdf"></i>
+                            </button>
+                        </div>
                         <ReactPaginate
                             previousLabel={
                                 <i className="fi fi-br-angle-double-small-left icon-style-pagination" ></i>

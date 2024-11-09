@@ -16,9 +16,6 @@ import "jspdf-autotable";
 const RegistroNovedad = () => {
     // Estados comunes
     const [monto, setMonto] = useState({});
-    const [tipoAccion, setTipoAccion] = useState({});
-    const [meses, setMeses] = useState("");
-    const [intereses, setIntereses] = useState("");
     const [accionPorEmpleado, setAccionPorEmpleado] = useState({});
 
     // Estados para la primera tabla (Empleados)
@@ -224,7 +221,7 @@ const RegistroNovedad = () => {
             [idEmpleado]: { ...prev[idEmpleado], meses }
         }));
     };
-
+    
     const handleInteresesChange = (idEmpleado, intereses) => {
         if (parseFloat(intereses) > 1 || !intereses.includes(".")) {
             setAccionPorEmpleado(prev => ({
@@ -234,10 +231,11 @@ const RegistroNovedad = () => {
         } else {
             toast.error("No se permiten decimales para valores menores o iguales a 1.");
         }
-    };
+    };    
 
     const handleAgregar = async (empleado) => {
         const empleadoAccion = accionPorEmpleado[empleado.idEmpleado] || {};
+        console.log("Acción por Empleado:", empleadoAccion);
         const montoValue = parseFloat(monto[empleado.idEmpleado]) || 0;
     
         if (!empleadoAccion.tipoAccion) {
@@ -277,7 +275,7 @@ const RegistroNovedad = () => {
         } catch (error) {
             toast.error("Hubo un error al registrar la novedad.");
         }
-    };
+    };    
 
     const calcularEstado = (prestamos = 0, descuentos = 0) => {
         if (Number(prestamos) === 0 && Number(descuentos) === 0) return "Sin novedades";
