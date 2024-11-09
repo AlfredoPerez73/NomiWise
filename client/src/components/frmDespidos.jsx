@@ -4,6 +4,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { useEmpleado } from "../context/empleadoContext";
 import { useCargo } from "../context/cargoContext";
 import { useContrato } from "../context/contratoContext";
+import { useDetalle } from "../context/detalleLiquidacionContext"
 import { useAuth } from "../context/authContext";
 import { format } from "date-fns";
 import ReactPaginate from 'react-paginate';
@@ -28,6 +29,7 @@ const RegistroEmpleados = () => {
 
     const { usuario } = useAuth();
     const { getCargo, cargos } = useCargo();
+    const { detalles } = useDetalle();
     const { getContrato, contratos } = useContrato();
     const { getEmpleado, empleados, updateEmpleado } = useEmpleado();
     const sEstado = [
@@ -48,20 +50,43 @@ const RegistroEmpleados = () => {
             return;
         }
 
-        try {
-            // Cambia el estado actual de "ACTIVO" a "INACTIVO" o viceversa
-            const nuevoEstado = empleado.estado === "ACTIVO" ? "INACTIVO" : "ACTIVO";
+        // Verificar si el empleado ya está en estado "INACTIVO"
+        if (empleado.estado === "INACTIVO") {
+            toast.error(<b>Error: El empleado ya está despedido.</b>);
+            return; // Evitar el despido nuevamente
+        }
 
-            // Obtener los detalles del contrato usando la idContrato del empleado
+        try {
+            // Buscar en la lista `detalles` si el empleado tiene una liquidación
+            // Obtener el mes y año actuales
+            const fechaActual = new Date();
+            const mesActual = fechaActual.getMonth();
+            const añoActual = fechaActual.getFullYear();
+
+            // Buscar en la lista `detalles` si el empleado tiene una liquidación del mes y año actuales
+            const tieneLiquidacionMesActual = detalles.some((detalle) => {
+                const fechaLiquidacion = new Date(detalle.fechaRegistro); // Suponiendo que `fechaLiquidacion` es el campo de fecha en `detalles`
+                return (
+                    detalle.idEmpleado === empleado.idEmpleado &&
+                    fechaLiquidacion.getMonth() === mesActual &&
+                    fechaLiquidacion.getFullYear() === añoActual
+                );
+            });
+
+            if (!tieneLiquidacionMesActual) {
+                toast.error(<b>Error: No se puede despedir al empleado sin haberlo liquidado para el mes actual.</b>);
+                return; // No permitir el despido
+            }
+
+            // Si se ha liquidado, continuar con el cambio de estado
+            const nuevoEstado = "INACTIVO";
             const contrato = contratos.find((c) => c.idContrato === empleado.idContrato);
 
-            // Verificar que el contrato existe
             if (!contrato) {
                 toast.error(<b>Error: No se encontró el contrato asociado al empleado.</b>);
                 return;
             }
 
-            // Crear el objeto detallesContrato, y si el estado es INACTIVO, establecer la fecha de fin a la actual
             const detallesContrato = {
                 fechaInicio: contrato.fechaInicio,
                 fechaFin: nuevoEstado === "INACTIVO" ? new Date() : contrato.fechaFin,
@@ -69,34 +94,27 @@ const RegistroEmpleados = () => {
                 tipoContrato: contrato.tipoContrato
             };
 
-            // Estructura los datos para la actualización
             const datosParaActualizar = {
                 idUsuario: empleado.idUsuario,
                 nombre: empleado.nombre,
                 idCargo: empleado.idCargo,
                 detallesContrato,
-                estado: nuevoEstado // Cambiamos el estado al nuevo valor
+                estado: nuevoEstado
             };
 
-            // Llamada a la función de actualización con la información estructurada
             await updateEmpleado(empleado.idEmpleado, datosParaActualizar);
 
-            // Actualizar el estado del empleado localmente en filteredEmpleados
             setFilteredEmpleados((prevEmpleados) =>
                 prevEmpleados.map((emp) =>
                     emp.idEmpleado === empleado.idEmpleado ? { ...emp, estado: nuevoEstado } : emp
                 )
             );
 
-            toast.success(
-                <b>El estado del empleado ha sido cambiado a {nuevoEstado} correctamente.</b>
-            );
+            toast.success(<b>El estado del empleado ha sido cambiado a {nuevoEstado} correctamente.</b>);
 
         } catch (error) {
             console.log("Error al actualizar el estado del empleado:", error);
-            toast.error(
-                <b>Error al actualizar el estado: {error.response?.data?.message || error.message}</b>
-            );
+            toast.error(<b>Error al actualizar el estado: {error.response?.data?.message || error.message}</b>);
         }
     };
 
@@ -438,23 +456,12 @@ const RegistroEmpleados = () => {
                                     </td>
                                     <td>{formatFecha(val.fechaRegistro)}</td>
                                     <td>
-                                        <button
-                                            type="button"
+                                        <button className="novedad-button"
                                             onClick={(e) => {
-                                                e.stopPropagation(); // Evita que el clic abra la tarjeta de detalles
-                                                handleEstadoUpdate(val); // Llama a handleEstadoUpdate con el empleado
-                                            }}
-                                            className="novedad-button"
-                                        >
-                                            {val.estado === "ACTIVO" ? (
-                                                <>
-                                                    <i class="fi fi-br-person-circle-minus icon-style-components-2"></i>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <i class="fi fi-br-assessment-alt icon-style-components-2"></i>
-                                                </>
-                                            )}
+                                                e.stopPropagation();
+                                                handleEstadoUpdate(val)
+                                            }}>
+                                            <i class="fi fi-br-person-circle-minus icon-style-components"></i>
                                         </button>
                                     </td>
                                 </tr>
