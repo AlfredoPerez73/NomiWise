@@ -46,75 +46,97 @@ const RegistroEmpleados = () => {
             toast.error(<b>Error: No se ha seleccionado un empleado para actualizar.</b>);
             return;
         }
-
+    
         // Verificar si el empleado ya está en estado "INACTIVO"
         if (empleado.estado === "INACTIVO") {
             toast.error(<b>Error: El empleado ya está despedido.</b>);
-            return; // Evitar el despido nuevamente
+            return;
         }
-
-        try {
-            // Buscar en la lista `detalles` si el empleado tiene una liquidación
-            // Obtener el mes y año actuales
-            const fechaActual = new Date();
-            const mesActual = fechaActual.getMonth();
-            const añoActual = fechaActual.getFullYear();
-
-            // Buscar en la lista `detalles` si el empleado tiene una liquidación del mes y año actuales
-            const tieneLiquidacionMesActual = detalles.some((detalle) => {
-                const fechaLiquidacion = new Date(detalle.fechaRegistro); // Suponiendo que `fechaLiquidacion` es el campo de fecha en `detalles`
-                return (
-                    detalle.idEmpleado === empleado.idEmpleado &&
-                    fechaLiquidacion.getMonth() === mesActual &&
-                    fechaLiquidacion.getFullYear() === añoActual
-                );
-            });
-
-            if (!tieneLiquidacionMesActual) {
-                toast.error(<b>Error: No se puede despedir al empleado sin haberlo liquidado para el mes actual.</b>);
-                return; // No permitir el despido
+    
+        toast(
+            (t) => (
+                <div style={{ textAlign: "center", fontWeight: "bold" }}>
+                    <p>¿Realmente desea despedir el empleado <strong>{empleado.nombre}</strong>?</p>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '10px' }}>
+                        <button className="toast-button-confirmed" onClick={async () => {
+                            try {
+                                // Obtener el mes y año actuales
+                                const fechaActual = new Date();
+                                const mesActual = fechaActual.getMonth();
+                                const añoActual = fechaActual.getFullYear();
+    
+                                // Verificar si el empleado tiene una liquidación para el mes y año actuales
+                                const tieneLiquidacionMesActual = detalles.some((detalle) => {
+                                    const fechaLiquidacion = new Date(detalle.fechaRegistro);
+                                    return (
+                                        detalle.idEmpleado === empleado.idEmpleado &&
+                                        fechaLiquidacion.getMonth() === mesActual &&
+                                        fechaLiquidacion.getFullYear() === añoActual
+                                    );
+                                });
+    
+                                if (!tieneLiquidacionMesActual) {
+                                    toast.dismiss(t.id);
+                                    toast.error(<b>Error: No se puede despedir al empleado sin haberlo liquidado para el mes actual.</b>);
+                                    return;
+                                }
+    
+                                // Si el empleado ha sido liquidado, proceder con el cambio de estado
+                                const nuevoEstado = "INACTIVO";
+                                const contrato = contratos.find((c) => c.idContrato === empleado.idContrato);
+    
+                                if (!contrato) {
+                                    toast.dismiss(t.id);
+                                    toast.error(<b>Error: No se encontró el contrato asociado al empleado.</b>);
+                                    return;
+                                }
+    
+                                const detallesContrato = {
+                                    fechaInicio: contrato.fechaInicio,
+                                    fechaFin: nuevoEstado === "INACTIVO" ? new Date() : contrato.fechaFin,
+                                    salario: contrato.salario,
+                                    tipoContrato: contrato.tipoContrato
+                                };
+    
+                                const datosParaActualizar = {
+                                    idUsuario: empleado.idUsuario,
+                                    nombre: empleado.nombre,
+                                    idCargo: empleado.idCargo,
+                                    detallesContrato,
+                                    estado: nuevoEstado
+                                };
+    
+                                await updateEmpleado(empleado.idEmpleado, datosParaActualizar);
+    
+                                setFilteredEmpleados((prevEmpleados) =>
+                                    prevEmpleados.map((emp) =>
+                                        emp.idEmpleado === empleado.idEmpleado ? { ...emp, estado: nuevoEstado } : emp
+                                    )
+                                );
+    
+                                toast.dismiss(t.id);
+                                toast.success(<b>El estado del empleado ha sido cambiado a {nuevoEstado} correctamente.</b>);
+    
+                            } catch (error) {
+                                toast.dismiss(t.id);
+                                console.log("Error al actualizar el estado del empleado:", error);
+                                toast.error(<b>Error al actualizar el estado: {error.response?.data?.message || error.message}</b>);
+                            }
+                        }}>
+                            Confirmar
+                        </button>
+                        <button className="toast-button-delete" onClick={() => toast.dismiss(t.id)}>
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            ),
+            {
+                duration: 8000, // Duración del mensaje
             }
-
-            // Si se ha liquidado, continuar con el cambio de estado
-            const nuevoEstado = "INACTIVO";
-            const contrato = contratos.find((c) => c.idContrato === empleado.idContrato);
-
-            if (!contrato) {
-                toast.error(<b>Error: No se encontró el contrato asociado al empleado.</b>);
-                return;
-            }
-
-            const detallesContrato = {
-                fechaInicio: contrato.fechaInicio,
-                fechaFin: nuevoEstado === "INACTIVO" ? new Date() : contrato.fechaFin,
-                salario: contrato.salario,
-                tipoContrato: contrato.tipoContrato
-            };
-
-            const datosParaActualizar = {
-                idUsuario: empleado.idUsuario,
-                nombre: empleado.nombre,
-                idCargo: empleado.idCargo,
-                detallesContrato,
-                estado: nuevoEstado
-            };
-
-            await updateEmpleado(empleado.idEmpleado, datosParaActualizar);
-
-            setFilteredEmpleados((prevEmpleados) =>
-                prevEmpleados.map((emp) =>
-                    emp.idEmpleado === empleado.idEmpleado ? { ...emp, estado: nuevoEstado } : emp
-                )
-            );
-
-            toast.success(<b>El estado del empleado ha sido cambiado a {nuevoEstado} correctamente.</b>);
-
-        } catch (error) {
-            console.log("Error al actualizar el estado del empleado:", error);
-            toast.error(<b>Error al actualizar el estado: {error.response?.data?.message || error.message}</b>);
-        }
+        );
     };
-
+    
     useEffect(() => {
         getEmpleado();
         getCargo();

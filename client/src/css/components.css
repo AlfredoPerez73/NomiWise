@@ -227,7 +227,7 @@ h6 {
   color: white;
   font-size: 10.5px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
   position: relative;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   left: 30%;
@@ -236,6 +236,7 @@ h6 {
 
 .card button:hover {
   background-color: var(--azul2);
+  transform: translateY(-2px);
 }
 
 /* Estilos generales del formulario */
@@ -387,7 +388,7 @@ h6 {
   color: white;
   font-size: 10.5px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   position: relative;
   left: 30%;
@@ -396,6 +397,7 @@ h6 {
 
 .card button[type="submit_2"]:hover {
   background-color: var(--azul2);
+  transform: translateY(-2px);
 }
 
 .card button[type="button"] {
@@ -408,7 +410,7 @@ h6 {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   font-size: 10.5px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
   position: relative;
   left: 30%;
   margin-top: 20px;
@@ -416,6 +418,7 @@ h6 {
 
 .card button[type="button"]:hover {
   background-color: var(--rojo2);
+  transform: translateY(-2px);
 }
 
 .edit-button {
@@ -426,7 +429,7 @@ h6 {
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
   margin-right: -5.8rem;
   margin-left: 1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -440,7 +443,7 @@ h6 {
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
   margin-right: 0.3rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -453,7 +456,7 @@ h6 {
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
   margin-right: 0.3rem;
   margin-left: 0.3rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -461,14 +464,17 @@ h6 {
 
 .edit-button:hover {
   background-color: var(--azul2);
+  transform: translateY(-2px);
 }
 
 .delete-button:hover {
   background-color: var(--rojo2);
+  transform: translateY(-2px);
 }
 
 .liquidar-button:hover {
   background-color: #d6763e;
+  transform: translateY(-2px);
 }
 
 /*CSS TABLAS*/
@@ -585,7 +591,7 @@ h6 {
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
   margin-right: 0.3rem;
   margin-left: 3rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -593,6 +599,7 @@ h6 {
 
 .novedad-button:hover {
   background-color: #4A4E69;
+  transform: translateY(-2px);
 }
 
 .evaluate-button {
@@ -603,7 +610,7 @@ h6 {
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
   margin-right: 0.3rem;
   margin-left: 3rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -611,6 +618,7 @@ h6 {
 
 .evaluate-button:hover {
   background-color: #4a6966;
+  transform: translateY(-2px);
 }
 
 
@@ -1133,7 +1141,7 @@ h6 {
   color: white;
   font-size: 10.5px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   position: relative;
   left: 30%;
@@ -1144,6 +1152,7 @@ h6 {
 
 .card-grid button[type="submit_2"]:hover {
   background-color: var(--azul2);
+  transform: translateY(-2px);
 }
 
 .card-grid button[type="button"] {
@@ -1156,7 +1165,7 @@ h6 {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   font-size: 10.5px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
   position: relative;
   left: 30%;
   margin-top: 20px;
@@ -1164,6 +1173,7 @@ h6 {
 
 .card-grid button[type="button"]:hover {
   background-color: var(--rojo2);
+  transform: translateY(-2px);
 }
 
 .grid-container input {
@@ -1383,6 +1393,18 @@ h6 {
   margin-bottom: 3rem;
   border-bottom: 2px solid var(--text-color);
   padding-bottom: 0.5rem;
+}
+
+.detalle-liquidacion-card h3 {
+  text-align: center;
+  font-size: 12px;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--text-color);
+  padding-bottom: 0.5rem;
+}
+
+.ver-todas-evaluaciones-button {
+  color: whitesmoke;
 }
 
 .detalle-liquidacion-card p,

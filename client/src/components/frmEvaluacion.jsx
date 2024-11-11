@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import "../css/components.css";
 import toast, { Toaster } from "react-hot-toast";
 import { useEmpleado } from "../context/empleadoContext";
+import { useEval } from "../context/evalContext";
 import { useCargo } from "../context/cargoContext";
+import { useAuth } from "../context/authContext";
 import { useContrato } from "../context/contratoContext";
 import { format } from "date-fns";
 import ReactPaginate from 'react-paginate';
@@ -18,12 +20,16 @@ const EvaluacionEmpleados = () => {
     const [isVisible, setIsVisible] = useState(false);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [isExiting, setIsExiting] = useState(false);
+    const [showAllEvaluations, setShowAllEvaluations] = useState(false);
+    const [editEval, setEditEval] = useState(null);
     const [currentPage, setCurrentPage] = useState(0);
     const [perPage] = useState(10); // Cambia esto al número de elementos por página que desees
 
+    const { usuario } = useAuth();
     const { getCargo, cargos } = useCargo();
     const { getContrato, contratos } = useContrato();
     const { getEmpleado, empleados } = useEmpleado();
+    const { getEval, evals, createEval, updateEvals, deleteEval } = useEval();
     const sEstado = ["ACTIVO", "INACTIVO"];
     const tcontratos = ["TERMINO INDEFINIDO", "TERMINO FIJO", "PERSTACION DE SERVICIOS"];
 
@@ -33,38 +39,92 @@ const EvaluacionEmpleados = () => {
             setIsVisible(false);
             setIsExiting(false);
             setSelectedEmpleado(null);
+            setEmpleadoToEvaluate(null);
+            setEditEval(null);
         }, 500);
     };
 
     const handleEvaluacionClose = () => {
         setIsFormOpen(false);
+        setEditEval(null);
         setSelectedEmpleado(null);
         setEmpleadoToEvaluate(null);
     };
 
     const handleEvaluateEmpleado = (empleado) => {
+        setSelectedEmpleado(empleado);
         setEmpleadoToEvaluate({
-            ...empleado,
+            idEmpleado: empleado.idEmpleado,
+            idUsuario: usuario.idUsuario,
             productividad: 10,
             puntualidad: 10,
             trabajoEnEquipo: 10,
             adaptabilidad: 10,
-            conocimientosTecnicos: 10
+            conocimientoTecnico: 10,
         });
         setIsFormOpen(true);
     };
 
-    const handleFormSubmit = (e) => {
+    const handleFormSubmit = async (e) => {
         e.preventDefault();
-        toast.success(`Evaluación de ${empleadoToEvaluate.nombre} registrada correctamente.`);
-        handleEvaluacionClose();
+
+        // Redondear todos los valores en `empleadoToEvaluate`
+        const evalData = {
+            idEmpleado: selectedEmpleado.idEmpleado,
+            idUsuario: empleadoToEvaluate.idUsuario,
+            productividad: Math.round(empleadoToEvaluate.productividad),
+            puntualidad: Math.round(empleadoToEvaluate.puntualidad),
+            trabajoEnEquipo: Math.round(empleadoToEvaluate.trabajoEnEquipo),
+            adaptabilidad: Math.round(empleadoToEvaluate.adaptabilidad),
+            conocimientoTecnico: Math.round(empleadoToEvaluate.conocimientoTecnico)
+        };
+
+        console.log("Datos a enviar después de redondear:", evalData);
+
+        try {
+            if (editEval) {
+                await updateEvals(editEval.idEvaluacion, evalData);
+                toast.success(`Evaluación actualizada correctamente.`);
+            } else {
+                await createEval(evalData);
+                console.log("Datos enviados a createEval:", evalData); // Confirmar datos
+                toast.success(`Evaluación de ${selectedEmpleado.nombre} registrada correctamente.`);
+            }
+            getEval();
+            handleEvaluacionClose();
+        } catch (error) {
+            console.error("Error al guardar la evaluación:", error);
+            toast.error(`Error al guardar la evaluación: ${error.message}`);
+        }
+    };
+
+
+    const handleEditEvaluacion = (evaluacion) => {
+        setEmpleadoToEvaluate(evaluacion);
+        setEditEval(evaluacion); // Establecer la evaluación en edición
+        setIsFormOpen(true);
+    };
+
+    const handleDeleteEvaluacion = async (idEvaluacion) => {
+        try {
+            await deleteEval(idEvaluacion);
+            toast.success("Evaluación eliminada correctamente.");
+            getEval(); // Recargar evaluaciones después de eliminar
+        } catch (error) {
+            toast.error(`Error al eliminar la evaluación: ${error.message}`);
+        }
     };
 
     useEffect(() => {
+        getEval();
         getEmpleado();
         getCargo();
         getContrato();
     }, []);
+
+    const getEmpleadoInfo = (idEmpleado, empleados) => {
+        return empleados.find((empleado) => empleado.idEmpleado === idEmpleado) || {};
+    };
 
     const getContratoInfo = (idContrato) => {
         const contrato = contratos.find((c) => c.idContrato === idContrato) || {};
@@ -139,6 +199,17 @@ const EvaluacionEmpleados = () => {
         return cargo ? cargo.nCargo : "Desconocido";
     };
 
+    const handleRowClick = (empleado) => {
+        setSelectedEmpleado(empleado);
+        const evaluaciones = evals.filter((e) => e.idEmpleado === empleado.idEmpleado);
+        setEmpleadoToEvaluate(evaluaciones);
+        setIsVisible(true);
+    };
+
+    const toggleShowAllEvaluations = () => {
+        setShowAllEvaluations(!showAllEvaluations);
+    };
+
     const handlePageClick = ({ selected }) => {
         setCurrentPage(selected);
     };
@@ -152,10 +223,10 @@ const EvaluacionEmpleados = () => {
             <Toaster />
             {isFormOpen ? (
                 <form className="evaluation-form" onSubmit={handleFormSubmit}>
-                    <h2>Evaluación de {empleadoToEvaluate.nombre}</h2>
+                    <h2>Evaluación de {selectedEmpleado.nombre}</h2>
                     <p className="form-description">Evalúa cada aspecto de desempeño deslizando el control a la puntuación deseada.</p>
 
-                    {["Productividad", "Puntualidad", "trabajo en Equipo", "Adaptabilidad", "Conocimientos Tecnicos"].map((metric) => (
+                    {["productividad", "puntualidad", "trabajoEnEquipo", "adaptabilidad", "conocimientoTecnico"].map((metric) => (
                         <div key={metric} className="metric-card">
                             <label>{metric.charAt(0).toUpperCase() + metric.slice(1)}</label>
                             <input
@@ -236,36 +307,45 @@ const EvaluacionEmpleados = () => {
                                 <tr>
                                     <th>Documento</th>
                                     <th>Empleado</th>
+                                    <th>Cargo</th>
+                                    <th>Contrato</th>
+                                    <th>Fecha de Fin</th>
                                     <th>Estado</th>
                                     <th>Fecha de registro</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {currentEmpleados.map((val, key) => (
-                                    <tr key={val.idEmpleado} onClick={() => setSelectedEmpleado(val)}>
-                                        <td>{val.documento}</td>
-                                        <td>{val.nombre}</td>
-                                        <td>
-                                            <span className={val.estado === "ACTIVO" ? "estado-activo" : "estado-inactivo"}>
-                                                {val.estado === "ACTIVO" ? (
-                                                    <i className="fi fi-br-time-check icon-style-components"></i>
-                                                ) : (
-                                                    <i className="fi fi-br-time-delete icon-style-components"></i>
-                                                )}
-                                            </span>
-                                        </td>
-                                        <td>{formatFecha(val.fechaRegistro)}</td>
-                                        <td>
-                                            <button
-                                                className="evaluate-button"
-                                                onClick={() => handleEvaluateEmpleado(val)}
-                                            >
-                                                <i className="fi fi-br-assessment icon-style-components"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
+                                {currentEmpleados.map((val, key) => {
+                                    const empleadoInfo = getEmpleadoInfo(val.idEmpleado, empleados);
+                                    return (
+                                        <tr key={val.idEmpleado} onClick={() => handleRowClick(empleadoInfo)}>
+                                            <td>{val?.documento || "Desconocido"}</td>
+                                            <td>{val?.nombre || "Desconocido"}</td>
+                                            <td>{getCargoName(empleadoInfo?.idCargo)}</td>
+                                            <td>{getContratoInfo(empleadoInfo?.idContrato).tipoContrato}</td>
+                                            <td>{getContratoInfo(empleadoInfo?.idContrato).fechaFin}</td>
+                                            <td>
+                                                <span className={val?.estado === "ACTIVO" ? "estado-activo" : "estado-inactivo"}>
+                                                    {val?.estado === "ACTIVO" ? (
+                                                        <i className="fi fi-br-time-check icon-style-components"></i>
+                                                    ) : (
+                                                        <i className="fi fi-br-time-delete icon-style-components"></i>
+                                                    )}
+                                                </span>
+                                            </td>
+                                            <td>{formatFecha(val.fechaRegistro)}</td>
+                                            <td>
+                                                <button
+                                                    className="evaluate-button"
+                                                    onClick={() => handleEvaluateEmpleado(empleadoInfo)}
+                                                >
+                                                    <i className="fi fi-br-assessment icon-style-components"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
                         </table>
                         <ReactPaginate
@@ -284,7 +364,7 @@ const EvaluacionEmpleados = () => {
                         />
                         {selectedEmpleado && (
                             <div className={`overlay ${isExiting ? "hidden" : "visible"}`} onClick={handleCloseModal}>
-                                <div className={`detalle-empleado-card ${isExiting ? "exiting" : ""}`} onClick={(e) => e.stopPropagation()}>
+                                <div className={`detalle-liquidacion-card ${isExiting ? "exiting" : ""}`} onClick={(e) => e.stopPropagation()}>
                                     <h2>Información del Empleado</h2>
                                     <p><strong>Documento:</strong> {selectedEmpleado.documento}</p>
                                     <p><strong>Empleado:</strong> {selectedEmpleado.nombre}</p>
@@ -302,7 +382,42 @@ const EvaluacionEmpleados = () => {
                                             )}
                                         </span>
                                     </p>
-                                    <p><strong>Fecha de registro:</strong> {formatFecha(selectedEmpleado.fechaRegistro)}</p>
+                                    <h3>Evaluaciones</h3>
+                                    {empleadoToEvaluate.length > 0 ? (
+                                        <>
+                                            <p><strong>Productividad:</strong> {empleadoToEvaluate.slice(0, 4).map(e => e.productividad).join(', ')}</p>
+                                            <p><strong>Puntualidad:</strong> {empleadoToEvaluate.slice(0, 4).map(e => e.puntualidad).join(', ')}</p>
+                                            <p><strong>Trabajo en Equipo:</strong> {empleadoToEvaluate.slice(0, 4).map(e => e.trabajoEnEquipo).join(', ')}</p>
+                                            <p><strong>Adaptabilidad:</strong> {empleadoToEvaluate.slice(0, 4).map(e => e.adaptabilidad).join(', ')}</p>
+                                            <p><strong>Conocimientos Técnicos:</strong> {empleadoToEvaluate.slice(0, 4).map(e => e.conocimientoTecnico).join(', ')}</p>
+
+                                            {empleadoToEvaluate.length > 4 && (
+                                                <button onClick={toggleShowAllEvaluations} className="ver-todas-evaluaciones-button">
+                                                    {showAllEvaluations ? "Ver menos" : "Ver todas las evaluaciones"}
+                                                </button>
+                                            )}
+
+                                            {showAllEvaluations && (
+                                                <div className="todas-evaluaciones-card">
+                                                    <h3>Todas las Evaluaciones</h3>
+                                                    {empleadoToEvaluate.map((evals, index) => (
+                                                        <div key={index} className="detalle-evaluacion-completa">
+                                                            <p><strong>Productividad:</strong> {evals.productividad}</p>
+                                                            <p><strong>Puntualidad:</strong> {evals.puntualidad}</p>
+                                                            <p><strong>Trabajo en Equipo:</strong> {evals.trabajoEnEquipo}</p>
+                                                            <p><strong>Adaptabilidad:</strong> {evals.adaptabilidad}</p>
+                                                            <p><strong>Conocimientos Técnicos:</strong> {evals.conocimientoTecnico}</p>
+                                                            <p><strong>Promedio de Evaluación:</strong> {evals.promedioEval}</p>
+                                                            <p><strong>Fecha de registro:</strong> {formatFecha(evals.fechaRegistro)}</p>
+                                                            <p><strong></strong></p>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <p>No hay evaluaciones para este empleado.</p>
+                                    )}
                                     <button className="cerrar-button" onClick={handleCloseModal}>Cerrar</button>
                                 </div>
                             </div>

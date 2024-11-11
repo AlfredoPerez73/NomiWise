@@ -6,6 +6,8 @@ import { Contrato } from "./contrato.js";
 import { DetalleLiquidacion } from "./detalleLiquidacion.js";
 import { Liquidacion } from "./liquidacion.js";
 import { Parametros } from "./parametros.js";
+import { Novedad } from "./novedades.js";
+import { Evaluacion } from "./evaluaciones.js";
 
 export const Usuario = sequelize.define(
   "usuarios",
@@ -44,6 +46,16 @@ Usuario.hasMany(Empleado, {
 });
 
 Empleado.belongsTo(Usuario, {
+  foreignKey: "idUsuario",
+  targetKey: "idUsuario",
+});
+
+Usuario.hasMany(Evaluacion, {
+  foreignKey: "idUsuario",
+  sourceKey: "idUsuario",
+});
+
+Evaluacion.belongsTo(Usuario, {
   foreignKey: "idUsuario",
   targetKey: "idUsuario",
 });
@@ -98,6 +110,15 @@ Parametros.belongsTo(Usuario, {
   targetKey: "idUsuario",
 });
 
+Usuario.hasMany(Novedad, {
+  foreignKey: "idUsuario",
+  sourceKey: "idUsuario",
+});
+
+Novedad.belongsTo(Usuario, {
+  foreignKey: "idUsuario",
+  targetKey: "idUsuario",
+});
 
 Usuario.hasMany(Liquidacion, {
   foreignKey: "idUsuario",
