@@ -1,7 +1,6 @@
 import * as evalService from "../services/evaluacion.service.js";
 
 export async function postEval(req, res) {
-    console.log("Datos recibidos en el backend:", req.body); // Verifica qué datos están llegando
     const idUsuario = req.usuario.idUsuario;
     const { idEmpleado, productividad, puntualidad, trabajoEnEquipo, adaptabilidad, conocimientoTecnico } = req.body;
     try {
@@ -16,7 +15,6 @@ export async function postEval(req, res) {
         );
         res.json(newEval);
     } catch (error) {
-        console.error("Error en el servidor:", error.message);
         res.status(500).json({ message: error.message });
     }
 }

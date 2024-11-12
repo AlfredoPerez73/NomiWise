@@ -5,6 +5,7 @@ import { useEmpleado } from "../context/empleadoContext";
 import { useEval } from "../context/evalContext";
 import { useCargo } from "../context/cargoContext";
 import { useAuth } from "../context/authContext";
+import { useUsuario } from "../context/usuarioContext";
 import { useContrato } from "../context/contratoContext";
 import { format } from "date-fns";
 import ReactPaginate from 'react-paginate';
@@ -26,6 +27,7 @@ const EvaluacionEmpleados = () => {
     const [perPage] = useState(10); // Cambia esto al número de elementos por página que desees
 
     const { usuario } = useAuth();
+    const { usuarios } = useUsuario();
     const { getCargo, cargos } = useCargo();
     const { getContrato, contratos } = useContrato();
     const { getEmpleado, empleados } = useEmpleado();
@@ -68,7 +70,6 @@ const EvaluacionEmpleados = () => {
     const handleFormSubmit = async (e) => {
         e.preventDefault();
 
-        // Redondear todos los valores en `empleadoToEvaluate`
         const evalData = {
             idEmpleado: selectedEmpleado.idEmpleado,
             idUsuario: empleadoToEvaluate.idUsuario,
@@ -78,22 +79,17 @@ const EvaluacionEmpleados = () => {
             adaptabilidad: Math.round(empleadoToEvaluate.adaptabilidad),
             conocimientoTecnico: Math.round(empleadoToEvaluate.conocimientoTecnico)
         };
-
-        console.log("Datos a enviar después de redondear:", evalData);
-
         try {
             if (editEval) {
                 await updateEvals(editEval.idEvaluacion, evalData);
                 toast.success(`Evaluación actualizada correctamente.`);
             } else {
                 await createEval(evalData);
-                console.log("Datos enviados a createEval:", evalData); // Confirmar datos
                 toast.success(`Evaluación de ${selectedEmpleado.nombre} registrada correctamente.`);
             }
             getEval();
             handleEvaluacionClose();
         } catch (error) {
-            console.error("Error al guardar la evaluación:", error);
             toast.error(`Error al guardar la evaluación: ${error.message}`);
         }
     };
@@ -110,6 +106,10 @@ const EvaluacionEmpleados = () => {
             await deleteEval(idEvaluacion);
             toast.success("Evaluación eliminada correctamente.");
             getEval(); // Recargar evaluaciones después de eliminar
+            // Actualizar el estado local para reflejar la eliminación
+            setEmpleadoToEvaluate(prevEvaluaciones =>
+                prevEvaluaciones.filter(evaluacion => evaluacion.idEvaluacion !== idEvaluacion)
+            );
         } catch (error) {
             toast.error(`Error al eliminar la evaluación: ${error.message}`);
         }
@@ -197,6 +197,11 @@ const EvaluacionEmpleados = () => {
     const getCargoName = (idCargo) => {
         const cargo = cargos.find((c) => c.idCargo === idCargo);
         return cargo ? cargo.nCargo : "Desconocido";
+    };
+
+    const getUsuarioName = (idUsuario) => {
+        const u = usuarios.find((c) => c.idUsuario === idUsuario);
+        return u ? u.nombre : "Desconocido";
     };
 
     const handleRowClick = (empleado) => {
@@ -390,13 +395,15 @@ const EvaluacionEmpleados = () => {
                                             <p><strong>Trabajo en Equipo:</strong> {empleadoToEvaluate.slice(0, 4).map(e => e.trabajoEnEquipo).join(', ')}</p>
                                             <p><strong>Adaptabilidad:</strong> {empleadoToEvaluate.slice(0, 4).map(e => e.adaptabilidad).join(', ')}</p>
                                             <p><strong>Conocimientos Técnicos:</strong> {empleadoToEvaluate.slice(0, 4).map(e => e.conocimientoTecnico).join(', ')}</p>
-
-                                            {empleadoToEvaluate.length > 4 && (
+                                            <p><strong>Promedio de Evaluacion:</strong> {empleadoToEvaluate.slice(0, 4).map(e => e.promedioEval).join(', ')}</p>
+                                            {empleadoToEvaluate.length === 1 && (
+                                                <p><strong>Evaluador:</strong> {getUsuarioName(empleadoToEvaluate[0].idUsuario)}</p>
+                                            )}
+                                            {empleadoToEvaluate.length > 1 && (
                                                 <button onClick={toggleShowAllEvaluations} className="ver-todas-evaluaciones-button">
                                                     {showAllEvaluations ? "Ver menos" : "Ver todas las evaluaciones"}
                                                 </button>
                                             )}
-
                                             {showAllEvaluations && (
                                                 <div className="todas-evaluaciones-card">
                                                     <h3>Todas las Evaluaciones</h3>
@@ -409,6 +416,19 @@ const EvaluacionEmpleados = () => {
                                                             <p><strong>Conocimientos Técnicos:</strong> {evals.conocimientoTecnico}</p>
                                                             <p><strong>Promedio de Evaluación:</strong> {evals.promedioEval}</p>
                                                             <p><strong>Fecha de registro:</strong> {formatFecha(evals.fechaRegistro)}</p>
+                                                            <p><strong>Evaluador:</strong> {getUsuarioName(evals.idUsuario)}</p>
+                                                            <button
+                                                                className="edit-button-card"
+                                                                onClick={(e) => { e.stopPropagation(); handleEditEvaluacion(evals); }}
+                                                            >
+                                                                <i className="fi fi-br-customize-edit icon-style-components"></i>
+                                                            </button>
+                                                            <button
+                                                                className="delete-button-card"
+                                                                onClick={(e) => { e.stopPropagation(); handleDeleteEvaluacion(evals.idEvaluacion); }}
+                                                            >
+                                                                <i className="fi fi-br-clear-alt icon-style-components"></i>
+                                                            </button>
                                                             <p><strong></strong></p>
                                                         </div>
                                                     ))}

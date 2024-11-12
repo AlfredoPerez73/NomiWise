@@ -66,7 +66,7 @@ export async function actualizarEval(idEvaluacion, idEmpleado, idUsuario, produc
             throw new Error('La evaluacion no existe.');
         }
         
-        promedioEvals = (productividad + puntualidad + trabajoEnEquipo + adaptabilidad + conocimientoTecnico) / 5
+        const promedioEvals = Math.round((productividad + puntualidad + trabajoEnEquipo + adaptabilidad + conocimientoTecnico) / 5);
 
         evals.idEmpleado = idEmpleado;
         evals.idUsuario = idUsuario;
