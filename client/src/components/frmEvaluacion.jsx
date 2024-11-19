@@ -4,6 +4,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { useEmpleado } from "../context/empleadoContext";
 import { useEval } from "../context/evalContext";
 import { useCargo } from "../context/cargoContext";
+import { useRol } from "../context/rolContext";
 import { useAuth } from "../context/authContext";
 import { useUsuario } from "../context/usuarioContext";
 import { useContrato } from "../context/contratoContext";
@@ -28,6 +29,7 @@ const EvaluacionEmpleados = () => {
 
     const { usuario } = useAuth();
     const { usuarios } = useUsuario();
+    const { roles } = useRol();
     const { getCargo, cargos } = useCargo();
     const { getContrato, contratos } = useContrato();
     const { getEmpleado, empleados } = useEmpleado();
@@ -199,6 +201,11 @@ const EvaluacionEmpleados = () => {
         return cargo ? cargo.nCargo : "Desconocido";
     };
 
+    const getRolName = (idRol) => {
+        const rol = roles.find((r) => r.idRol === idRol);
+        return rol ? rol.nRol : "Desconocido";
+    };
+
     const getUsuarioName = (idUsuario) => {
         const u = usuarios.find((c) => c.idUsuario === idUsuario);
         return u ? u.nombre : "Desconocido";
@@ -317,7 +324,9 @@ const EvaluacionEmpleados = () => {
                                     <th>Fecha de Fin</th>
                                     <th>Estado</th>
                                     <th>Fecha de registro</th>
-                                    <th>Acciones</th>
+                                    {getRolName(usuario.idRol) !== "EMPLEADO USUARIO" && (
+                                        <th>Acciones</th>
+                                    )}
                                 </tr>
                             </thead>
                             <tbody>
@@ -341,12 +350,14 @@ const EvaluacionEmpleados = () => {
                                             </td>
                                             <td>{formatFecha(val.fechaRegistro)}</td>
                                             <td>
-                                                <button
-                                                    className="evaluate-button"
-                                                    onClick={() => handleEvaluateEmpleado(empleadoInfo)}
-                                                >
-                                                    <i className="fi fi-br-assessment icon-style-components"></i>
-                                                </button>
+                                                {getRolName(usuario.idRol) !== "EMPLEADO USUARIO" && (
+                                                    <button
+                                                        className="evaluate-button"
+                                                        onClick={() => handleEvaluateEmpleado(empleadoInfo)}
+                                                    >
+                                                        <i className="fi fi-br-assessment icon-style-components"></i>
+                                                    </button>
+                                                )}
                                             </td>
                                         </tr>
                                     );
