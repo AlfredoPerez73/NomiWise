@@ -867,6 +867,24 @@ h6 {
   font-size: 16px;
 }
 
+.procesarNominaButton {
+  background-color: #5d53e8;
+  color: whitesmoke;
+  padding: 7px 10px;
+  margin-bottom: -41.5px;
+  margin-right: 40px;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease-out;
+}
+
+.procesarNominaButton:hover {
+  background-color: #5c45db;
+  box-shadow: 0 20px 40px rgba(121, 121, 121, 0.137);
+  transition: all 0.3s ease-in-out;
+}
+
 .open-PDF-button {
   background-color: #e87653;
   color: whitesmoke;

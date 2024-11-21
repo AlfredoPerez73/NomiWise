@@ -51,7 +51,46 @@ const actualizarTotalesLiquidacion = async (año, mes, t) => {
     });
 
     await Liquidacion.update(totales, { where: { año, mes }, transaction: t });
+    return totales
 };
+
+export async function enviarVariasNominasAFinanzas(nominas) {
+    const errores = [];
+
+    for (const nomina of nominas) {
+        try {
+            const fechaActual = new Date();
+            const fecha = fechaActual.toISOString().split('T')[0];
+            const hora = fechaActual.toTimeString().split(' ')[0].slice(0, 5);
+
+            const payload = {
+                Monto: nomina.total,
+                Categoria: "Nómina",
+                Proveedor: "RRHH",
+                Fecha: fecha,
+                Hora: hora
+            };
+
+            const response = await fetch("https://finanzasbackend-dw9a.onrender.com/api/addGastos", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error al enviar nómina con ID ${nomina.idLiquidacion}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log(`Nómina con ID ${nomina.idLiquidacion} enviada correctamente:`, data);
+        } catch (error) {
+            console.error(`Error al enviar nómina con ID ${nomina.idLiquidacion}:`, error.message);
+            errores.push({ id: nomina.idLiquidacion, error: error.message });
+        }
+    }
+
+    return errores; // Devuelve errores si los hay
+}
 
 async function verificarPython() {
     return new Promise((resolve) => {

@@ -1,6 +1,7 @@
 import { createContext, useContext, useState } from "react";
 import {
-    getNominaRequest
+    getNominaRequest,
+    getProcesamientoNominaRequest
 } from '../api/nomina/nominaAuth';
 
 const NominaContext  = createContext();
@@ -25,10 +26,20 @@ export function NominaProvider({ children }) {
         }
     }
 
+    const procesarNomina = async (nominas) => {
+        try {
+            const res = await getProcesamientoNominaRequest(nominas); // Llama al endpoint
+            console.log("Nómina procesada con éxito:", res.data);
+        } catch (error) {
+            console.error("Error al procesar la nómina:", error);
+        }
+    };
+
     return(
         <NominaContext.Provider value={{
             nominas,
-            getNominas
+            getNominas,
+            procesarNomina
         }}>
             {children}
         </NominaContext.Provider>

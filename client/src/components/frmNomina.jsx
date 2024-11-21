@@ -21,7 +21,7 @@ const Nomina = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const [perPage] = useState(10);
 
-    const { getNominas, nominas } = useNomina();
+    const { nominas, getNominas, procesarNomina } = useNomina();
     const { usuario } = useAuth();
 
     const uniqueYears = [...new Set(nominas.map(nomina => nomina.año))].sort();
@@ -414,6 +414,14 @@ const Nomina = () => {
                             })}
                         </tbody>
                     </table>
+                    <div className="button-container">
+                        <button type="button" className="procesarNominaButton"
+                            onClick={() => {
+                                procesarNomina(nominas);
+                            }}>
+                            <i class="fi fi-br-process icon-style-pdf"></i>
+                        </button>
+                    </div>
                     <div className="button-container">
                         <button type="button" className="open-PDF-button" onClick={generatePDF}>
                             <i class="fi fi-rr-file-medical-alt icon-style-pdf"></i>
