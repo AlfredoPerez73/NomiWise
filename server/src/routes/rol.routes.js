@@ -9,9 +9,9 @@ import { usuarioRequerido } from "../middlewares/usuario.middleware.js";
 
 const router = Router();
 
-router.post("/roles", postRol); //crear categoria
-router.get("/roles", getRol); // obtener todas las categorias
-router.put("/roles/:idRol", putRol); //modificar una categoria
-router.delete("/roles/:idRol", deleteRol); //eliminar una categoria
+router.post("/roles", postRol);
+router.get("/roles", getRol);
+router.put("/roles/:idRol", putRol);
+router.delete("/roles/:idRol", deleteRol);
 
 export default router;

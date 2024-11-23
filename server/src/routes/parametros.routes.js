@@ -9,9 +9,9 @@ import { usuarioRequerido } from "../middlewares/usuario.middleware.js";
 
 const router = Router();
 
-router.post("/parametros", usuarioRequerido,  postParametro); //crear categoria
-router.get("/parametros", usuarioRequerido, getParametro); //obtener categoria
-router.put("/parametros/:idParametro", usuarioRequerido, putParametro); //modificar una categoria
-router.delete("/parametros/:idParametro", usuarioRequerido, deleteParametro); //eliminar una categoria
+router.post("/parametros", usuarioRequerido,  postParametro);
+router.get("/parametros", usuarioRequerido, getParametro);
+router.put("/parametros/:idParametro", usuarioRequerido, putParametro);
+router.delete("/parametros/:idParametro", usuarioRequerido, deleteParametro);
 
 export default router;

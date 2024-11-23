@@ -7,7 +7,7 @@ import { usuarioRequerido } from "../middlewares/usuario.middleware.js";
 
 const router = Router();
 
-router.post("/novedades", usuarioRequerido,  postNovedades); //crear categoria
-router.get("/novedades", usuarioRequerido, getNovedad); //obtener categoria
+router.post("/novedades", usuarioRequerido,  postNovedades);
+router.get("/novedades", usuarioRequerido, getNovedad);
 
 export default router;

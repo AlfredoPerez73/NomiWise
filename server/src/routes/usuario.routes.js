@@ -16,6 +16,7 @@ const router = Router();
 
 router.post("/usuarios", usuarioRequerido, postRegistroUsuario);
 router.get("/usuarios", usuarioRequerido, getUsuario);
+//router.get("/usuariosPrueba", getUsuario);
 router.put("/usuarios/:idUsuario", usuarioRequerido, putUsuario);
 router.delete("/usuarios/:idUsuario", usuarioRequerido, deleteUsuario);
 

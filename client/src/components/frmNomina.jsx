@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../css/components.css";
+import toast, { Toaster } from "react-hot-toast";
 import { useAuth } from "../context/authContext";
 import { useNomina } from "../context/nominaContext";
 import { format, startOfDay, endOfDay } from "date-fns";
@@ -65,6 +66,41 @@ const Nomina = () => {
     };
 
     const userName = usuario ? usuario.nombre : "Desconocido";
+
+    const handleConfirmToast = () => {
+        toast(
+            (t) => (
+                <div style={{ textAlign: "center", fontWeight: "bold" }}>
+                    <p>¿Desea enviar estas nóminas a Finanzas?</p>
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            gap: "10px",
+                            marginTop: "10px",
+                        }}
+                    >
+                        <button
+                            className="toast-button-confirmed"
+                            onClick={async () => {
+                                await procesarNomina(nominas); // Procesa las nóminas
+                                toast.success(
+                                    <b><strong>Se han enviado correctamente las nóminas a Finanzas</strong></b>
+                                );
+                                toast.dismiss(t.id); // Cierra el toast actual
+                            }}
+                        >
+                            Confirmar
+                        </button>
+                        <button className="toast-button-delete" onClick={() => toast.dismiss(t.id)}>Cancelar</button>
+                    </div>
+                </div>
+            ),
+            {
+                duration: 8000, // Duración del mensaje
+            }
+        );
+    };
 
     const handleFilterChangeAño = (e) => {
         setFilterValueAño(e.target.value);
@@ -334,6 +370,7 @@ const Nomina = () => {
 
     return (
         <div className="w-full h-full">
+            <Toaster />
             <div className="form-comp">
                 <div className="header-comp">
                     <h1 className="title-comp">Registro de Nomina</h1>
@@ -416,9 +453,7 @@ const Nomina = () => {
                     </table>
                     <div className="button-container">
                         <button type="button" className="procesarNominaButton"
-                            onClick={() => {
-                                procesarNomina(nominas);
-                            }}>
+                            onClick={handleConfirmToast}>
                             <i class="fi fi-br-process icon-style-pdf"></i>
                         </button>
                     </div>

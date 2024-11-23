@@ -7,7 +7,7 @@ import { usuarioRequerido } from "../middlewares/usuario.middleware.js";
 
 const router = Router();
 
-router.get("/nomina", usuarioRequerido, getNomina); // obtener todas las categorias
+router.get("/nomina", usuarioRequerido, getNomina);
 router.post("/procesarNomina", usuarioRequerido, procesarTodasLasNominas); 
 
 export default router;

@@ -61,7 +61,7 @@ describe('Pruebas de <LoginPage />', () => {
 
     // Simular el envío del formulario
     await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: /inicia sesión/i }));
+      fireEvent.click(screen.getByRole('button', { name: /Iniciar Sesion/i }));
     });
 
     // Esperar y asegurarse que la función signinu se haya llamado con los valores correctos
