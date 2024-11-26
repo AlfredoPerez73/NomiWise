@@ -35,13 +35,13 @@ describe('Pruebas de <LoginPage />', () => {
     );
   };
 
-  test('Prueba de Integacion <<CAO>>', () => {
+  test('Prueba Unitaria al componente Login', () => {
     renderLoginPage();
     expect(screen.getByLabelText(/correo/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/contraseña/i)).toBeInTheDocument();
   });
 
-  test('Prueba de Integacion <<CA1>>', () => {
+  test('Renderizado y actualizacion de campos', () => {
     renderLoginPage();
     const emailInput = screen.getByLabelText(/correo/i);
     fireEvent.change(emailInput, { target: { value: 'test@test.com' } });
@@ -52,7 +52,7 @@ describe('Pruebas de <LoginPage />', () => {
     expect(passwordInput.value).toBe('123456');
   });
 
-  test('Prueba de Integacion <<CA3>>', async () => {
+  test('Prueba Unitaria de envio de datos validos para un usuario', async () => {
     renderLoginPage();
     
     // Cambiar los campos del formulario

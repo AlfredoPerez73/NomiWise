@@ -199,125 +199,132 @@ async function calcularValoresAutomaticosPython(detalle, parametro, novedad) {
     }
 }
 
-async function obtenerDatosIniciales(detalle, idParametro, idNovedad) {
-    const empleado = await Empleado.findByPk(detalle.idEmpleado);
-    if (!empleado) throw new Error(`No se encontró el empleado con ID ${detalle.idEmpleado}`);
-
-    const contrato = await Contrato.findByPk(empleado.idContrato);
-    if (!contrato) throw new Error(`No se encontró el contrato del empleado con ID ${detalle.idEmpleado}`);
-
-    const parametro = await Parametros.findByPk(idParametro);
-    if (!parametro) throw new Error(`No se encontró el parámetro con ID ${idParametro}`);
-
-    let novedad = await Novedad.findByPk(idNovedad);
-    if (!novedad) {
-        novedad = await Novedad.create({
-            idEmpleado: detalle.idEmpleado,
-            idCargo: empleado.idCargo,
-            idContrato: empleado.idContrato,
-            idUsuario: detalle.idUsuario,
-            prestamos: 0,
-            descuentos: 0,
-            meses: 0,
-            intereses: 0,
-        });
-    }
-
-    return { empleado, contrato, parametro, novedad };
-}
-
-async function verificarLiquidacionExistente(idEmpleado, mes, año) {
-    const detalleExistente = await DetalleLiquidacion.findOne({
-        where: { idEmpleado, mes, año },
-    });
-    if (detalleExistente) {
-        throw new Error(`El empleado con código ${idEmpleado} ya ha sido liquidado en el mes ${mes} del año ${año}`);
-    }
-}
-
-async function obtenerOcrearLiquidacion(mes, año, idUsuario, transaction) {
-    let liquidacion = await Liquidacion.findOne({ where: { mes, año } });
-    if (!liquidacion) {
-        liquidacion = await Liquidacion.create({
-            año,
-            mes,
-            salarioTotal: 0,
-            saludTotal: 0,
-            pensionTotal: 0,
-            auxTransporteTotal: 0,
-            bonificacionServicioTotal: 0,
-            auxAlimentacionTotal: 0,
-            primaNavidadTotal: 0,
-            vacacionesTotal: 0,
-            cesantiasTotal: 0,
-            interesesCesantiasTotal: 0,
-            total: 0,
-            idUsuario,
-        }, { transaction });
-    }
-    return liquidacion;
-}
-
-async function calcularValores(detalle, parametro, novedad) {
-    const parametros = {
-        salarioMinimo: parametro.salarioMinimo,
-        salud: parametro.salud,
-        pension: parametro.pension,
-        auxTransporte: parametro.auxTransporte,
-    };
-
-    const novedades = {
-        prestamos: novedad.prestamos,
-        descuentos: novedad.descuentos,
-        meses: novedad.meses,
-        intereses: novedad.intereses,
-    };
-
-    return await calcularValoresAutomaticosPython(detalle, parametros, novedades);
-}
-
-async function actualizarNovedad(novedad, valoresCalculados, transaction) {
-    novedad.prestamos = Math.max(novedad.prestamos - valoresCalculados.prestamos, 0);
-    novedad.descuentos = Math.max(novedad.descuentos - valoresCalculados.descuentos, 0);
-    await novedad.save({ transaction });
-}
-
-async function crearDetalleLiquidacion(
-    detalle, valoresCalculados, liquidacion, novedad, contrato, idParametro, idUsuario, transaction
-) {
-    const now = new Date();
-    const newDetalleLiquidacion = await DetalleLiquidacion.create({
-        año: now.getFullYear(),
-        mes: now.getMonth() + 1,
-        ...detalle,
-        ...valoresCalculados,
-        salario: contrato.salario,
-        tipoContrato: contrato.tipoContrato,
-        fechaRegistro: now.toISOString().split('T')[0],
-        idParametro,
-        idNovedad: novedad.idNovedad,
-        idLiquidacion: liquidacion.idLiquidacion,
-        idUsuario,
-    }, { transaction });
-
-    return newDetalleLiquidacion;
-}
-
 export async function createDetalleLiquidacion(detalle, idParametro, idNovedad, idUsuario) {
     const t = await sequelize.transaction();
+
     const now = new Date();
     const mes = now.getMonth() + 1;
     const año = now.getFullYear();
 
     try {
-        const { contrato, parametro, novedad } = await obtenerDatosIniciales(detalle, idParametro, idNovedad);
-        await verificarLiquidacionExistente(detalle.idEmpleado, mes, año);
-        const liquidacion = await obtenerOcrearLiquidacion(mes, año, idUsuario, t);
-        const valoresCalculados = await calcularValores(detalle, parametro, novedad);
-        const newDetalleLiquidacion = await crearDetalleLiquidacion(
-            detalle, valoresCalculados, liquidacion, novedad, contrato, idParametro, idUsuario, t
-        );
-        await actualizarNovedad(novedad, valoresCalculados, t);
+        const empleado = await Empleado.findByPk(detalle.idEmpleado);
+        if (!empleado) {
+            throw new Error(`No se encontró el empleado con ID ${detalle.idEmpleado}`);
+        }
+        const contrato = await Contrato.findByPk(empleado.idContrato);
+        if (!contrato) {
+            throw new Error(`No se encontró el contrato del empleado con la ID ${detalle.idEmpleado}`);
+        }
+        const parametro = await Parametros.findByPk(idParametro);
+        if (!parametro) {
+            throw new Error(`No se encontró el parámetro con ID ${idParametro}`);
+        }
+        
+        // Verificar si existe la novedad o crearla con valores en 0
+        let novedad = await Novedad.findByPk(idNovedad);
+        if (!novedad) {
+            novedad = await Novedad.create({
+                idEmpleado: detalle.idEmpleado,
+                idCargo: empleado.idCargo,
+                idContrato: empleado.idContrato,
+                idUsuario: idUsuario,
+                prestamos: 0,
+                descuentos: 0,
+                meses: 0,
+                intereses: 0
+            }, { transaction: t });
+        }
+
+        const detalleCompleto = {
+            ...detalle,
+            salario: contrato.salario,
+            tipoContrato: contrato.tipoContrato,
+            fechaRegistro: now.toISOString().split('T')[0],
+            diasTrabajados: detalle.diasTrabajados,
+            horasExtras: detalle.horasExtras,
+        };
+
+        const parametros = {
+            salarioMinimo: parametro.salarioMinimo,
+            salud: parametro.salud,
+            pension: parametro.pension,
+            auxTransporte: parametro.auxTransporte,
+        };
+
+        const novedades = {
+            prestamos: novedad.prestamos,
+            descuentos: novedad.descuentos,
+            meses: novedad.meses,
+            intereses: novedad.intereses
+        };
+
+        const detalleExistente = await DetalleLiquidacion.findOne({
+            where: {
+                idEmpleado: detalleCompleto.idEmpleado,
+                mes: mes,
+                año: año,
+            },
+        });
+
+        if (detalleExistente) {
+            throw new Error(`El empleado con el código ${detalleCompleto.idEmpleado} ya ha sido liquidado en el mes ${mes} del año ${año}`);
+        }
+
+        let liquidacionExistente = await Liquidacion.findOne({
+            where: {
+                mes: mes,
+                año: año,
+            },
+        });
+
+        let idLiquidacion;
+
+        if (liquidacionExistente) {
+            idLiquidacion = liquidacionExistente.idLiquidacion;
+        } else {
+            const newLiquidacion = new Liquidacion({
+                año: año,
+                mes: mes,
+                salarioTotal: 0,
+                saludTotal: 0,
+                pensionTotal: 0,
+                auxTransporteTotal: 0,
+                bonificacionServicioTotal: 0,
+                auxAlimentacionTotal: 0,
+                primaNavidadTotal: 0,
+                vacacionesTotal: 0,
+                cesantiasTotal: 0,
+                interesesCesantiasTotal: 0,
+                total: 0,
+                idUsuario: idUsuario,
+            });
+
+            const liquidacionGuardada = await newLiquidacion.save({ transaction: t });
+            idLiquidacion = liquidacionGuardada.idLiquidacion;
+        }
+
+        const valoresCalculados = await calcularValoresAutomaticosPython(detalleCompleto, parametros, novedades);
+
+        const newDetalleLiquidacion = new DetalleLiquidacion({
+            año: año,
+            mes: mes,
+            ...detalleCompleto,
+            ...valoresCalculados,
+            idParametro: detalle.idParametro,
+            idNovedad: novedad.idNovedad, // Usar la ID de novedad existente o recién creada
+            idLiquidacion: idLiquidacion,
+            idUsuario: idUsuario,
+        });
+
+        await newDetalleLiquidacion.save({ transaction: t });
+
+        novedad.prestamos -= valoresCalculados.prestamos;
+        novedad.descuentos -= valoresCalculados.descuentos;
+        
+        novedad.prestamos = Math.max(novedad.prestamos, 0);
+        novedad.descuentos = Math.max(novedad.descuentos, 0);
+
+        await novedad.save({ transaction: t });
         await actualizarTotalesLiquidacion(año, mes, t);
 
         await t.commit();
@@ -348,7 +355,7 @@ export async function createDetalleLiquidacion(detalle, idParametro, idNovedad, 
         await t.rollback();
         throw new Error(`Error creando DetalleLiquidacion: ${error.message}`);
     }
-}
+};
 
 export async function obtenerDetalles() {
     try {

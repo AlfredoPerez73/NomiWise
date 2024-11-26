@@ -157,6 +157,7 @@ const RegistroRoles = () => {
                             <div className="input-container">
                                 <input
                                     type="text"
+                                    data-testid="roleNameInput"
                                     id="nRol"
                                     name="nRol"
                                     placeholder=" "

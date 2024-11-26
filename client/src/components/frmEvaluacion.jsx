@@ -248,6 +248,8 @@ const EvaluacionEmpleados = () => {
                                 step="1"
                                 value={empleadoToEvaluate[metric]}
                                 onChange={(e) => setEmpleadoToEvaluate({ ...empleadoToEvaluate, [metric]: e.target.value })}
+                                aria-label={metric}  // Utiliza un aria-label para identificar el input
+                                data-testid={`range-${metric}`}  // Opcional, si prefieres usar data-testid
                             />
                             <span className="metric-value">{empleadoToEvaluate[metric]}</span>
                         </div>
@@ -255,8 +257,8 @@ const EvaluacionEmpleados = () => {
 
                     <button type="submit" className="submit-button">Evaluar</button>
                     <button type="button" className="close-button" onClick={handleEvaluacionClose}>Cerrar</button>
-
                 </form>
+
             ) : (
                 <div className="form-comp">
                     <div className="header-comp">

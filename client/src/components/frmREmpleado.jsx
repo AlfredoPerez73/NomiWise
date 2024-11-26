@@ -141,6 +141,7 @@ const RegistroEmpleadoForm = ({ onClose, empleadoToEdit, cargos, isReadOnly }) =
                                 <select
                                     id="idCargo"
                                     name="idCargo"
+                                    data-testid="cargo"
                                     value={formData.idCargo}
                                     onChange={handleChange}
                                     required
@@ -159,6 +160,7 @@ const RegistroEmpleadoForm = ({ onClose, empleadoToEdit, cargos, isReadOnly }) =
                                     type="date"
                                     id="fechaInicio"
                                     name="fechaInicio"
+                                    data-testid="fechaInicio"
                                     value={formData.fechaInicio}
                                     onChange={handleChange}
                                     required
@@ -171,6 +173,7 @@ const RegistroEmpleadoForm = ({ onClose, empleadoToEdit, cargos, isReadOnly }) =
                                     type="date"
                                     id="fechaFin"
                                     name="fechaFin"
+                                    data-testid="fechaFin"
                                     value={formData.fechaFin}
                                     onChange={handleChange}
                                     required
@@ -196,6 +199,7 @@ const RegistroEmpleadoForm = ({ onClose, empleadoToEdit, cargos, isReadOnly }) =
                             <select
                                     id="tipoContrato"
                                     name="tipoContrato"
+                                    data-testid="contrato"
                                     value={formData.tipoContrato}
                                     onChange={handleChange}
                                     required
