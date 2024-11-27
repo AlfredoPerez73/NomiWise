@@ -65,7 +65,14 @@ export const postIniciarSesion = async (req, res) => {
       correo,
       contraseña
     );
-    res.cookie("token", usuarioLogueado.token);
+    res.cookie("token", usuarioLogueado.token,{
+      httpOnly: true,  // Protege la cookie para que no sea accesible mediante JavaScript
+      secure: process.env.NODE_ENV === 'production',  // Solo usa 'secure' en producción con HTTPS
+      sameSite: 'None',  // Necesario para cookies entre dominios
+      path: '/',  // Asegura que la cookie esté disponible en toda la aplicación
+      maxAge: 24 * 60 * 60 * 1000  // 1 día de validez
+    });
+    res.json(usuarioLogueado);
     res.json(usuarioLogueado);
   } catch (error) {
     res.status(500).json({ message: error.message });
