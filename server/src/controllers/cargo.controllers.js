@@ -14,6 +14,18 @@ export async function postCargo(req, res) {
     }
 }
 
+export async function postCargo2(req, res) {
+    const { nCargo } = req.body;
+    try {
+        const newCargo = await cargoService.crearCargo(
+            nCargo
+        );
+        res.json(newCargo);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
 export async function getCargo(req, res) {
     try {
         const cargos = await cargoService.obtenerCargo();

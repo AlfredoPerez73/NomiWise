@@ -31,6 +31,20 @@ export async function crearCargo(idUsuario, nCargo) {
     }
 }
 
+export async function crearCargo(nCargo) {
+    try {
+        const newCargo = await Cargo.create({
+            nCargo,
+        });
+        return new CargoDTO(
+            newCargo.idCargo,
+            newCargo.nCargo
+        );
+    } catch (error) {
+        throw new Error(error.message);
+    }
+}
+
 export async function obtenerCargo() {
     try {
         const cargos = await Cargo.findAll();
