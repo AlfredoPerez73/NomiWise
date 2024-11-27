@@ -31,7 +31,7 @@ export async function crearCargo(idUsuario, nCargo) {
     }
 }
 
-export async function crearCargo(nCargo) {
+export async function crearCargo2(nCargo) {
     try {
         const newCargo = await Cargo.create({
             nCargo,

@@ -17,7 +17,7 @@ export async function postCargo(req, res) {
 export async function postCargo2(req, res) {
     const { nCargo } = req.body;
     try {
-        const newCargo = await cargoService.crearCargo(
+        const newCargo = await cargoService.crearCargo2(
             nCargo
         );
         res.json(newCargo);
