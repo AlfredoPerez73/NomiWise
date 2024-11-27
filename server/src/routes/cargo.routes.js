@@ -11,6 +11,7 @@ const router = Router();
 
 router.post("/cargos", usuarioRequerido, postCargo);
 router.get("/cargos", usuarioRequerido, getCargo);
+router.get("/cargosPublicos", getCargo);
 router.put("/cargos/:idCargo", usuarioRequerido, putCargo);
 router.delete("/cargos/:idCargo", usuarioRequerido, deleteCargo);
 
