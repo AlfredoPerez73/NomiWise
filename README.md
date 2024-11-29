@@ -18,10 +18,11 @@ Un sistema de gestión de nómina desarrollado con un enfoque moderno y minimali
 
 | Tecnología  | Descripción              | Logo                  |
 |-------------|--------------------------|-----------------------|
-| **React**   | Frontend dinámico        | <img src="https://nodejs.org/static/images/logo.svg" alt="Node.js" width="40" height="40" /> |
-| **Node.js** | Backend eficiente        | <img src="https://vitejs.dev/logo.svg" alt="Vite" width="40" height="40" /> |
-| **PostgreSQL** | Base de datos robusta | <img src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Postgresql_elephant.svg" alt="PostgreSQL" width="40" height="40" /> |
-| **Vite**    | Herramienta de desarrollo rápida | <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" alt="Python" width="40" height="40" /> |
+| **React**   | Frontend dinámico        | <div align="center"><img src="https://nodejs.org/static/images/logo.svg" alt="Node.js" width="40" height="40" /></div> |
+| **Node.js** | Backend eficiente        | <div align="center"><img src="https://vitejs.dev/logo.svg" alt="Vite" width="40" height="40" /></div> |
+| **PostgreSQL** | Base de datos robusta | <div align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Postgresql_elephant.svg" width="40" /></div> |
+| **Vite**    | Herramienta de desarrollo rápida | <div align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" alt="Python" width="40" height="40" /></div> |
+| **Python**       | Lenguaje para scripts y análisis       | <div align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" width="40" /></div> |
 
 ---
 
@@ -29,10 +30,11 @@ Un sistema de gestión de nómina desarrollado con un enfoque moderno y minimali
 
 | Requisito         | Descripción                  | Logo                  |
 |-------------------|------------------------------|-----------------------|
-| **Node.js**       | v14+ instalado              | <img src="https://nodejs.org/static/images/logo.svg" alt="Node.js" width="40" height="40" /> |
-| **PostgreSQL**    | Configurado y en ejecución   | <img src="https://vitejs.dev/logo.svg" alt="Vite" width="40" height="40" /> |
-| **Git**           | Para clonar el repositorio  | <img src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Postgresql_elephant.svg" alt="PostgreSQL" width="40" height="40" /> |
-| **npm o yarn**    | Administrador de paquetes    | <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" alt="Python" width="40" height="40" /> |
+| **Node.js**       | v14+ instalado              | <div align="center"><img src="https://nodejs.org/static/images/logo.svg" alt="Node.js" width="40" height="40" /></div> |
+| **Python**       | Lenguaje para scripts y análisis       | <div align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" width="40" /></div> |
+| **PostgreSQL**    | Configurado y en ejecución   | <div align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Postgresql_elephant.svg" width="40" /></div> |
+| **Git**           | Para clonar el repositorio  | <div align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Postgresql_elephant.svg" alt="PostgreSQL" width="40" height="40" /></div> |
+| **npm o yarn**    | Administrador de paquetes    | <div align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" alt="Python" width="40" height="40" /></div> |
 
 ---
 
