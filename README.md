@@ -9,7 +9,7 @@ Un sistema de gestión de nómina desarrollado con un enfoque moderno y minimali
 | Tecnología  | Descripción              | Logo                  |
 |-------------|--------------------------|-----------------------|
 | **React**   | Frontend dinámico        | <div align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" width="40" /></div> |
-| **Node.js** | Backend eficiente        | <div align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/6/64/Node.js_logo_2015.svg" alt="Node.js" width="40" height="40" /></div> |
+| **Node.js** | Backend eficiente        | <div align="center"><img src="https://nodejs.org/static/images/logo.svg" alt="Node.js" width="40" height="40" /></div> |
 | **PostgreSQL** | Base de datos robusta | <div align="center"><img src="https://www.postgresql.org/media/img/about/press/elephant.png" width="40" /></div> |
 | **Vite**    | Herramienta de desarrollo rápida | <div align="center"><img src="https://vitejs.dev/logo.svg" width="40" /></div> |
 | **Python**  | Lenguaje para scripts y análisis | <div align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" width="40" /></div> |
@@ -20,7 +20,7 @@ Un sistema de gestión de nómina desarrollado con un enfoque moderno y minimali
 
 | Requisito         | Descripción                  | Logo                  |
 |-------------------|------------------------------|-----------------------|
-| **Node.js**       | v14+ instalado               | <div align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/6/64/Node.js_logo_2015.svg" alt="Node.js" width="40" height="40" /></div> |
+| **Node.js**       | v14+ instalado               | <div align="center"><img src="https://nodejs.org/static/images/logo.svg" alt="Node.js" width="40" height="40" /></div> |
 | **Python**        | Lenguaje para scripts y análisis | <div align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" width="40" /></div> |
 | **PostgreSQL**    | Configurado y en ejecución   | <div align="center"><img src="https://www.postgresql.org/media/img/about/press/elephant.png" width="40" /></div> |
 | **Git**           | Para clonar el repositorio   | <div align="center"><img src="https://git-scm.com/images/logos/logo@2x.png" width="40" height="40" /></div> |
