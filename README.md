@@ -18,10 +18,10 @@ Un sistema de gestión de nómina desarrollado con un enfoque moderno y minimali
 
 | Tecnología  | Descripción              | Logo                  |
 |-------------|--------------------------|-----------------------|
-| **React**   | Frontend dinámico        | ![React](https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg) |
-| **Node.js** | Backend eficiente        | ![Node.js](https://upload.wikimedia.org/wikipedia/commons/d/d9/Node.js_logo.svg) |
-| **PostgreSQL** | Base de datos robusta | ![PostgreSQL](https://upload.wikimedia.org/wikipedia/commons/2/29/Postgresql_elephant.svg) |
-| **Vite**    | Herramienta de desarrollo rápida | ![Vite](https://vitejs.dev/logo.svg) |
+| **React**   | Frontend dinámico        | <img src="https://nodejs.org/static/images/logo.svg" alt="Node.js" width="40" height="40" /> |
+| **Node.js** | Backend eficiente        | <img src="https://vitejs.dev/logo.svg" alt="Vite" width="40" height="40" /> |
+| **PostgreSQL** | Base de datos robusta | <img src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Postgresql_elephant.svg" alt="PostgreSQL" width="40" height="40" /> |
+| **Vite**    | Herramienta de desarrollo rápida | <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" alt="Python" width="40" height="40" /> |
 
 ---
 
@@ -29,10 +29,10 @@ Un sistema de gestión de nómina desarrollado con un enfoque moderno y minimali
 
 | Requisito         | Descripción                  | Logo                  |
 |-------------------|------------------------------|-----------------------|
-| **Node.js**       | v14+ instalado              | ![Node.js](https://upload.wikimedia.org/wikipedia/commons/d/d9/Node.js_logo.svg) |
-| **PostgreSQL**    | Configurado y en ejecución   | ![PostgreSQL](https://upload.wikimedia.org/wikipedia/commons/2/29/Postgresql_elephant.svg) |
-| **Git**           | Para clonar el repositorio  | ![Git](https://upload.wikimedia.org/wikipedia/commons/e/e0/Git-logo.svg) |
-| **npm o yarn**    | Administrador de paquetes    | ![npm](https://upload.wikimedia.org/wikipedia/commons/d/db/Npm-logo.svg) |
+| **Node.js**       | v14+ instalado              | <img src="https://nodejs.org/static/images/logo.svg" alt="Node.js" width="40" height="40" /> |
+| **PostgreSQL**    | Configurado y en ejecución   | <img src="https://vitejs.dev/logo.svg" alt="Vite" width="40" height="40" /> |
+| **Git**           | Para clonar el repositorio  | <img src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Postgresql_elephant.svg" alt="PostgreSQL" width="40" height="40" /> |
+| **npm o yarn**    | Administrador de paquetes    | <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" alt="Python" width="40" height="40" /> |
 
 ---
 
@@ -63,69 +63,40 @@ Al compilar el sistema por primera vez, se insertará automáticamente un admini
 
 ## 🗄️ Datos Iniciales
 
-{
-  "Usuarios (usuarios)": [
-    {
-      "idUsuario": 1,
-      "documento": "10668664955",
-      "nombre": "ALFREDO JOSE PEREZ MEZA",
-      "correo": "alfredojoseperezmeza124@gmail.com",
-      "contrasena": "alfredo7",
-      "fechaRegistro": "2024-12-07",
-      "idRol": 1
-    }
-  ],
-  "Roles (roles)": [
-    {
-      "idRol": 1,
-      "nRol": "ADMINISTRADOR",
-      "fechaRegistro": "2024-12-07"
-    }
-  ],
-  "Permisos (permisos)": [
-    {
-      "nPermiso": "Inicio",
-      "idRol": 1
-    },
-    {
-      "nPermiso": "Empleados",
-      "idRol": 1
-    },
-    {
-      "nPermiso": "Liquidaciones",
-      "idRol": 1
-    },
-    {
-      "nPermiso": "Cargos",
-      "idRol": 1
-    },
-    {
-      "nPermiso": "Usuarios",
-      "idRol": 1
-    },
-    {
-      "nPermiso": "Roles",
-      "idRol": 1
-    },
-    {
-      "nPermiso": "Nomina",
-      "idRol": 1
-    },
-    {
-      "nPermiso": "Permisos",
-      "idRol": 1
-    },
-    {
-      "nPermiso": "Evaluaciones",
-      "idRol": 1
-    },
-    {
-      "nPermiso": "Novedades",
-      "idRol": 1
-    },
-    {
-      "nPermiso": "Despidos",
-      "idRol": 1
-    }
-  ]
-}
+📂 Usuarios (usuarios)
+
+[
+  {
+    "documento": "EL QUE DESEE",
+    "nombre": "EL QUE DESEE",
+    "correo": "EL QUE DESEE",
+    "contraseña": "EL QUE DESEE",
+    "idRol": 1
+  }
+]
+
+📂 Roles (roles)
+
+[
+  {
+    "idRol": 1,
+    "nRol": "ADMINISTRADOR",
+    "fechaRegistro": "2024-12-07"
+  }
+]
+
+📂 Permisos (permisos)
+
+[
+  { "nPermiso": "Inicio", "idRol": 1 },
+  { "nPermiso": "Empleados", "idRol": 1 },
+  { "nPermiso": "Liquidaciones", "idRol": 1 },
+  { "nPermiso": "Cargos", "idRol": 1 },
+  { "nPermiso": "Usuarios", "idRol": 1 },
+  { "nPermiso": "Roles", "idRol": 1 },
+  { "nPermiso": "Nomina", "idRol": 1 },
+  { "nPermiso": "Permisos", "idRol": 1 },
+  { "nPermiso": "Evaluaciones", "idRol": 1 },
+  { "nPermiso": "Novedades", "idRol": 1 },
+  { "nPermiso": "Despidos", "idRol": 1 }
+]
