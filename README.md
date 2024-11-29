@@ -23,9 +23,6 @@ Un sistema de gestión de nómina desarrollado con un enfoque moderno y minimali
 | **Node.js**       | v14+ instalado               | <div align="center"><img src="https://nodejs.org/static/images/logo.svg" alt="Node.js" width="40" height="40" /></div> |
 | **Python**        | Lenguaje para scripts y análisis | <div align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" width="40" /></div> |
 | **PostgreSQL**    | Configurado y en ejecución   | <div align="center"><img src="https://www.postgresql.org/media/img/about/press/elephant.png" width="40" /></div> |
-| Requisito         | Descripción                  | Logo                  |
-| **Git**           | Para clonar el repositorio   | <div align="center"><img src="https://git-scm.com/images/logos/logo@2x.png" width="40" height="40" /></div> |
-| **npm o yarn**    | Administrador de paquetes    | <div align="center"><img src="https://en.m.wikipedia.org/wiki/File:Npm-logo.svg" alt="npm" width="40" height="40" /></div> |
 
 ---
 
