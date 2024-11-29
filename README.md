@@ -38,6 +38,12 @@ Un sistema de gestión de nómina desarrollado con un enfoque moderno y minimali
 **2. Ruta para el Frontend:** cd client | npm install/i  para copilarlo npm run dev
 **3. Ruta para el Backend:** cd server | npm install/i  para copilarlo npm run dev
 
+### 📝 Configuración de PostgreSQL
+
+- db name: "nomiwise2"
+- username: "postgres"
+- password: "123"
+
 ---
 
 ## 👤 Usuario Administrador Predefinido
@@ -64,20 +70,20 @@ Al compilar el sistema por primera vez, se insertará automáticamente un admini
     "fechaRegistro": "2024-12-07",
     "idRol": 1
   }
-  
 ]
 
 📂 Roles (roles)
+
 [
   {
     "idRol": 1,
     "nRol": "ADMINISTRADOR",
     "fechaRegistro": "2024-12-07"
   }
-  
 ]
 
 📂 Permisos (permisos)
+
 [
   { "nPermiso": "Inicio", "idRol": 1 },
   { "nPermiso": "Empleados", "idRol": 1 },
