@@ -4,16 +4,6 @@ Un sistema de gestión de nómina desarrollado con un enfoque moderno y minimali
 
 ---
 
-## 🚀 Características
-
-- Gestión de empleados, cargos, despidos, evaluaciones, novedades, liquidaciones y nómina.
-- Administración de usuarios, roles y permisos.
-- Filtros avanzados para reportes y visualización de datos.
-- Usuario administrador predefinido al compilar el sistema por primera vez.
-- Tecnología moderna con un diseño minimalista.
-
----
-
 ## 🛠️ Tecnologías Utilizadas
 
 | Tecnología  | Descripción              | Logo                  |
@@ -23,6 +13,18 @@ Un sistema de gestión de nómina desarrollado con un enfoque moderno y minimali
 | **PostgreSQL** | Base de datos robusta | <div align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Postgresql_elephant.svg" width="40" /></div> |
 | **Vite**    | Herramienta de desarrollo rápida | <div align="center"><img src="https://vitejs.dev/logo.svg" width="40" /></div> |
 | **Python**       | Lenguaje para scripts y análisis       | <div align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" width="40" /></div> |
+
+---
+
+## 📋 Requisitos Previos
+
+| Requisito         | Descripción                  | Logo                  |
+|-------------------|------------------------------|-----------------------|
+| **Node.js**       | v14+ instalado               | <div align="center"><img src="https://nodejs.org/static/images/logo.svg" alt="Node.js" width="40" height="40" /></div> |
+| **Python**        | Lenguaje para scripts y análisis | <div align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" width="40" /></div> |
+| **PostgreSQL**    | Configurado y en ejecución   | <div align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Postgresql_elephant.svg" width="40" /></div> |
+| **Git**           | Para clonar el repositorio   | <div align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Git-logo.svg" width="40" height="40" /></div> |
+| **npm o yarn**    | Administrador de paquetes    | <div align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/6/64/Npm-logo.svg" alt="npm" width="40" height="40" /></div> |
 
 ---
 
