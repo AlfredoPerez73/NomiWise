@@ -21,7 +21,7 @@ Un sistema de gestión de nómina desarrollado con un enfoque moderno y minimali
 | **React**   | Frontend dinámico        | <div align="center"><img src="https://nodejs.org/static/images/logo.svg" alt="Node.js" width="40" height="40" /></div> |
 | **Node.js** | Backend eficiente        | <div align="center"><img src="https://vitejs.dev/logo.svg" alt="Vite" width="40" height="40" /></div> |
 | **PostgreSQL** | Base de datos robusta | <div align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Postgresql_elephant.svg" width="40" /></div> |
-| **Vite**    | Herramienta de desarrollo rápida | <div align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" alt="Python" width="40" height="40" /></div> |
+| **Vite**    | Herramienta de desarrollo rápida | <div align="center"><img src="https://vitejs.dev/logo.svg" width="40" /></div> |
 | **Python**       | Lenguaje para scripts y análisis       | <div align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" width="40" /></div> |
 
 ---
